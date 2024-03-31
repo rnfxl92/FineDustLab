@@ -11,7 +11,7 @@ final class HomeViewController: BaseViewController {
     
     private let searchStackView = UIStackView(axis: .horizontal)
     
-    private let searchBar: FDSearchBar = { 
+    private let searchBar: FDSearchBar = {
         let searchBar = FDSearchBar()
         searchBar.setPlaceHolderText("미세먼지에 대해 검색해 보세요")
         
@@ -95,6 +95,124 @@ final class HomeViewController: BaseViewController {
     }()
     private let manualImageView: UIImageView = UIImageView(image: .chevronRight)
     
+    private let todayWeatherView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray0
+        view.cornerRadius = 20
+        view.layer.maskedCorners = [
+            .layerMinXMinYCorner,
+            .layerMaxXMinYCorner
+        ]
+        
+        return view
+    }()
+    
+    private let todayTitleView = UIView()
+    private let todayTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "오늘의 미세먼지"
+        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.textColor = .gray1000
+        
+        return label
+    }()
+    let humidityView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray100
+        view.cornerRadius = 14
+        return view
+    }()
+    private let humidityLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.textColor = .gray800
+        label.text = "32" // TODO
+        return label
+    }()
+    private let humidityImageView = UIImageView(image: .waterDrop)
+    private let humidityTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "습도"
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.textColor = .gray700
+        return label
+    }()
+    
+    private let temperatureView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray100
+        view.cornerRadius = 14
+        return view
+    }()
+    private let temperatureImageView = UIImageView(image: .thermometer)
+    private let temperatureTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "온도"
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.textColor = .gray700
+        return label
+    }()
+    private let temperatureLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.textColor = .gray800
+        label.text = "11" // TODO
+        return label
+    }()
+    
+    private let dustStackView = UIStackView(axis: .horizontal)
+    private let externalView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .blue0
+        return view
+    }()
+    private let externalTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.textColor = .gray600
+        label.text = "학교 외부"
+        return label
+    }()
+    private let externalStackView = UIStackView(axis: .horizontal)
+    private let externalImageView = UIImageView()
+    private let externalDustLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .gray800
+        label.text = "좋아요!" // TODO
+        return label
+    }()
+    
+    private let internalView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .orange0
+        return view
+    }()
+    private let internalTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .medium)
+        label.textColor = .gray600
+        label.text = "학교 내부"
+        return label
+    }()
+    private let internalStackView = UIStackView(axis: .horizontal)
+    private let internalImageView = UIImageView()
+    private let internalDustLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .gray800
+        label.text = "안좋아요 ㅠ" // TODO
+        return label
+    }()
+    
+    private let regionDateLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .gray600
+        label.text = "서울 코인초등학교 날짜 땡땡" // TODO imageAttributed
+        return label
+    }()
+    
     private var viewModel = HomeViewModel()
     
     override func setUserInterface() {
@@ -107,6 +225,8 @@ final class HomeViewController: BaseViewController {
         settingButtonView.snp.makeConstraints {
             $0.size.equalTo(48)
         }
+        let settingTapGesture = UITapGestureRecognizer(target: self, action: #selector(settingButtonTapped))
+        settingButtonView.addGestureRecognizer(settingTapGesture)
         
         cardCollectionView.dataSource = self
         cardCollectionView.delegate = self
@@ -151,9 +271,113 @@ final class HomeViewController: BaseViewController {
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         
-        view.addSubViews([searchStackView, mainSurveyView])
+        humidityView.addSubViews([humidityImageView, humidityTitleLabel, humidityLabel])
+        
+        humidityImageView.snp.makeConstraints {
+            $0.size.equalTo(16)
+            $0.leading.equalToSuperview().inset(8)
+            $0.directionalVerticalEdges.equalToSuperview().inset(6)
+        }
+        
+        humidityTitleLabel.snp.makeConstraints {
+            $0.leading.equalTo(humidityImageView.snp.trailing).offset(2)
+            $0.centerY.equalTo(humidityImageView.snp.centerY)
+        }
+        
+        humidityLabel.snp.makeConstraints {
+            $0.leading.equalTo(humidityTitleLabel.snp.trailing).offset(2)
+            $0.centerY.equalTo(humidityImageView.snp.centerY)
+            $0.trailing.equalToSuperview().inset(8)
+        }
+        
+        temperatureView.addSubViews([temperatureImageView, temperatureTitleLabel, temperatureLabel])
+        
+        temperatureImageView.snp.makeConstraints {
+            $0.size.equalTo(16)
+            $0.leading.equalToSuperview().inset(8)
+            $0.directionalVerticalEdges.equalToSuperview().inset(6)
+        }
+        
+        temperatureTitleLabel.snp.makeConstraints {
+            $0.leading.equalTo(temperatureImageView.snp.trailing).offset(2)
+            $0.centerY.equalTo(temperatureImageView.snp.centerY)
+        }
+        
+        temperatureLabel.snp.makeConstraints {
+            $0.leading.equalTo(temperatureTitleLabel.snp.trailing).offset(2)
+            $0.centerY.equalTo(temperatureImageView.snp.centerY)
+            $0.trailing.equalToSuperview().inset(8)
+        }
+        
+        todayTitleView.addSubViews([todayTitleLabel, humidityView, temperatureView])
+        todayTitleLabel.snp.makeConstraints {
+            $0.leading.top.bottom.equalToSuperview().inset(4)
+            $0.trailing.lessThanOrEqualTo(humidityView.snp.leading).inset(8)
+        }
+        
+        humidityView.snp.makeConstraints {
+            $0.centerY.equalTo(todayTitleView.snp.centerY)
+            $0.trailing.equalTo(temperatureView.snp.leading).inset(-8)
+        }
+        temperatureView.snp.makeConstraints {
+            $0.centerY.equalTo(todayTitleView.snp.centerY)
+            $0.trailing.equalToSuperview()
+        }
+        externalStackView.spacing = 12
+        externalStackView.addArrangedSubViews([externalImageView, externalDustLabel])
+        externalImageView.snp.makeConstraints {
+            $0.size.equalTo(32)
+        }
+        externalView.addSubViews([externalTitleLabel, externalStackView])
+        externalTitleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(18)
+        }
+        externalStackView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(externalTitleLabel.snp.bottom).offset(12)
+        }
+        internalStackView.spacing = 12
+        internalStackView.addArrangedSubViews([internalImageView, internalDustLabel])
+        internalImageView.snp.makeConstraints {
+            $0.size.equalTo(32)
+        }
+        internalView.addSubViews([internalTitleLabel, internalStackView])
+        internalTitleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(18)
+        }
+        internalStackView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(internalTitleLabel.snp.bottom).offset(12)
+        }
+        
+        dustStackView.clipsToBounds = true
+        dustStackView.distribution = .fillEqually
+        dustStackView.cornerRadius = 16
+        dustStackView.addArrangedSubViews([externalView, internalView])
+        
+        todayWeatherView.addSubViews([todayTitleView, dustStackView, regionDateLabel])
+        
+        todayTitleView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+        }
+        
+        dustStackView.snp.makeConstraints {
+            $0.top.equalTo(todayTitleView.snp.bottom).offset(16)
+            $0.height.equalTo(102)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+        }
+        
+        regionDateLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(dustStackView.snp.bottom).offset(24)
+        }
+        
+        view.addSubViews([searchStackView, mainSurveyView, todayWeatherView])
         searchStackView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(8)
             $0.directionalHorizontalEdges.equalToSuperview().inset(16)
         }
         
@@ -161,14 +385,24 @@ final class HomeViewController: BaseViewController {
             $0.top.equalTo(searchStackView.snp.bottom).offset(16)
             $0.directionalHorizontalEdges.equalToSuperview()
         }
+        
+        todayWeatherView.snp.makeConstraints {
+            $0.top.equalTo(mainSurveyView.snp.bottom).offset(16)
+            $0.directionalHorizontalEdges.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
+        
         view.backgroundColor = .blue100
-
+        
     }
     
     @objc private func manualButtonTapped(_ sender: UITapGestureRecognizer) {
         print("manual button tapped")
     }
     
+    @objc private func settingButtonTapped(_ sender: UITapGestureRecognizer) {
+        print("setting button tapped")
+    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -186,7 +420,6 @@ extension HomeViewController: UICollectionViewDataSource {
         
         return cell
     }
-    
     
 }
 
