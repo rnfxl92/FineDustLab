@@ -43,6 +43,29 @@ final class HomeViewController: BaseViewController {
         return collectionView
     }()
     
+    private let manualButtonView: UIView = {
+        let view = UIView()
+        
+        view.layer.cornerRadius = 14
+        view.backgroundColor = .green300
+        view.isUserInteractionEnabled = true
+        
+        return view
+    }()
+    private let manualTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .gray0
+        label.textAlignment = .left
+        let str1 = "📚 한 눈에 보는 미세먼지 매뉴얼"
+        let highlighted = "미세먼지 매뉴얼"
+        
+        label.attributedText = str1.emphasized(.systemFont(ofSize: 16, weight: .bold), string: highlighted)
+        
+        return label
+    }()
+    private let manualImageView: UIImageView = UIImageView(image: .chevronRight)
+    
     private var viewModel = HomeViewModel()
     
     override func setUserInterface() {
@@ -52,7 +75,22 @@ final class HomeViewController: BaseViewController {
         titleStackView.spacing = 4
         titleStackView.addArrangedSubViews([titleLabel, descriptionLabel])
         
-        mainSurveyView.addSubViews([titleStackView, cardCollectionView])
+        manualButtonView.addSubViews([manualTitleLabel, manualImageView])
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(manualButtonTapped))
+        manualButtonView.addGestureRecognizer(tapGesture)
+        
+        manualTitleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(manualImageView.snp.leading).offset(6).priority(.high)
+        }
+        manualImageView.snp.makeConstraints {
+            $0.size.equalTo(18)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
+        }
+        
+        mainSurveyView.addSubViews([titleStackView, cardCollectionView, manualButtonView])
         mainSurveyView.backgroundColor = .gray0
         mainSurveyView.layer.cornerRadius = 20
         
@@ -64,7 +102,14 @@ final class HomeViewController: BaseViewController {
             $0.top.equalTo(titleStackView.snp.bottom).inset(-32)
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.height.equalTo(floor((UIScreen.main.bounds.width - 16) / 2) * 1.2)
-            $0.bottom.equalToSuperview()
+            
+        }
+        
+        manualButtonView.snp.makeConstraints {
+            $0.height.equalTo(56)
+            $0.top.equalTo(cardCollectionView.snp.bottom).inset(-24)
+            $0.bottom.equalToSuperview().inset(24)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         
         view.addSubViews([mainSurveyView])
@@ -75,6 +120,10 @@ final class HomeViewController: BaseViewController {
         }
         view.backgroundColor = .blue100
 
+    }
+    
+    @objc private func manualButtonTapped(_ sender: UITapGestureRecognizer) {
+        print("manual button tapped")
     }
     
 }
