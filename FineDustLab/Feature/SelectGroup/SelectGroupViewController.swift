@@ -93,7 +93,7 @@ final class SelectGroupViewController: BaseViewController {
     override func bind() {
         
         viewModel.$state
-            .sink {state in
+            .sink { state in
                 state.isLoading ? FDIndicator.shared.show() : FDIndicator.shared.hide()
                 switch state {
                 case .complete:

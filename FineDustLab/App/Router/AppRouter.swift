@@ -37,7 +37,11 @@ public final class AppRouter: Router {
         switch type {
         case .splash:
             let splashView = SplashViewController {
-                AppRouter.shared.route(to: .selectGroup)
+                if Preferences.selectedUserType == nil {
+                    AppRouter.shared.route(to: .selectGroup)
+                } else {
+                    AppRouter.shared.route(to: .home)
+                }
             }
             splashView.setRoot(for: presenter)
         case .home:

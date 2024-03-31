@@ -43,6 +43,8 @@ extension Date {
         case Mdahmm
         case MMddahmm
         case yyyyMM
+        case Md
+        case E
         case custom(String)
 
         var value: String? {
@@ -60,6 +62,8 @@ extension Date {
             case .Mdahmm: return "M.d a h:mm"
             case .MMddahmm: return "MM.dd a h:mm"
             case .yyyyMM: return "yyyy.MM"
+            case .Md: return "M월 d일"
+            case .E: return "E"
             case .custom(let format): return format
             }
         }
@@ -73,7 +77,7 @@ extension Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = formatValue
         dateFormatter.timeZone = .autoupdatingCurrent
-        dateFormatter.locale = Locale.current
+        dateFormatter.locale = Locale(identifier: "ko_KR")
         
         return dateFormatter.string(from: self)
     }
@@ -206,6 +210,46 @@ extension Date {
         } else {
             return "18740101".toDate(format: .yyyyMMdd)
         }
+    }
+    
+    static func getWeekdaysAndNextMonday() -> [Date] {
+        var dates: [Date] = []
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // 현재 날짜를 기준으로 이번 주 월요일을 찾습니다.
+        guard let sundayThisWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)) else {
+            return dates
+        }
+        
+        // 이번 주 월요일부터 금요일까지의 날짜를 계산하여 배열에 추가합니다.
+        for dayOffset in 1..<6 {
+            if let weekday = calendar.date(byAdding: .day, value: dayOffset, to: sundayThisWeek) {
+                dates.append(weekday)
+            }
+        }
+        
+        // 다음 주 월요일의 날짜를 계산하여 배열에 추가합니다.
+        if let nextMonday = calendar.date(byAdding: .day, value: 8, to: sundayThisWeek) {
+            dates.append(nextMonday)
+        }
+        
+        return dates
+    }
+    
+    static func isInTheSameWeek(as compareDate: Date) -> Bool {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        // 현재 날짜와 비교할 날짜의 '년도'와 '주' 값을 가져옵니다.
+        let currentWeek = calendar.component(.weekOfYear, from: now)
+        let currentYear = calendar.component(.yearForWeekOfYear, from: now)
+        
+        let compareWeek = calendar.component(.weekOfYear, from: compareDate)
+        let compareYear = calendar.component(.yearForWeekOfYear, from: compareDate)
+        
+        // 년도와 주가 모두 일치하는지 확인합니다.
+        return currentYear == compareYear && currentWeek == compareWeek
     }
 }
 

@@ -1,13 +1,13 @@
 //
-//  LargeFilledButton.swift
+//  SmallFilledButton.swift
 //  FineDustLab
 //
-//  Created by 박성민 on 3/30/24.
+//  Created by 박성민 on 3/31/24.
 //
 
 import UIKit
 
-final class LargeFilledButton: UIButton {
+final class SmallFilledButton: UIButton {
     private let defaultTitleColor: UIColor
     private let defaultColor: UIColor
     private let disabledColor: UIColor
@@ -29,18 +29,18 @@ final class LargeFilledButton: UIButton {
         
         setTitle(title, for: .normal)
         titleLabel?.font = font
-        titleEdgeInsets = UIEdgeInsets(top: 16, left: 24, bottom: 16, right: 24)
+        titleEdgeInsets = UIEdgeInsets(top: 8, left: 24, bottom: 8, right: 24)
         
         setBackgroundColor(color: defaultColor, forState: .normal)
         setBackgroundColor(color: disabledColor, forState: .disabled)
         setTitleColor(defaultTitleColor, for: .normal)
         setTitleColor(disabledColor, for: .disabled)
         
-        layer.cornerRadius = 16
+        layer.cornerRadius = 20
         layer.masksToBounds = true
         
         snp.makeConstraints { make in
-            make.height.equalTo(56)
+            make.height.equalTo(40)
             make.width.greaterThanOrEqualTo(intrinsicContentSize.width + 48)
         }
     }
@@ -50,3 +50,4 @@ final class LargeFilledButton: UIButton {
     }
     
 }
+
