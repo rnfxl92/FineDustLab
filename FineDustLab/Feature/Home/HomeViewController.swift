@@ -8,6 +8,35 @@
 import UIKit
 
 final class HomeViewController: BaseViewController {
+    
+    private let searchStackView = UIStackView(axis: .horizontal)
+    
+    private let searchBar: FDSearchBar = { 
+        let searchBar = FDSearchBar()
+        searchBar.setPlaceHolderText("미세먼지에 대해 검색해 보세요")
+        
+        return searchBar
+    }()
+    
+    private let settingButtonView: UIView = {
+        
+        let view = UIView()
+        
+        let imageView = UIImageView(image: .settings.withTintColor(.gray0, renderingMode: .alwaysTemplate))
+        imageView.tintColor = .gray0
+        
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(24)
+        }
+        imageView.contentMode = .scaleAspectFit
+        view.backgroundColor = .blue200
+        view.cornerRadius = 14
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .bold)
@@ -69,6 +98,16 @@ final class HomeViewController: BaseViewController {
     private var viewModel = HomeViewModel()
     
     override func setUserInterface() {
+        
+        searchStackView.addArrangedSubViews([searchBar, settingButtonView])
+        searchStackView.spacing = 8
+        searchBar.snp.makeConstraints {
+            $0.height.equalTo(48)
+        }
+        settingButtonView.snp.makeConstraints {
+            $0.size.equalTo(48)
+        }
+        
         cardCollectionView.dataSource = self
         cardCollectionView.delegate = self
         
@@ -112,10 +151,14 @@ final class HomeViewController: BaseViewController {
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         
-        view.addSubViews([mainSurveyView])
+        view.addSubViews([searchStackView, mainSurveyView])
+        searchStackView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(16)
+        }
         
         mainSurveyView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(40)
+            $0.top.equalTo(searchStackView.snp.bottom).offset(16)
             $0.directionalHorizontalEdges.equalToSuperview()
         }
         view.backgroundColor = .blue100
