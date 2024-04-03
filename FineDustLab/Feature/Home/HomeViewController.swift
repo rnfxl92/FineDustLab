@@ -416,6 +416,7 @@ extension HomeViewController: UICollectionViewDataSource {
             return .init()
         }
         let cell: CardCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+        cell.delegate = self
         cell.setUIModel(uiModel)
         
         return cell
@@ -436,5 +437,11 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         .init(top: 0, left: 24, bottom: 0, right: 24)
+    }
+}
+
+extension HomeViewController: CardCollectionViewCellDelegate {
+    func surveyStartButtonTapped() {
+        AppRouter.shared.route(to: .surveyStart)
     }
 }

@@ -6,6 +6,11 @@
 //
 
 import UIKit
+import Combine
+
+protocol CardCollectionViewCellDelegate: AnyObject {
+    func surveyStartButtonTapped()
+}
 
 final class CardCollectionViewCell: UICollectionViewCell {
     
@@ -36,9 +41,13 @@ final class CardCollectionViewCell: UICollectionViewCell {
     
     private let startButton = SmallFilledButton(title: "설문 시작하기", font: .systemFont(ofSize: 14, weight: .medium))
     
+    weak var delegate: CardCollectionViewCellDelegate?
+    private var cancellable = Set<AnyCancellable>()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        bind()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -107,6 +116,16 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 mainView.backgroundColor = .gray200
             }
         } 
+    }
+    
+    private func bind() {
+        startButton
+            .tapPublisher
+            .throttle(for: 1, scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] _ in
+                self?.delegate?.surveyStartButtonTapped()
+            }
+            .store(in: &cancellable)
     }
     
 }

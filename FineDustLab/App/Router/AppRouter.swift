@@ -19,7 +19,8 @@ public final class AppRouter: Router {
         case selectGroup
         case setting
         case manual
-        case survey
+        case surveyStart
+        case surveyDetail
     }
     
     private var presenter: UIWindow?
@@ -52,6 +53,10 @@ public final class AppRouter: Router {
             let vc = SelectGroupViewController()
             
             vc.setRoot(for: presenter)
+        case .surveyStart:
+            let vc = SurveyStartViewController()
+            
+            presenter?.push(vc, animated: true)
         case .login:
             break
         default:
