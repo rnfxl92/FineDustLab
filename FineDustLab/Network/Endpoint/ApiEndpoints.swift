@@ -1,0 +1,74 @@
+//
+//  ApiEndpoints.swift
+//  FineDustLab
+//
+//  Created by 박성민 on 4/6/24.
+//
+
+import Foundation
+
+import Alamofire
+
+protocol Requestable {
+    var baseURL: String { get }
+    var path: String { get }
+    var method: Alamofire.HTTPMethod { get }
+    var queryParameters: Encodable? { get }
+    var bodyParameters: Encodable? { get }
+    var headers: [String: String]? { get }
+}
+
+protocol Responsable {
+    associatedtype Response
+}
+
+class Endpoint<R: Decodable>: Requestable, Responsable {
+    typealias Response = R
+
+    var baseURL: String
+    var path: String
+    var method: Alamofire.HTTPMethod
+    var queryParameters: Encodable?
+    var bodyParameters: Encodable?
+    var headers: [String: String]?
+
+    init(baseURL: String,
+         path: String = "",
+         method: Alamofire.HTTPMethod = .get,
+         queryParameters: Encodable? = nil,
+         bodyParameters: Encodable? = nil,
+         headers: [String: String]? = [:]
+    ) {
+        self.baseURL = baseURL
+        self.path = path
+        self.method = method
+        self.queryParameters = queryParameters
+        self.bodyParameters = bodyParameters
+        self.headers = headers
+    }
+}
+
+struct APIEndpoints {
+    
+    static func getSchoolInfo(with schoolName: SchoolSearchRequestDto) -> Endpoint<SchoolInfoWrapper> {
+        
+        return Endpoint(baseURL: "https://open.neis.go.kr/hub",
+                        path: "/schoolInfo",
+                        method: .get,
+                        queryParameters: schoolName
+                        
+        )
+    }
+}
+
+extension Encodable {
+    func toDictionary() -> [String: Any]? {
+        do {
+            let data = try JSONEncoder().encode(self)
+            let jsonData = try JSONSerialization.jsonObject(with: data)
+            return jsonData as? [String: Any]
+        } catch {
+            return nil
+        }
+    }
+}

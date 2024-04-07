@@ -7,8 +7,13 @@
 
 import UIKit
 
-class FDSearchBar: UISearchBar {
+class CSGSearchBar: UISearchBar {
     
+    var textFieldBackgroundColor: UIColor = .gray0 {
+        didSet {
+            searchTextField.backgroundColor = textFieldBackgroundColor
+        }
+    }
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setDefaultUserInterface()
@@ -23,7 +28,7 @@ class FDSearchBar: UISearchBar {
         self.searchBarStyle = UISearchBar.Style.minimal
         self.placeholder = ""
         let searchField = self.value(forKey: "searchField") as! UITextField
-        searchField.textColor = .gray100
+        searchField.textColor = .gray900
     }
     
     private var isSetupView: Bool = false

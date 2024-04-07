@@ -11,8 +11,8 @@ final class HomeViewController: BaseViewController {
     
     private let searchStackView = UIStackView(axis: .horizontal)
     
-    private let searchBar: FDSearchBar = {
-        let searchBar = FDSearchBar()
+    private let searchBar: CSGSearchBar = {
+        let searchBar = CSGSearchBar()
         searchBar.setPlaceHolderText("미세먼지에 대해 검색해 보세요")
         
         return searchBar
