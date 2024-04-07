@@ -94,7 +94,7 @@ final class SelectGroupViewController: BaseViewController {
         
         viewModel.$state
             .sink { state in
-                state.isLoading ? FDIndicator.shared.show() : FDIndicator.shared.hide()
+                state.isLoading ? CSGIndicator.shared.show() : CSGIndicator.shared.hide()
                 switch state {
                 case .complete:
                     AppRouter.shared.route(to: .home)

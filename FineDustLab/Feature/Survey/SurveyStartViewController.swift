@@ -74,11 +74,13 @@ final class SurveyStartViewController: BaseViewController {
         let label = UILabel()
         label.text = "학교를 입력해주세요"
         label.textColor = .gray500
+        label.font = .systemFont(ofSize: 16)
         return label
     }()
     private let infoStackView: UIStackView = {
         let stackView = UIStackView(axis: .horizontal)
         stackView.spacing = 10
+        stackView.distribution = .fillEqually
         return stackView
     }()
     private let gradeBackground: UIView = {
@@ -88,14 +90,20 @@ final class SurveyStartViewController: BaseViewController {
         view.clipsToBounds = true
         return view
     }()
+    private let gradeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "학년"
+        label.textColor = .gray700
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        return label
+    }()
     private let gradeTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .gray900
-        textField.attributedPlaceholder = NSAttributedString(string: "학년", attributes: [.foregroundColor: UIColor.gray500])
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
-        
+        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return textField
     }()
     private let classBackground: UIView = {
@@ -105,14 +113,20 @@ final class SurveyStartViewController: BaseViewController {
         view.clipsToBounds = true
         return view
     }()
+    private let classLabel: UILabel = {
+        let label = UILabel()
+        label.text = "반"
+        label.textColor = .gray700
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        return label
+    }()
     private let classTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .gray900
-        textField.attributedPlaceholder = NSAttributedString(string: "반", attributes: [.foregroundColor: UIColor.gray500])
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
-        
+        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return textField
     }()
     private let numberBackground: UIView = {
@@ -122,14 +136,20 @@ final class SurveyStartViewController: BaseViewController {
         view.clipsToBounds = true
         return view
     }()
+    private let numberLabel: UILabel = {
+        let label = UILabel()
+        label.text = "번"
+        label.textColor = .gray700
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        return label
+    }()
     private let numberTextField: UITextField = {
         let textField = UITextField()
         textField.textColor = .gray900
-        textField.attributedPlaceholder = NSAttributedString(string: "번호", attributes: [.foregroundColor: UIColor.gray500])
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
-        
+        textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return textField
     }()
     
@@ -177,7 +197,12 @@ final class SurveyStartViewController: BaseViewController {
         let schoolTapGesture = UITapGestureRecognizer(target: self, action: #selector(showSchoolSearchBottomSheet))
         schoolBackground.addGestureRecognizer(schoolTapGesture)
         let agreeTapGesture = UITapGestureRecognizer(target: self, action: #selector(agreeTerms))
+        nameTextField.delegate = self
+        gradeTextField.delegate = self
+        classTextField.delegate = self
+        numberTextField.delegate = self
         termsAgreeView.addGestureRecognizer(agreeTapGesture)
+        startButton.isEnabled = false
         
         view.backgroundColor = .gray0
         view.addSubViews([navigationBar, backgroundImageView, titleStackView, textFieldStackView, termsAgreeView, startButton])
@@ -199,7 +224,7 @@ final class SurveyStartViewController: BaseViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.directionalHorizontalEdges.equalToSuperview().inset(16)
         }
-      
+        
         termsStackView.addArrangedSubViews([termsAgreeCheckImageView, agreeLabel])
         termsAgreeCheckImageView.snp.makeConstraints {
             $0.size.equalTo(24)
@@ -227,12 +252,52 @@ final class SurveyStartViewController: BaseViewController {
             $0.leading.equalToSuperview().inset(16)
             $0.centerY.equalToSuperview()
         }
-        textFieldStackView.addArrangedSubViews([nameBackground, schoolBackground])
+        textFieldStackView.addArrangedSubViews([nameBackground, schoolBackground, infoStackView])
         
         nameBackground.snp.makeConstraints {
             $0.height.equalTo(62)
         }
         schoolBackground.snp.makeConstraints {
+            $0.height.equalTo(62)
+        }
+        gradeBackground.addSubViews([gradeTextField, gradeLabel])
+        gradeTextField.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(16)
+        }
+        gradeLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(gradeTextField.snp.trailing).offset(8).priority(.high)
+            $0.trailing.equalToSuperview().inset(16)
+        }
+        classBackground.addSubViews([classTextField, classLabel])
+        classTextField.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(16)
+        }
+        classLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(classTextField.snp.trailing).offset(8).priority(.high)
+            $0.trailing.equalToSuperview().inset(16)
+        }
+        numberBackground.addSubViews([numberTextField, numberLabel])
+        numberTextField.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(16)
+        }
+        numberLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(numberTextField.snp.trailing).offset(8).priority(.high)
+            $0.trailing.equalToSuperview().inset(16)
+        }
+        infoStackView.addArrangedSubViews([gradeBackground, classBackground, numberBackground])
+        gradeBackground.snp.makeConstraints {
+            $0.height.equalTo(62)
+        }
+        classBackground.snp.makeConstraints {
+            $0.height.equalTo(62)
+        }
+        numberBackground.snp.makeConstraints {
             $0.height.equalTo(62)
         }
         
@@ -248,10 +313,13 @@ final class SurveyStartViewController: BaseViewController {
         }
         .store(in: &cancellable)
         
-        startButton.tapPublisher.sink { [weak self] in
-            print("start")
-        }
-        .store(in: &cancellable)
+        startButton.tapPublisher
+            .debounce(for: 0.2, scheduler: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.viewModel.saveUserData()
+                AppRouter.shared.route(to: .surveyDetail)
+            }
+            .store(in: &cancellable)
         
         viewModel.$state
             .receive(on: DispatchQueue.main)
@@ -268,6 +336,26 @@ final class SurveyStartViewController: BaseViewController {
                 self?.updateStartButton()
             }
             .store(in: &cancellable)
+        
+        nameTextField.textPublisher.sink { [weak self] text in
+            self?.viewModel.nameUpdate(text ?? "")
+        }
+        .store(in: &cancellable)
+        
+        gradeTextField.textPublisher.sink { [weak self] text in
+            self?.viewModel.gradeUpdate(Int(text ?? ""))
+        }
+        .store(in: &cancellable)
+        
+        classTextField.textPublisher.sink { [weak self] text in
+            self?.viewModel.classUpdate(Int(text ?? ""))
+        }
+        .store(in: &cancellable)
+        
+        numberTextField.textPublisher.sink { [weak self] text in
+            self?.viewModel.numberUpdate(Int(text ?? ""))
+        }
+        .store(in: &cancellable)
     }
     
     @objc private func showSchoolSearchBottomSheet() {
@@ -284,5 +372,20 @@ final class SurveyStartViewController: BaseViewController {
     
     private func updateStartButton() {
         startButton.isEnabled = viewModel.canStart
+    }
+}
+
+extension SurveyStartViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        if textField == nameTextField {
+            return updatedText.count <= 5
+        } else if textField == gradeTextField {
+            return CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string)) && updatedText.count <= 1
+        }
+        return CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string)) && updatedText.count <= 2
     }
 }

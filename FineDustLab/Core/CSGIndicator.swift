@@ -7,8 +7,8 @@
 
 import UIKit
 
-final class FDIndicator {
-    static let shared = FDIndicator()
+final class CSGIndicator {
+    static let shared = CSGIndicator()
     private let dimmedView = DimmedView()
     private let stackView = UIStackView(axis: .vertical)
     private let indicator = UIActivityIndicatorView()
@@ -72,7 +72,7 @@ final class FDIndicator {
 
 private final class DimmedView: UIView {
     private var isTouched: Bool {
-        FDIndicator.shared.isWebView
+        CSGIndicator.shared.isWebView
     }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {

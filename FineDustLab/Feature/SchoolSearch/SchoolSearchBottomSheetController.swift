@@ -67,6 +67,7 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
         searchTextField.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.isScrollEnabled = true
         
         view.backgroundColor = .gray0
         searchBackground.addSubViews([searchImageView, searchTextField])
@@ -82,14 +83,14 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
             $0.trailing.equalToSuperview().inset(16)
         }
         
-        view.addSubViews([searchBackground, tableView])
+        view.addSubViews([tableView, searchBackground])
         
         searchBackground.snp.makeConstraints {
             $0.top.directionalHorizontalEdges.equalToSuperview().inset(24)
             $0.height.equalTo(48)
         }
         tableView.snp.makeConstraints {
-            $0.top.equalTo(searchBackground.snp.bottom).offset(20)
+            $0.top.equalTo(searchBackground.snp.bottom).offset(24)
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.height.equalTo(floor(UIScreen.main.bounds.height * 0.7))
             $0.bottom.equalToSuperview()
@@ -109,9 +110,9 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
             .sink { [weak self] state in
                 switch state {
                 case .loading:
-                    FDIndicator.shared.show()
+                    CSGIndicator.shared.show()
                 case .searched(let data):
-                    FDIndicator.shared.hide()
+                    CSGIndicator.shared.hide()
                     self?.dataSource = data
                     self?.tableView.reloadData()
                 }
@@ -122,14 +123,11 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
 
 extension SchoolSearchBottomSheetController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
-        if textField.text?.count ?? 0 > 20 {
-            return false
-        }
-        
-        return true
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        return updatedText.count <= 10
     }
-    
 }
 
 extension SchoolSearchBottomSheetController: UITableViewDataSource {

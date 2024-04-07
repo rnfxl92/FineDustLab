@@ -45,4 +45,33 @@ final class SurveyStartViewModel {
         self.school = school
         state = .schoolUpdated(school)
     }
+    
+    func nameUpdate(_ name: String) {
+        self.name = name
+        state = .nameUpdated
+    }
+    
+    func gradeUpdate(_ grade: Int?) {
+        self.grade = grade
+        state = .gradeUpdated(grade)
+    }
+    
+    func classUpdate(_ class: Int?) {
+        self.`class` = `class`
+        state = .classUpdate(`class`)
+    }
+    
+    func numberUpdate(_ number: Int?) {
+        self.number = number
+        state = .numberUpdate(number)
+    }
+    
+    func saveUserData() {
+        guard let name, name.isNotEmpty, let school, let grade, let `class`, let number else {
+            return
+        }
+        
+        Preferences.userInfo = UserInfo(name: name, school: school, grade: grade, class: `class`, number: number)
+        
+    }
 }

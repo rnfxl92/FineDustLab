@@ -12,5 +12,5 @@ struct UserInfo: Codable {
     let school: SchoolModel
     let grade: Int
     let `class`: Int
-    let no: Int?
+    let number: Int?
 }
