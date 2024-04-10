@@ -194,6 +194,7 @@ final class SurveyStartViewController: BaseViewController {
         super.viewDidLoad()
         
         viewModel.fetchSurveyData()
+        viewModel.getUserInfo()
     }
     
     override func setUserInterface() {
@@ -306,7 +307,7 @@ final class SurveyStartViewController: BaseViewController {
         numberBackground.snp.makeConstraints {
             $0.height.equalTo(62)
         }
-        
+        infoStackView.isHidden = true
         textFieldStackView.snp.makeConstraints {
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalTo(termsAgreeView.snp.top).offset(-150)
@@ -330,14 +331,25 @@ final class SurveyStartViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 switch state {
-                case .schoolUpdated(let school):
+                case .schoolSelected(let school):
                     self?.schoolLabel.textColor = .gray900
                     self?.schoolLabel.text = school?.schulNm
+                    self?.infoStackView.isHidden = false
                 case .agreeUpdated(let isAgree):
                     self?.termsAgreeCheckImageView.image = isAgree ? .checkS : .checkN
                 case .userDataSaved(let success):
                     if success {
                         AppRouter.shared.route(to: .surveyDetail(currentIndex: 0))
+                    }
+                case .getUserInfo(let userInfo):
+                    self?.nameTextField.text = userInfo.name
+                    self?.schoolLabel.text = userInfo.school.schulNm
+                    self?.schoolLabel.textColor = .gray900
+                    self?.infoStackView.isHidden = false
+                    self?.classTextField.text = "\(userInfo.class)"
+                    self?.gradeTextField.text = "\(userInfo.grade)"
+                    if let number = userInfo.number {
+                        self?.numberTextField.text = "\(number)"
                     }
                 default:
                     break

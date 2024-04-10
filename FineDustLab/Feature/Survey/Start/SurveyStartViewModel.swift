@@ -10,12 +10,10 @@ import Combine
 
 final class SurveyStartViewModel {
     enum State {
-        case nameUpdated
         case agreeUpdated(Bool)
-        case schoolUpdated(SchoolModel?)
-        case gradeUpdated(Int?)
-        case classUpdate(Int?)
-        case numberUpdate(Int?)
+        case schoolSelected(SchoolModel?)
+        case inputUpdated
+        case getUserInfo(UserInfo)
         case none
         case userDataSaved(Bool)
     }
@@ -38,6 +36,18 @@ final class SurveyStartViewModel {
     }
     private var cancellable = Set<AnyCancellable>()
     
+    func getUserInfo() {
+        if let userInfo = Preferences.userInfo {
+            name = userInfo.name
+            school = userInfo.school
+            grade = userInfo.grade
+            `class` = userInfo.class
+            number = userInfo.number
+            
+            state = .getUserInfo(userInfo)
+        }
+    }
+    
     func agreeButtonTapped() {
         isAgreed.toggle()
         state = .agreeUpdated(isAgreed)
@@ -45,27 +55,27 @@ final class SurveyStartViewModel {
     
     func schoolUpdated(_ school: SchoolModel) {
         self.school = school
-        state = .schoolUpdated(school)
+        state = .schoolSelected(school)
     }
     
     func nameUpdate(_ name: String) {
         self.name = name
-        state = .nameUpdated
+        state = .inputUpdated
     }
     
     func gradeUpdate(_ grade: Int?) {
         self.grade = grade
-        state = .gradeUpdated(grade)
+        state = .inputUpdated
     }
     
     func classUpdate(_ class: Int?) {
         self.`class` = `class`
-        state = .classUpdate(`class`)
+        state = .inputUpdated
     }
     
     func numberUpdate(_ number: Int?) {
         self.number = number
-        state = .numberUpdate(number)
+        state = .inputUpdated
     }
     
     func saveUserData() {
