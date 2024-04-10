@@ -17,6 +17,7 @@ final class SurveyStartViewModel {
         case classUpdate(Int?)
         case numberUpdate(Int?)
         case none
+        case userDataSaved(Bool)
     }
     
     @Published var state: State = .none
@@ -35,6 +36,7 @@ final class SurveyStartViewModel {
         && !number.isNil
         && isAgreed
     }
+    private var cancellable = Set<AnyCancellable>()
     
     func agreeButtonTapped() {
         isAgreed.toggle()
@@ -68,10 +70,27 @@ final class SurveyStartViewModel {
     
     func saveUserData() {
         guard let name, name.isNotEmpty, let school, let grade, let `class`, let number else {
+            state = .userDataSaved(false)
             return
         }
         
         Preferences.userInfo = UserInfo(name: name, school: school, grade: grade, class: `class`, number: number)
+        state = .userDataSaved(true)
+    }
+    
+    func fetchSurveyData()  {
+        cancellable.removeAll()
+        let endPoint = APIEndpoints.getSurveyData(with: .init(type: Preferences.selectedUserType ?? .elementary))
         
+        NetworkService
+            .shared
+            .request(endPoint)
+            .replaceError(with: nil)
+            .sink { surveyData in
+                if let surveyData {
+                    Preferences.surveyData = surveyData
+                }
+            }
+            .store(in: &cancellable)
     }
 }

@@ -67,7 +67,7 @@ class CustomNavigationBar: UIView {
 
 extension CustomNavigationBar {
     func setNavigation(title: String? = nil,
-                       largeTitleFont: UIFont = .title1.fixedBold,
+                       
                        prefersLargeTitles: Bool = true,
                        titleAlwaysVisible: Bool = false,
                        leftItems: [UIView] = [],
@@ -84,7 +84,7 @@ extension CustomNavigationBar {
         stackView.addArrangedSubViews(leftItems)
 
         if let title = title {
-            setTitleView(title, largeTitleFont: largeTitleFont)
+            setTitleView(title)
         }
         if let centerView = centerView {
             setCenterView(centerView, insets: centerViewInsets)
@@ -112,33 +112,17 @@ extension CustomNavigationBar {
         }
     }
     
-    private func setTitleView(_ title: String?, largeTitleFont: UIFont = .title1.fixedBold) {
+    private func setTitleView(_ title: String?) {
         titleLabel = UILabel()
         titleLabel?.alpha = titleAlwaysVisible ? 1 : 0
-        titleLabel?.font = .title3.regular
+        titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
         titleLabel?.text = title
-        titleLabel?.textColor = .gray100
+        titleLabel?.textColor = .gray900
+        titleLabel?.textAlignment = .center
         if let label = titleLabel {
             setCenterView(label)
-            if prefersLargeTitles {
-                fadeInItems.append(label)
-            }
         }
         
-        if prefersLargeTitles {
-            largeTitleLabel = UILabel()
-            largeTitleLabel?.text = title
-            largeTitleLabel?.font = largeTitleFont
-            largeTitleLabel?.textColor = .gray100
-            
-            largeTitleLabel?.embed(in: self)
-            largeTitleLabel?.snp.makeConstraints { make in
-                largeTitleTopConstraint = make.top.equalTo(safeAreaLayoutGuide).offset(barHeight).constraint
-                make.left.right.equalToSuperview().inset(16)
-                largeTitleBottomConstraint = make.bottom.equalToSuperview().constraint
-            }
-            bringSubviewToFront(contentView)
-        }
     }
     
     private func setCenterView(_ view: UIView?, insets: UIEdgeInsets = .zero) {

@@ -14,6 +14,7 @@ class CustomNavigationButton: UIButton {
 
         case custom(UIImage?)
         case text(String)
+        case attributedText(NSAttributedString)
         
         var image: UIImage? {
             switch self {
@@ -25,6 +26,8 @@ class CustomNavigationButton: UIButton {
                 return image
             case .text:
                 return nil
+            case .attributedText:
+                return nil
             }
         }
     }
@@ -32,6 +35,8 @@ class CustomNavigationButton: UIButton {
     convenience init(_ type: ButtonType, tintColor: UIColor = .gray900) {
         switch type {
         case let .text(text):
+            self.init(text)
+        case let .attributedText(text):
             self.init(text)
         default:
             self.init(type.image, tintColor: tintColor)
@@ -53,6 +58,18 @@ class CustomNavigationButton: UIButton {
         
         setTitle(text, for: .normal)
         setTitleColor(.gray900, for: .normal)
+        titleLabel?.font = .body.regular
+        
+        snp.makeConstraints { make in
+            make.height.equalTo(40)
+            make.width.equalTo(intrinsicContentSize.width + 16)
+        }
+    }
+    
+    private init(_ attStr: NSAttributedString) {
+        super.init(frame: .zero)
+        
+        setAttributedTitle(attStr, for: .normal)
         titleLabel?.font = .body.regular
         
         snp.makeConstraints { make in

@@ -20,7 +20,7 @@ public final class AppRouter: Router {
         case setting
         case manual
         case surveyStart
-        case surveyDetail
+        case surveyDetail(currentIndex: Int)
     }
     
     private var presenter: UIWindow?
@@ -55,6 +55,10 @@ public final class AppRouter: Router {
             vc.setRoot(for: presenter)
         case .surveyStart:
             let vc = SurveyStartViewController()
+            
+            presenter?.push(vc, animated: true)
+        case .surveyDetail(let currentIndex):
+            let vc = SurveyDetailViewController(viewModel: .init(currentIndex: currentIndex))
             
             presenter?.push(vc, animated: true)
         case .login:

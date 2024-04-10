@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Survey
-struct SurveyWrapper: Codable {
+struct SurveyData: Codable {
     let contentType: String
     let data: [SurveyModel]
 
@@ -25,10 +25,12 @@ struct SurveyModel: Codable, Hashable {
     let question: String
     let answer: Answer
     let id: Int
+    let categoryColor: String?
 
     enum CodingKeys: String, CodingKey {
         case categoryName = "category_name"
         case categoryID = "category_id"
+        case categoryColor = "category_color"
         case question, answer, id
     }
 }

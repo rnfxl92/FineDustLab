@@ -190,6 +190,12 @@ final class SurveyStartViewController: BaseViewController {
     private let viewModel = SurveyStartViewModel()
     private var cancellable = Set<AnyCancellable>()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        viewModel.fetchSurveyData()
+    }
+    
     override func setUserInterface() {
         
         navigationBar.setNavigation(leftItems: [backButton])
@@ -317,7 +323,6 @@ final class SurveyStartViewController: BaseViewController {
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] in
                 self?.viewModel.saveUserData()
-                AppRouter.shared.route(to: .surveyDetail)
             }
             .store(in: &cancellable)
         
@@ -330,6 +335,10 @@ final class SurveyStartViewController: BaseViewController {
                     self?.schoolLabel.text = school?.schulNm
                 case .agreeUpdated(let isAgree):
                     self?.termsAgreeCheckImageView.image = isAgree ? .checkS : .checkN
+                case .userDataSaved(let success):
+                    if success {
+                        AppRouter.shared.route(to: .surveyDetail(currentIndex: 0))
+                    }
                 default:
                     break
                 }
