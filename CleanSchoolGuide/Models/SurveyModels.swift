@@ -19,31 +19,39 @@ struct SurveyData: Codable {
 }
 
 // MARK: - Datum
-struct SurveyModel: Codable, Hashable {
+struct SurveyModel: Codable {
+    let subQuestions: [SubQuestion]
     let categoryName: String
     let categoryID: Int
-    let question: String
-    let answer: Answer
+    let question, categoryColor: String
     let id: Int
-    let categoryColor: String?
 
     enum CodingKeys: String, CodingKey {
+        case subQuestions = "sub_questions"
         case categoryName = "category_name"
         case categoryID = "category_id"
+        case question
         case categoryColor = "category_color"
-        case question, answer, id
+        case id
     }
 }
 
-// MARK: - Answer
-struct Answer: Codable, Hashable {
-    let options: [AnswerOption]
-    let type: AnswerOptionType
+// MARK: - SubQuestion
+struct SubQuestion: Codable {
+    let options: [Option]
+    let type: String
+    let subQuestionID: Int?
+    let text: String?
+
+    enum CodingKeys: String, CodingKey {
+        case options, type
+        case subQuestionID = "sub_question_id"
+        case text
+    }
 }
 
-// MARK: - AnswerOption
-struct AnswerOption: Codable, Hashable {
-    let options: [OptionOption]?
+// MARK: - Option
+struct Option: Codable {
     let id: Int?
     let text: String?
     let input: Bool?
@@ -52,22 +60,7 @@ struct AnswerOption: Codable, Hashable {
     let selected: Bool?
 }
 
-// MARK: - OptionOption
-struct OptionOption: Codable, Hashable {
-    let input: Bool
-    let id: Int
-    let text: String
-}
-
 // MARK: - Range
-struct RangeModel: Codable, Hashable {
+struct RangeModel: Codable {
     let min, max: Int
-}
-
-enum AnswerOptionType: String, Codable, Hashable {
-    case ox
-    case choice
-    case multiChoice = "multi_choice"
-    case numberPicker = "number_picker"
-    case checkbox
 }

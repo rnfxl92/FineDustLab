@@ -98,6 +98,7 @@ final class SurveyStartViewModel {
             .replaceError(with: nil)
             .sink { surveyData in
                 if let surveyData {
+                    dump(surveyData)
                     Preferences.surveyData = surveyData
                 }
             }
