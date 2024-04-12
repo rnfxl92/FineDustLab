@@ -107,7 +107,7 @@ final class SurveyChoiceButton: UIButton {
     
     init(title: String) {
         super.init(frame: .zero)
-        
+        titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
         setTitle(title, for: .normal)
         setTitleColor(.gray900, for: .normal)
         setTitleColor(.green300, for: .selected)

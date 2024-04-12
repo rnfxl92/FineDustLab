@@ -37,8 +37,8 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SchoolListTableViewCell.self)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorStyle = .none
-        tableView.isScrollEnabled = false
-        tableView.clipsToBounds = false
+        tableView.isScrollEnabled = true
+        tableView.clipsToBounds = true
         tableView.backgroundColor = .clear
         tableView.contentInset = .init(top: 0, left: 0, bottom: 100, right: 0)
         return tableView
@@ -64,6 +64,7 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.dataSource = self
         tableView.register(SurveySubQuestionOXCell.self)
         tableView.register(SurveySubQuestionChoiceCell.self)
+        tableView.register(SurveySubQuestionNumberPickerCell.self)
         
         nextButton.isEnable = false
         var str = NSAttributedString("")
@@ -84,7 +85,7 @@ final class SurveyDetailViewController: BaseViewController {
         titleStackView.addArrangedSubViews([categoryLabel, questionLabel])
         
         view.backgroundColor = .gray0
-        view.addSubViews([navigationBar, titleStackView, tableView, nextButton])
+        view.addSubViews([tableView, navigationBar, titleStackView, nextButton])
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.directionalHorizontalEdges.equalToSuperview()
@@ -159,7 +160,10 @@ extension SurveyDetailViewController: UITableViewDataSource {
         case .choice:
             let cell: SurveySubQuestionChoiceCell = tableView.dequeueReusableCell(for: indexPath)
             cell.setUIModel(subQuestion, delegate: self)
-            
+            return cell
+        case .numberPicker:
+            let cell: SurveySubQuestionNumberPickerCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.setUIModel(subQuestion, delegate: self)
             return cell
         default:
             return .init()
@@ -178,4 +182,11 @@ extension SurveyDetailViewController: SurveySubQuestionChoiceCellDelegate {
     func choiceButtonTapped(subQuestionId: Int, optionId: Int) {
         viewModel.answerSelected(subQuestionId: subQuestionId, optionId: optionId)
     }
+}
+
+extension SurveyDetailViewController: SurveySubQuestionNumberPickerCellDelegate {
+    func numberPicked(subQuestionId: Int, optionId: Int) {
+        viewModel.answerSelected(subQuestionId: subQuestionId, optionId: optionId)
+    }
+    
 }

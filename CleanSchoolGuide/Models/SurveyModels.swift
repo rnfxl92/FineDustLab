@@ -68,6 +68,6 @@ struct RangeModel: Codable {
 enum SubQuestionType: String, Codable {
     case ox
     case choice
-    case number_picker
+    case numberPicker = "number_picker"
     case checkbox
 }

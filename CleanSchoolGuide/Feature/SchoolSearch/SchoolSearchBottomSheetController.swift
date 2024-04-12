@@ -42,8 +42,8 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
         tableView.register(SchoolListTableViewCell.self)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorStyle = .none
-        tableView.isScrollEnabled = false
-        tableView.clipsToBounds = false
+        tableView.isScrollEnabled = true
+        tableView.clipsToBounds = true
         tableView.backgroundColor = .clear
         tableView.contentInset = .init(top: 0, left: 0, bottom: 100, right: 0)
         return tableView
@@ -67,7 +67,6 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
         searchTextField.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.isScrollEnabled = true
         
         view.backgroundColor = .gray0
         searchBackground.addSubViews([searchImageView, searchTextField])
