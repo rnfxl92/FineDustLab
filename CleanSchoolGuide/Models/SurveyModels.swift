@@ -39,8 +39,8 @@ struct SurveyModel: Codable {
 // MARK: - SubQuestion
 struct SubQuestion: Codable {
     let options: [Option]
-    let type: String
-    let subQuestionID: Int?
+    let type: SubQuestionType
+    let subQuestionID: Int
     let text: String?
 
     enum CodingKeys: String, CodingKey {
@@ -63,4 +63,11 @@ struct Option: Codable {
 // MARK: - Range
 struct RangeModel: Codable {
     let min, max: Int
+}
+
+enum SubQuestionType: String, Codable {
+    case ox
+    case choice
+    case number_picker
+    case checkbox
 }

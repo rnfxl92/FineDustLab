@@ -23,15 +23,15 @@ final class SurveyStartViewModel {
     private var name: String?
     private var school: SchoolModel?
     private var grade: Int?
-    private var `class`: Int?
-    private var number: Int?
+    private var classNumber: Int?
+    private var studentNumber: Int?
     private var isAgreed: Bool = false
     var canStart: Bool {
         name.isNotNilOrEmpty
         && !school.isNil
         && !grade.isNil
-        && !`class`.isNil
-        && !number.isNil
+        && !classNumber.isNil
+        && !studentNumber.isNil
         && isAgreed
     }
     private var cancellable = Set<AnyCancellable>()
@@ -41,8 +41,8 @@ final class SurveyStartViewModel {
             name = userInfo.name
             school = userInfo.school
             grade = userInfo.grade
-            `class` = userInfo.class
-            number = userInfo.number
+            classNumber = userInfo.classNum
+            studentNumber = userInfo.studentNum
             
             state = .getUserInfo(userInfo)
         }
@@ -69,22 +69,22 @@ final class SurveyStartViewModel {
     }
     
     func classUpdate(_ class: Int?) {
-        self.`class` = `class`
+        self.classNumber = `class`
         state = .inputUpdated
     }
     
     func numberUpdate(_ number: Int?) {
-        self.number = number
+        self.studentNumber = number
         state = .inputUpdated
     }
     
     func saveUserData() {
-        guard let name, name.isNotEmpty, let school, let grade, let `class`, let number else {
+        guard let name, name.isNotEmpty, let school, let grade, let classNumber, let studentNumber else {
             state = .userDataSaved(false)
             return
         }
         
-        Preferences.userInfo = UserInfo(name: name, school: school, grade: grade, class: `class`, number: number)
+        Preferences.userInfo = UserInfo(name: name, school: school, grade: grade, classNum: classNumber, studentNum: studentNumber)
         state = .userDataSaved(true)
     }
     
@@ -98,7 +98,6 @@ final class SurveyStartViewModel {
             .replaceError(with: nil)
             .sink { surveyData in
                 if let surveyData {
-                    dump(surveyData)
                     Preferences.surveyData = surveyData
                 }
             }

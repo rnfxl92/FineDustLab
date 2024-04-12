@@ -68,6 +68,16 @@ struct APIEndpoints {
             queryParameters: type
         )
     }
+    
+    static func postSurveyData(with surveyData: SetSurveyReqeustDto) -> Endpoint<EmptyData?> {
+        
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/survey/set",
+            method: .post,
+            bodyParameters: surveyData
+        )
+    }
 }
 
 extension Encodable {

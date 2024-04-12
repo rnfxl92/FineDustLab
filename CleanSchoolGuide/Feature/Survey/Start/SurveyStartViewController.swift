@@ -346,9 +346,9 @@ final class SurveyStartViewController: BaseViewController {
                     self?.schoolLabel.text = userInfo.school.schulNm
                     self?.schoolLabel.textColor = .gray900
                     self?.infoStackView.isHidden = false
-                    self?.classTextField.text = "\(userInfo.class)"
+                    self?.classTextField.text = "\(userInfo.classNum)"
                     self?.gradeTextField.text = "\(userInfo.grade)"
-                    if let number = userInfo.number {
+                    if let number = userInfo.studentNum {
                         self?.numberTextField.text = "\(number)"
                     }
                 default:
