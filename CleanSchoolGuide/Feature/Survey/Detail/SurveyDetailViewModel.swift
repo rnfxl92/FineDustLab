@@ -28,7 +28,7 @@ final class SurveyDetailViewModel {
         currentIndex + 1 >= totalCount
     }
     
-    private var answerDic: [Int: Any] = [:]
+    private var answerDic: [Int: String] = [:]
     private var cancellable = Set<AnyCancellable>()
     
     @Published var state: State = .none
@@ -37,8 +37,8 @@ final class SurveyDetailViewModel {
         self.currentIndex = currentIndex
     }
     
-    func answerSelected(subQuestionId: Int, optionId: Int) {
-        answerDic[subQuestionId] = optionId
+    func answered(subQuestionId: Int, answer: String) {
+        answerDic[subQuestionId] = answer
         state = .answerUpdated
     }
     

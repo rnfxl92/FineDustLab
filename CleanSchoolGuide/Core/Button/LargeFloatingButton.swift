@@ -69,7 +69,7 @@ final class LargeFloatingButtonView: UIView {
         defaultButton.setTitle(defaultTitle, for: .normal)
         defaultButton.setTitleColor(defaultTitleColor, for: .normal)
         defaultButton.setBackgroundColor(color: defaultColor, forState: .normal)
-        defaultButton.setTitleColor(disabledColor, for: .disabled)
+        defaultButton.setTitleColor(disabledTitleColor, for: .disabled)
         defaultButton.setBackgroundColor(color: disabledColor, forState: .disabled)
         
         buttonStackView.layer.borderColor = UIColor.line.withAlphaComponent(0.16).cgColor

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SurveySubQuestionNumberPickerCellDelegate: AnyObject {
-    func numberPicked(subQuestionId: Int, optionId: Int)
+    func numberPicked(subQuestionId: Int, answer: String)
 }
 
 final class SurveySubQuestionNumberPickerCell: UITableViewCell {
@@ -109,7 +109,7 @@ extension SurveySubQuestionNumberPickerCell: UIPickerViewDataSource, UIPickerVie
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         textField.text = "\(numbers[safe: row] ?? 0)"
-        delegate?.numberPicked(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: numbers[safe: row] ?? 0)
+        delegate?.numberPicked(subQuestionId: subQuestion?.subQuestionID ?? 0, answer: "\(numbers[safe: row] ?? 0)")
         endEditing(true)
     }
 }

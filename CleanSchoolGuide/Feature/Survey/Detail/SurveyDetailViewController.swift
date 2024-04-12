@@ -44,7 +44,7 @@ final class SurveyDetailViewController: BaseViewController {
         return tableView
     }()
     
-    private lazy var nextButton = LargeFloatingButtonView(.single, defaultTitle: "다음")
+    private lazy var nextButton = LargeFloatingButtonView(.single, defaultTitle: viewModel.isEnd ? "완료!" : "다음")
         
     private let viewModel: SurveyDetailViewModel
     
@@ -65,6 +65,7 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SurveySubQuestionOXCell.self)
         tableView.register(SurveySubQuestionChoiceCell.self)
         tableView.register(SurveySubQuestionNumberPickerCell.self)
+        tableView.register(SurveySubQuestionCheckboxCell.self)
         
         nextButton.isEnable = false
         var str = NSAttributedString("")
@@ -126,7 +127,7 @@ final class SurveyDetailViewController: BaseViewController {
                 switch state {
                 case .postAnswerSuccess:
                     if self.viewModel.isEnd {
-                    
+                        AppRouter.shared.route(to: .home)
                     } else {
                         AppRouter.shared.route(to: .surveyDetail(currentIndex: viewModel.currentIndex + 1))
                     }
@@ -165,6 +166,10 @@ extension SurveyDetailViewController: UITableViewDataSource {
             let cell: SurveySubQuestionNumberPickerCell = tableView.dequeueReusableCell(for: indexPath)
             cell.setUIModel(subQuestion, delegate: self)
             return cell
+        case .checkbox:
+            let cell: SurveySubQuestionCheckboxCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.setUIModel(subQuestion, delegate: self)
+            return cell
         default:
             return .init()
         }
@@ -174,19 +179,28 @@ extension SurveyDetailViewController: UITableViewDataSource {
 
 extension SurveyDetailViewController: SurveySubQuestionOXCellDelegate {
     func oxButtonTapped(subQuestionId: Int, optionId: Int) {
-        viewModel.answerSelected(subQuestionId: subQuestionId, optionId: optionId)
+        viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)")
     }
 }
 
 extension SurveyDetailViewController: SurveySubQuestionChoiceCellDelegate {
     func choiceButtonTapped(subQuestionId: Int, optionId: Int) {
-        viewModel.answerSelected(subQuestionId: subQuestionId, optionId: optionId)
+        viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)")
     }
 }
 
 extension SurveyDetailViewController: SurveySubQuestionNumberPickerCellDelegate {
-    func numberPicked(subQuestionId: Int, optionId: Int) {
-        viewModel.answerSelected(subQuestionId: subQuestionId, optionId: optionId)
+    func numberPicked(subQuestionId: Int, answer: String) {
+        viewModel.answered(subQuestionId: subQuestionId, answer: answer)
     }
     
 }
+
+extension SurveyDetailViewController: SurveySubQuestionCheckboxCellDelegate {
+    func checkboxTapped(subQuestionId: Int, answer: String) {
+        viewModel.answered(subQuestionId: subQuestionId, answer: answer)
+    }
+    
+    
+}
+                                            
