@@ -63,6 +63,8 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(SurveySubQuestionOXCell.self)
+        tableView.register(SurveySubQuestionChoiceCell.self)
+        
         nextButton.isEnable = false
         var str = NSAttributedString("")
         if viewModel.totalCount > 0 {
@@ -154,6 +156,11 @@ extension SurveyDetailViewController: UITableViewDataSource {
             let cell: SurveySubQuestionOXCell = tableView.dequeueReusableCell(for: indexPath)
             cell.setUIModel(subQuestion, delegate: self)
             return cell
+        case .choice:
+            let cell: SurveySubQuestionChoiceCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.setUIModel(subQuestion, delegate: self)
+            
+            return cell
         default:
             return .init()
         }
@@ -162,7 +169,13 @@ extension SurveyDetailViewController: UITableViewDataSource {
 }
 
 extension SurveyDetailViewController: SurveySubQuestionOXCellDelegate {
-    func oxSelectedId(subQuestionId: Int, optionId: Int) {
+    func oxButtonTapped(subQuestionId: Int, optionId: Int) {
+        viewModel.answerSelected(subQuestionId: subQuestionId, optionId: optionId)
+    }
+}
+
+extension SurveyDetailViewController: SurveySubQuestionChoiceCellDelegate {
+    func choiceButtonTapped(subQuestionId: Int, optionId: Int) {
         viewModel.answerSelected(subQuestionId: subQuestionId, optionId: optionId)
     }
 }

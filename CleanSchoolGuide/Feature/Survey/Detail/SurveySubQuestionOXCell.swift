@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SurveySubQuestionOXCellDelegate: AnyObject {
-    func oxSelectedId(subQuestionId: Int, optionId: Int)
+    func oxButtonTapped(subQuestionId: Int, optionId: Int)
 }
 
 final class SurveySubQuestionOXCell: UITableViewCell {
@@ -132,7 +132,7 @@ final class SurveySubQuestionOXCell: UITableViewCell {
         
         xLabel.font = .systemFont(ofSize: 16, weight: .regular)
         xView.borderWidth = 0
-        delegate?.oxSelectedId(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: subQuestion?.options[safe: 0]?.id ?? 0)
+        delegate?.oxButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: subQuestion?.options[safe: 0]?.id ?? 0)
     }
     
     @objc private func xButtonTapped(_ sender: UITapGestureRecognizer) {
@@ -142,6 +142,6 @@ final class SurveySubQuestionOXCell: UITableViewCell {
         xLabel.font = .systemFont(ofSize: 16, weight: .bold)
         xView.borderWidth = 2
         
-        delegate?.oxSelectedId(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: subQuestion?.options[safe: 1]?.id ?? 0)
+        delegate?.oxButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: subQuestion?.options[safe: 1]?.id ?? 0)
     }
 }
