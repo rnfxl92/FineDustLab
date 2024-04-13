@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 final class HomeViewController: BaseViewController {
     
@@ -212,11 +213,22 @@ final class HomeViewController: BaseViewController {
         label.text = "서울 코인초등학교 날짜 땡땡" // TODO imageAttributed
         return label
     }()
-    
+    private var locationManager =  CLLocationManager()
     private var viewModel = HomeViewModel()
     
-    override func setUserInterface() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
+        locationManager.delegate = self
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        checkUserCurrentLocationAuthorization()
+    }
+    
+    override func setUserInterface() {
         searchStackView.addArrangedSubViews([searchBar, settingButtonView])
         searchStackView.spacing = 8
         searchBar.snp.makeConstraints {
@@ -261,7 +273,6 @@ final class HomeViewController: BaseViewController {
             $0.top.equalTo(titleStackView.snp.bottom).inset(-32)
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.height.equalTo(floor((UIScreen.main.bounds.width - 16) / 2) * 1.2)
-            
         }
         
         manualButtonView.snp.makeConstraints {
@@ -366,13 +377,14 @@ final class HomeViewController: BaseViewController {
         
         dustStackView.snp.makeConstraints {
             $0.top.equalTo(todayTitleView.snp.bottom).offset(16)
-            $0.height.equalTo(102)
+            
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         
         regionDateLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(dustStackView.snp.bottom).offset(24)
+            $0.bottom.equalTo(todayWeatherView.safeAreaLayoutGuide).offset(24)
         }
         
         view.addSubViews([searchStackView, mainSurveyView, todayWeatherView])
@@ -403,6 +415,40 @@ final class HomeViewController: BaseViewController {
     @objc private func settingButtonTapped(_ sender: UITapGestureRecognizer) {
         print("setting button tapped")
     }
+    
+    func showRequestLocationServiceAlert() {
+        let requestLocationServiceAlert = UIAlertController(title: "위치 정보 이용", message: "위치 서비스를 사용할 수 없습니다.\n디바이스의 '설정 > 개인정보 보호'에서 위치 서비스를 켜주세요.", preferredStyle: .alert)
+        let goSetting = UIAlertAction(title: "설정으로 이동", style: .destructive) { _ in
+            if let appSetting = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(appSetting)
+            }
+        }
+        let cancel = UIAlertAction(title: "취소", style: .default) { _ in }
+        requestLocationServiceAlert.addAction(cancel)
+        requestLocationServiceAlert.addAction(goSetting)
+        
+        present(requestLocationServiceAlert, animated: true)
+    }
+    
+    func checkUserCurrentLocationAuthorization() {
+        guard !viewModel.isChecked else { return }
+        let status = locationManager.authorizationStatus
+        switch status {
+        case .notDetermined:
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.requestWhenInUseAuthorization()
+                
+        case .denied, .restricted:
+            showRequestLocationServiceAlert()
+            
+        case .authorizedWhenInUse:
+            locationManager.startUpdatingLocation()
+        default:
+            print("Default")
+        }
+        viewModel.isChecked = true
+    }
+    
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -443,5 +489,28 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 extension HomeViewController: CardCollectionViewCellDelegate {
     func surveyStartButtonTapped() {
         AppRouter.shared.route(to: .surveyStart)
+    }
+}
+
+extension HomeViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+        default:
+            break
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            print("Latitude: \(latitude), Longitude: \(longitude)")
+            
+            viewModel.getWeather()
+            // 현재 위치를 얻은 후 위치 업데이트 중지
+            locationManager.stopUpdatingLocation()
+        }
     }
 }

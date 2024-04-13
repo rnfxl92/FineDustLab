@@ -78,6 +78,16 @@ struct APIEndpoints {
             bodyParameters: surveyData
         )
     }
+    
+    static func getWeaher(with location: WeatherRequestDto) -> Endpoint<EmptyData?> {
+        
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/weather/get",
+            method: .get,
+            bodyParameters: location
+        )
+    }
 }
 
 extension Encodable {

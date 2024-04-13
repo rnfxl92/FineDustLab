@@ -7,7 +7,10 @@
 
 import Foundation
 
-final class HomeViewModel {
+final class HomeViewModel: NSObject {
+    
+    var isChecked: Bool = false
+    
     var dataSource: [CardCollectionViewCell.CardUIModel] {
         let dates = Date.getWeekdaysAndNextMonday()
         var models: [CardCollectionViewCell.CardUIModel] = []
@@ -27,6 +30,8 @@ final class HomeViewModel {
         return models
     }
     
-    
+    func getWeather() {
+        
+    }
     
 }

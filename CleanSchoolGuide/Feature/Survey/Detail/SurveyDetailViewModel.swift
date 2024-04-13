@@ -74,7 +74,7 @@ final class SurveyDetailViewModel {
                 surveyData: .init(
                     questionId: survey.id,
                     answers: answers,
-                    date: Date().toString(dateFormat: .yyyyMMddHHmm))
+                    date: Date().toString(dateFormat: .server))
             )
         )
         
