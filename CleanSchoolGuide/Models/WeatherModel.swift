@@ -8,5 +8,10 @@
 import Foundation
 
 struct WeatherModel: Codable {
-    
+    let result: String
+    let temperature: Int?
+    let humidity: Int?
+    let id: String?
 }
+
+

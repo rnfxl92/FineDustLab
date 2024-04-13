@@ -63,6 +63,10 @@ public final class AppRouter: Router {
             presenter?.push(vc, animated: true)
         case .login:
             break
+        case .manual:
+            let vc = ManualListViewController()
+            
+            presenter?.push(vc, animated: true)
         default:
             break
         }

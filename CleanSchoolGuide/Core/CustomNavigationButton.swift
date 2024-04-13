@@ -11,7 +11,7 @@ class CustomNavigationButton: UIButton {
     enum ButtonType {
 //        case close
         case back
-
+        case search
         case custom(UIImage?)
         case text(String)
         case attributedText(NSAttributedString)
@@ -22,6 +22,8 @@ class CustomNavigationButton: UIButton {
 //                return .ic24Close
             case .back:
                 return .icLeft
+            case .search:
+                return .search
             case .custom(let image):
                 return image
             case .text:

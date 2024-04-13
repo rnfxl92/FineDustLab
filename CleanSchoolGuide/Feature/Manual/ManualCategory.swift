@@ -8,11 +8,11 @@
 import Foundation
 
 enum ManualCategory {
-    enum Elementary: Int, CaseIterable {
-        case chapter1_1
-        case chapter1_2
-        case chapter2_1
-        case chapter2_2
+    enum Elementary: String, CaseIterable {
+        case chapter1_1 = "chapter 1-1"
+        case chapter1_2 = "chapter 1-2"
+        case chapter2_1 = "chapter 2-1"
+        case chapter2_2 = "chapter 2-2"
         
         var title: String {
             switch self {
@@ -76,13 +76,13 @@ enum ManualCategory {
         }
     }
     
-    enum Middle: Int, CaseIterable {
-        case chapter1_1
-        case chapter1_2
-        case chapter2_1
-        case chapter2_2
-        case chapter2_3
-        case chapter2_4
+    enum Middle: String, CaseIterable {
+        case chapter1_1 = "chapter 1-1"
+        case chapter1_2 = "chapter 1-2"
+        case chapter2_1 = "chapter 2-1"
+        case chapter2_2 = "chapter 2-2"
+        case chapter2_3 = "chapter 2-3"
+        case chapter2_4 = "chapter 2-4"
         
         var title: String {
             switch self {
@@ -118,7 +118,7 @@ enum ManualCategory {
             }
         }
         
-        enum SubChapter: Int, CaseIterable {
+        enum SubChapter: String, CaseIterable {
             case one1
             case one2
             case one3
@@ -193,14 +193,14 @@ enum ManualCategory {
         }
     }
     
-    enum Teacher: Int, CaseIterable {
-        case chapter1_1
-        case chapter1_2
-        case chapter2_1
-        case chapter2_2
-        case chapter2_3
-        case chapter2_4
-        case chapter2_5
+    enum Teacher: String, CaseIterable {
+        case chapter1_1 = "chapter 1-1"
+        case chapter1_2 = "chapter 1-2"
+        case chapter2_1 = "chapter 2-1"
+        case chapter2_2 = "chapter 2-2"
+        case chapter2_3 = "chapter 2-3"
+        case chapter2_4 = "chapter 2-4"
+        case chapter2_5 = "chapter 2-5"
         
         var title: String {
             switch self {
