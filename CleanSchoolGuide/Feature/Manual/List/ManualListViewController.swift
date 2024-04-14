@@ -59,7 +59,37 @@ final class ManualListViewController: BaseViewController {
 }
 
 extension ManualListViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch Preferences.selectedUserType  {
+        case .elementary:
+            let chapter = ManualCategory.Elementary.allCases
+            guard let section = chapter[safe: indexPath.section],
+                  let row = section.subChapters[safe: indexPath.row] else { break }
+            AppRouter.shared.route(to: .manualDetail(title: row.title, fileName: row.fileName, searchWords: nil))
+        case .middle, .high:
+            let chapter = ManualCategory.Middle.allCases
+            
+            guard let section = chapter[safe: indexPath.section],
+                  let row = section.subChapters[safe: indexPath.row]
+            else { break }
+            AppRouter.shared.route(to: .manualDetail(title: row.title, fileName: row.fileName, searchWords: nil))
+
+        case .teacher:
+            let chapter = ManualCategory.Teacher.allCases
+            
+            guard let section = chapter[safe: indexPath.section],
+                  let row = section.subChapters[safe: indexPath.row]
+            else { break }
+            AppRouter.shared.route(to: .manualDetail(title: row.title, fileName: row.fileName, searchWords: nil))
+        default:
+            let chapter = ManualCategory.Elementary.allCases
+            
+            guard let section = chapter[safe: indexPath.section],
+                  let row = section.subChapters[safe: indexPath.row]
+            else { break }
+            AppRouter.shared.route(to: .manualDetail(title: row.title, fileName: row.fileName, searchWords: nil))
+        }
+    }
 }
 
 extension ManualListViewController: UITableViewDataSource {

@@ -73,6 +73,29 @@ enum ManualCategory {
                     return "부록"
                 }
             }
+            
+            var fileName: String {
+                switch self {
+                case .one1:
+                    return "elementary_1_1"
+                case .one2:
+                    return "elementary_1_2"
+                case .one3:
+                    return "elementary_1_3"
+                case .one4:
+                    return "elementary_1_4"
+                case .two1:
+                    return "elementary_2_1"
+                case .two2:
+                    return "elementary_2_2"
+                case .three1:
+                    return "elementary_3_1"
+                case .three2:
+                    return "elementary_3_2"
+                case .four1:
+                    return "elementary_4_1"
+                }
+            }
         }
     }
     
@@ -190,6 +213,56 @@ enum ManualCategory {
                     return "부록"
                 }
             }
+            
+            var fileName: String {
+                switch self {
+                case .one1:
+                    return "middle_1_1"
+                case .one2:
+                    return "middle_1_2"
+                case .one3:
+                    return "middle_1_3"
+                case .one4:
+                    return "middle_1_4"
+                case .one5:
+                    return "middle_1_5"
+                case .one6:
+                    return "middle_1_6"
+                case .one7:
+                    return "middle_1_7"
+                case .two1:
+                    return "middle_2_1"
+                case .two2:
+                    return "middle_2_2"
+                case .two3:
+                    return "middle_2_3"
+                case .two4:
+                    return "middle_2_4"
+                case .two5:
+                    return "middle_2_5"
+                case .three1:
+                    return "middle_3_1"
+                case .three2:
+                    return "middle_3_2"
+                case .three3:
+                    return "middle_3_3"
+                case .four1:
+                    return "middle_4_1"
+                case .four2:
+                    return "middle_4_2"
+                case .four3:
+                    return "middle_4_3"
+                case .four4:
+                    return "middle_4_4"
+                case .four5:
+                    return "middle_4_5"
+                case .five1:
+                    return "middle_5_1"
+                case .six1:
+                    return "middle_6_1"
+                }
+            }
+            
         }
     }
     
@@ -328,6 +401,67 @@ enum ManualCategory {
                     return "참고문헌"
                 case .seven1:
                     return "부록"
+                }
+            }
+            
+            var fileName: String {
+                switch self {
+                case .one1:
+                    return "teacher_1_1"
+                case .one2:
+                    return "teacher_1_2"
+                case .one3:
+                    return "teacher_1_3"
+                case .one4:
+                    return "teacher_1_4"
+                case .one5:
+                    return "teacher_1_5"
+                case .one6:
+                    return "teacher_1_6"
+                case .one7:
+                    return "teacher_1_7"
+                case .two1:
+                    return "teacher_2_1"
+                case .two2:
+                    return "teacher_2_2"
+                case .two3:
+                    return "teacher_2_3"
+                case .two4:
+                    return "teacher_2_4"
+                case .two5:
+                    return "teacher_2_5"
+                case .three1:
+                    return "teacher_3_1"
+                case .three2:
+                    return "teacher_3_2"
+                case .three3:
+                    return "teacher_3_3"
+                case .four1:
+                    return "teacher_1_1"
+                case .four2:
+                    return "teacher_4_2"
+                case .four3:
+                    return "teacher_4_3"
+                case .four4:
+                    return "teacher_4_4"
+                case .four5:
+                    return "teacher_4_5"
+                case .four6:
+                    return "teacher_4_6"
+                case .five1:
+                    return "teacher_5_1"
+                case .five2:
+                    return "teacher_5_2"
+                case .five3:
+                    return "teacher_5_3"
+                case .five4:
+                    return "teacher_5_4"
+                case .five5:
+                    return "teacher_5_5"
+                case .six1:
+                    return "teacher_6_1"
+                case .seven1:
+                    return "teacher_7_1"
                 }
             }
         }

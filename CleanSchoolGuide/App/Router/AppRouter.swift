@@ -18,7 +18,8 @@ public final class AppRouter: Router {
         case login
         case selectGroup
         case setting
-        case manual
+        case manualList
+        case manualDetail(title: String, fileName: String, searchWords: String?)
         case surveyStart
         case surveyDetail(currentIndex: Int)
     }
@@ -63,8 +64,12 @@ public final class AppRouter: Router {
             presenter?.push(vc, animated: true)
         case .login:
             break
-        case .manual:
+        case .manualList:
             let vc = ManualListViewController()
+            
+            presenter?.push(vc, animated: true)
+        case .manualDetail(let title, let fileName, let searchWords):
+            let vc = ManualDetailViewController(title: title, fileName: fileName, searchWords: searchWords)
             
             presenter?.push(vc, animated: true)
         default:

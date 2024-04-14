@@ -409,7 +409,7 @@ final class HomeViewController: BaseViewController {
     }
     
     @objc private func manualButtonTapped(_ sender: UITapGestureRecognizer) {
-        AppRouter.shared.route(to: .manual)
+        AppRouter.shared.route(to: .manualList)
     }
     
     @objc private func settingButtonTapped(_ sender: UITapGestureRecognizer) {
