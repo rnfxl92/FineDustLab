@@ -118,7 +118,7 @@ enum ManualCategory {
             }
         }
         
-        enum SubChapter: String, CaseIterable {
+        enum SubChapter: Int, CaseIterable {
             case one1
             case one2
             case one3
@@ -218,6 +218,25 @@ enum ManualCategory {
                 return "참고문헌"
             case .chapter2_5:
                 return "부록"
+            }
+        }
+        
+        var subChapters: [SubChapter] {
+            switch self {
+            case .chapter1_1:
+                return [.one1, .one2, .one3, .one4, .one5, .one6, .one7]
+            case .chapter1_2:
+                return [.two1, .two2, .two3, .two3, .two4, .two5]
+            case .chapter2_1:
+                return [.three1, .three2, .three3]
+            case .chapter2_2:
+                return [.four1, .four2, .four3, .four4, .four5, .four6]
+            case .chapter2_3:
+                return [.five1, .five2, .five3, .five4, .five5]
+            case .chapter2_4:
+                return [.six1]
+            case .chapter2_5:
+                return [.seven1]
             }
         }
         
