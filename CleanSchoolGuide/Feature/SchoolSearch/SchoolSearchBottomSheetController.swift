@@ -97,7 +97,6 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
     }
     
     override func bind() {
-        
         let output = viewModel.bind(
             .init(
                 name: searchTextField.textPublisher.eraseToAnyPublisher()

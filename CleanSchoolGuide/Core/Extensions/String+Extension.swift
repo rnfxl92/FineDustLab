@@ -214,7 +214,7 @@ public extension String {
         return attributedString
     }
     
-    public func attributedString(string: String, attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+    func attributedString(string: String, attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
         let attributedString = NSMutableAttributedString(string: self)
         
         let range = (self as NSString).range(of: string)
@@ -222,6 +222,20 @@ public extension String {
         
         return attributedString
     }
+    
+    func ranges(of searchString: String) -> [Range<String.Index>] {
+        var ranges: [Range<String.Index>] = []
+        var startIndex = self.startIndex
+        while startIndex < self.endIndex, let range = self[startIndex...].range(of: searchString) {
+            ranges.append(range)
+            startIndex = range.lowerBound < range.upperBound ? range.upperBound : self.index(range.lowerBound, offsetBy: 1)
+        }
+        return ranges
+    }
+    
+    func nsRanges(from ranges: [Range<String.Index>]) -> [NSRange] {
+           return ranges.map { NSRange($0, in: self) }
+       }
 }
 
 public extension Optional where Wrapped == String {
