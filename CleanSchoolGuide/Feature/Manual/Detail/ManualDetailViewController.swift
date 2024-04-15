@@ -67,10 +67,50 @@ final class ManualDetailViewController: BaseViewController {
         return view
     }()
     
+    private let searchedWordsView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray900
+        
+        return view
+    }()
+    private let divider: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray800
+        
+        return view
+    }()
+    private let searchedWordsLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.textColor = .gray600
+        label.text = "찾은 단어"
+        return label
+    }()
+    private let prevButton: UIButton = {
+        let button = UIButton()
+        button.setImage(.icUp, for: .normal)
+        button.tintColor = .gray600
+        
+        return button
+    }()
+    private let nextButton: UIButton = {
+        let button = UIButton()
+        button.setImage(.icDown, for: .normal)
+        button.tintColor = .gray600
+        
+        return button
+    }()
+    private let currentIndexLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        return label
+    }()
+    
     private let navTitle: String
     private let fileName: String
     private var searchWords: String?
     private var searchResults: [PDFSelection] = []
+    private var currentIndex: Int = 0
     
     private var cancellable = Set<AnyCancellable>()
     
@@ -117,7 +157,32 @@ final class ManualDetailViewController: BaseViewController {
             $0.trailing.equalToSuperview().inset(16)
         }
         
-        view.addSubViews([navigationBar, searchContainerView, pdfView])
+        searchedWordsView.addSubViews([searchedWordsLabel, currentIndexLabel, divider, prevButton, nextButton])
+        searchedWordsLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(16)
+            $0.centerY.equalToSuperview()
+        }
+        nextButton.snp.makeConstraints {
+            $0.trailing.directionalVerticalEdges.equalToSuperview()
+            $0.width.equalTo(48)
+        }
+        prevButton.snp.makeConstraints {
+            $0.directionalVerticalEdges.equalToSuperview()
+            $0.width.equalTo(48)
+            $0.trailing.equalTo(nextButton.snp.leading)
+        }
+        divider.snp.makeConstraints {
+            $0.height.equalTo(22)
+            $0.width.equalTo(1)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(prevButton.snp.leading).offset(-4)
+        }
+        currentIndexLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(divider.snp.leading).offset(-14)
+        }
+        
+        view.addSubViews([navigationBar, searchContainerView, pdfView, searchedWordsView])
         
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -135,6 +200,13 @@ final class ManualDetailViewController: BaseViewController {
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+        
+        searchedWordsView.snp.makeConstraints {
+            $0.height.equalTo(48 + view.safeAreaInsets.bottom)
+            $0.directionalHorizontalEdges.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
+        searchedWordsView.isHidden = true
         searchContainerView.isHidden = true
     }
     
@@ -151,11 +223,7 @@ final class ManualDetailViewController: BaseViewController {
             .debounce(for: 1, scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] word in
-                if let word {
-                    self?.searchForText(word)
-                } else {
-                    self?.pdfView.document
-                }
+                self?.searchForText(word ?? "")
             }
             .store(in: &cancellable)
         
@@ -166,6 +234,7 @@ final class ManualDetailViewController: BaseViewController {
                 guard let self else { return }
                 self.searchContainerView.isHidden = false
                 self.view.bringSubviewToFront(self.searchContainerView)
+                self.searchedWordsView.isHidden = false
             }
             .store(in: &cancellable)
         
@@ -174,6 +243,26 @@ final class ManualDetailViewController: BaseViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.searchContainerView.isHidden = true
+                self?.view.endEditing(true)
+                if self?.searchResults.isEmpty ?? true {
+                    self?.searchedWordsView.isHidden = true
+                }
+            }
+            .store(in: &cancellable)
+        
+        nextButton
+            .tapPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.nextButtonTapped()
+            }
+            .store(in: &cancellable)
+        
+        prevButton
+            .tapPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.prevButtonTapped()
             }
             .store(in: &cancellable)
     }
@@ -184,11 +273,14 @@ final class ManualDetailViewController: BaseViewController {
         let searchSelections = document.findString(text, withOptions: .caseInsensitive)
         self.searchResults = searchSelections
         highlightSelections(searchSelections)
+        if let firstSelection = searchSelections.first {
+            pdfView.go(to: firstSelection)
+        }
     }
     
     private func removeExistingHighlights() {
             guard let document = pdfView.document else { return }
-            
+            currentIndex = 0
             for pageIndex in 0..<document.pageCount {
                 guard let page = document.page(at: pageIndex) else { continue }
                 let annotations = page.annotations
@@ -207,6 +299,47 @@ final class ManualDetailViewController: BaseViewController {
             highlight.color = .yellow
             pages.addAnnotation(highlight)
         }
+        updateButton()
+    }
+    
+    private func nextButtonTapped() {
+        // 다음 검색 결과로 이동
+        if currentIndex < searchResults.count - 1 {
+            currentIndex += 1
+            let selection = searchResults[currentIndex]
+            pdfView.go(to: selection)
+            pdfView.setCurrentSelection(selection, animate: true)
+            updateButton()
+        }
+    }
+    
+    private func prevButtonTapped() {
+        // 이전 검색 결과로 이동
+        if currentIndex > 0 {
+            currentIndex -= 1
+            let selection = searchResults[currentIndex]
+            pdfView.go(to: selection)
+            pdfView.setCurrentSelection(selection, animate: true)
+            updateButton()
+        }
+    }
+    
+    private func updateButton() {
+        var currentIdx: String = "0"
+        var totalIdx: String = "/\(searchResults.count)"
+        if searchResults.isNotEmpty {
+            currentIdx = "\(currentIndex + 1)"
+        }
+        var str = NSAttributedString(string: currentIdx + totalIdx, attributes: [.font: UIFont.systemFont(ofSize: 14, weight: .medium)])
+            .addAttributes(currentIdx, attributes: [.foregroundColor: UIColor.blue300])
+            .addAttributes(totalIdx, attributes: [.foregroundColor: UIColor.gray400])
+        currentIndexLabel.attributedText = str
+        
+        prevButton.isEnabled = currentIndex > 0
+        prevButton.tintColor = prevButton.isEnabled ? .gray600 : .gray800
+        nextButton.isEnabled = searchResults.count > 0 && currentIndex < searchResults.count - 1
+        nextButton.tintColor = nextButton.isEnabled ? .gray600 : .gray800
+        
     }
 }
 
