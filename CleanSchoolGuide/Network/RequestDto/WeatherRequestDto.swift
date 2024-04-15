@@ -8,6 +8,6 @@
 import Foundation
 
 struct WeatherRequestDto: Encodable {
-    let lat: String
-    let lng: String
+    let lat: Double
+    let lng: Double
 }

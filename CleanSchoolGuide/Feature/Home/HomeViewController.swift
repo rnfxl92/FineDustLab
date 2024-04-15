@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreLocation
+import Combine
 
 final class HomeViewController: BaseViewController {
     
@@ -216,14 +217,18 @@ final class HomeViewController: BaseViewController {
     private var locationManager =  CLLocationManager()
     private var viewModel = HomeViewModel()
     
+    private let fetchWeatherPublisher = PassthroughSubject<(lat: Double?, lng: Double?), Never>()
+    private let fetchFineDustPublisher = PassthroughSubject<Void, Never>()
+    private var cancellable = Set<AnyCancellable>()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         locationManager.delegate = self
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
         checkUserCurrentLocationAuthorization()
     }
@@ -384,7 +389,7 @@ final class HomeViewController: BaseViewController {
         regionDateLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(dustStackView.snp.bottom).offset(24)
-            $0.bottom.equalTo(todayWeatherView.safeAreaLayoutGuide).offset(24)
+            $0.bottom.equalTo(todayWeatherView.safeAreaLayoutGuide).inset(12)
         }
         
         view.addSubViews([searchStackView, mainSurveyView, todayWeatherView])
@@ -440,7 +445,7 @@ final class HomeViewController: BaseViewController {
                 
         case .denied, .restricted:
             showRequestLocationServiceAlert()
-            
+            fetchWeatherPublisher.send((lat: nil, lng: nil))
         case .authorizedWhenInUse:
             locationManager.startUpdatingLocation()
         default:
@@ -449,6 +454,30 @@ final class HomeViewController: BaseViewController {
         viewModel.isChecked = true
     }
     
+    override func bind() {
+        viewModel.bind(
+            .init(
+                fetchWeather: fetchWeatherPublisher.eraseToAnyPublisher(),
+                fetchFineDust: fetchFineDustPublisher.eraseToAnyPublisher()
+            )
+        )
+        
+        viewModel
+            .$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                switch state {
+                case .wetherUpdated(let humidity, let temperature, let date):
+                    self?.humidityLabel.text = humidity
+                    self?.temperatureLabel.text = temperature
+                    // TODO: date
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellable)
+            
+    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -506,9 +535,8 @@ extension HomeViewController: CLLocationManagerDelegate {
         if let location = locations.last {
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
-            print("Latitude: \(latitude), Longitude: \(longitude)")
+            fetchWeatherPublisher.send((lat: latitude, lng: longitude))
             
-            viewModel.getWeather()
             // 현재 위치를 얻은 후 위치 업데이트 중지
             locationManager.stopUpdatingLocation()
         }

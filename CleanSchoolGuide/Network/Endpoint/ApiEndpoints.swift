@@ -79,13 +79,13 @@ struct APIEndpoints {
         )
     }
     
-    static func getWeaher(with location: WeatherRequestDto) -> Endpoint<EmptyData?> {
+    static func getWeaher(with location: WeatherRequestDto) -> Endpoint<WeatherModel?> {
         
         return Endpoint(
             baseURL: "https://finedustlab-api-ko.net",
             path: "/weather/get",
             method: .get,
-            bodyParameters: location
+            queryParameters: location
         )
     }
 }

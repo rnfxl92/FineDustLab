@@ -95,6 +95,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         dayLabel.text = model.date.toString(dateFormat: .E)
         if model.isToday {
             dateLabel.textColor = .gray0
+            dayLabel.textColor = .gray0
             startButton.setBackgroundColor(color: .blue400, forState: .normal)
             mainView.backgroundColor = .blue300
             if model.isSuveyed {
@@ -105,6 +106,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
             }
         } else {
             dateLabel.textColor = .gray500
+            dayLabel.textColor = .gray500
             startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .disabled)
             startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .normal)
             startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .highlighted)
