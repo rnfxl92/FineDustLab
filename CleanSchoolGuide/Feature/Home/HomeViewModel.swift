@@ -16,7 +16,8 @@ final class HomeViewModel: NSObject {
     
     enum State {
         case wetherUpdated(humidity: String, temperature: String, date: String)
-        case fineDustUpdated
+        case externalFineUpdate(state: FineStatusModel.Status)
+        case internalFineUpdate(state: InternalFineStatusModel.Status)
         case none
     }
     
@@ -67,6 +68,42 @@ final class HomeViewModel: NSObject {
                 self.state = .wetherUpdated(humidity: humidity, temperature:temperature, date: date)
             }
             .store(in: &cancellable)
+        
+        input
+            .fetchFineDust
+            .flatMap { [weak self] _ -> AnyPublisher<FineStatusModel?, Never> in
+                guard let self else { return Empty().eraseToAnyPublisher() }
+                var schoolCode: Int?
+                if let sdSchulCode = Preferences.userInfo?.school.sdSchulCode {
+                    schoolCode = Int(sdSchulCode)
+                }
+                return self.getExternalFineStatus(schoolCode: schoolCode)
+            }
+            .sink { [weak self] fineStatusModel in
+                
+                if let fineState = fineStatusModel?.status {
+                    self?.state = .externalFineUpdate(state: fineState)
+                }
+            }
+            .store(in: &cancellable)
+        
+        input
+            .fetchFineDust
+            .flatMap { [weak self] _ -> AnyPublisher<InternalFineStatusModel?, Never> in
+                guard
+                    let self,
+                    let userInfo = Preferences.userInfo,
+                    let schoolCode = Int(userInfo.school.sdSchulCode)
+                else { return Empty().eraseToAnyPublisher() }
+                
+                return self.getInternalFineStatus(schoolCode: schoolCode, grade: userInfo.grade, classNum: userInfo.classNum)
+            }
+            .sink { [weak self] fineStatusModel in
+                guard let fineStatusModel else { return }
+                
+                self?.state = .internalFineUpdate(state: fineStatusModel.finedustFactor > 60 ? .bad : .good)
+            }
+            .store(in: &cancellable)
     }
     
     private func getWeather(
@@ -82,4 +119,29 @@ final class HomeViewModel: NSObject {
             .eraseToAnyPublisher()
     }
     
+    private func getExternalFineStatus(
+        schoolCode: Int?
+    ) -> AnyPublisher<FineStatusModel?, Never> {
+        
+        let endPoint = APIEndpoints.getExternalFineStatus(with: .init(location: schoolCode ?? 7201099))
+        
+        return NetworkService
+            .shared
+            .request(endPoint)
+            .replaceError(with: nil)
+            .eraseToAnyPublisher()
+    }
+    
+    private func getInternalFineStatus(
+        schoolCode: Int, grade: Int, classNum: Int
+    ) -> AnyPublisher<InternalFineStatusModel?, Never> {
+        
+        let endPoint = APIEndpoints.getIntertalFineStatus(with: .init(schoolCode: schoolCode, grade: grade, classNum: classNum))
+        
+        return NetworkService
+            .shared
+            .request(endPoint)
+            .replaceError(with: nil)
+            .eraseToAnyPublisher()
+    }
 }

@@ -168,6 +168,13 @@ final class HomeViewController: BaseViewController {
         view.backgroundColor = .blue0
         return view
     }()
+    private let externalVstack: UIStackView = {
+        let stackView = UIStackView(axis: .vertical)
+        stackView.distribution = .fill
+        stackView.alignment = .center
+        stackView.spacing = 16
+        return stackView
+    }()
     private let externalTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 13, weight: .medium)
@@ -176,12 +183,17 @@ final class HomeViewController: BaseViewController {
         return label
     }()
     private let externalStackView = UIStackView(axis: .horizontal)
-    private let externalImageView = UIImageView()
+    private let externalImageView: UIImageView = {
+        let imageView = UIImageView(image: .imgGood)
+        imageView.contentMode = .scaleAspectFill
+        
+        return imageView
+    }()
     private let externalDustLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textColor = .gray800
-        label.text = "좋아요!" // TODO
+        label.text = "좋아요!"
         return label
     }()
     
@@ -189,6 +201,13 @@ final class HomeViewController: BaseViewController {
         let view = UIView()
         view.backgroundColor = .orange0
         return view
+    }()
+    private let internalVstack: UIStackView = {
+        let stackView = UIStackView(axis: .vertical)
+        stackView.distribution = .fill
+        stackView.alignment = .center
+        stackView.spacing = 16
+        return stackView
     }()
     private let internalTitleLabel: UILabel = {
         let label = UILabel()
@@ -198,12 +217,17 @@ final class HomeViewController: BaseViewController {
         return label
     }()
     private let internalStackView = UIStackView(axis: .horizontal)
-    private let internalImageView = UIImageView()
+    private let internalImageView: UIImageView = {
+        let imageView = UIImageView(image: .imgBad)
+        imageView.contentMode = .scaleAspectFill
+        
+        return imageView
+    }()
     private let internalDustLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textColor = .gray800
-        label.text = "안좋아요 ㅠ" // TODO
+        label.text = "안좋아요"
         return label
     }()
     
@@ -231,6 +255,7 @@ final class HomeViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         checkUserCurrentLocationAuthorization()
+        fetchFineDustPublisher.send()
     }
     
     override func setUserInterface() {
@@ -344,28 +369,20 @@ final class HomeViewController: BaseViewController {
         externalImageView.snp.makeConstraints {
             $0.size.equalTo(32)
         }
-        externalView.addSubViews([externalTitleLabel, externalStackView])
-        externalTitleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(18)
-        }
-        externalStackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(externalTitleLabel.snp.bottom).offset(12)
+        externalVstack.addArrangedSubViews([externalTitleLabel, externalStackView])
+        externalView.addSubViews([externalVstack])
+        externalVstack.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         internalStackView.spacing = 12
         internalStackView.addArrangedSubViews([internalImageView, internalDustLabel])
         internalImageView.snp.makeConstraints {
             $0.size.equalTo(32)
         }
-        internalView.addSubViews([internalTitleLabel, internalStackView])
-        internalTitleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(18)
-        }
-        internalStackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(internalTitleLabel.snp.bottom).offset(12)
+        internalVstack.addArrangedSubViews([internalTitleLabel, internalStackView])
+        internalView.addSubViews([internalVstack])
+        internalVstack.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
         dustStackView.clipsToBounds = true
@@ -471,6 +488,12 @@ final class HomeViewController: BaseViewController {
                     self?.humidityLabel.text = humidity
                     self?.temperatureLabel.text = temperature
                     // TODO: date
+                case .externalFineUpdate(let state):
+                    self?.externalDustLabel.text = state.description
+                    self?.externalImageView.image = state == .bad ? .imgBad : .imgGood
+                case .internalFineUpdate(let state):
+                    self?.internalDustLabel.text = state.description
+                    self?.internalImageView.image = state == .bad ? .imgBad : .imgGood
                 default:
                     break
                 }

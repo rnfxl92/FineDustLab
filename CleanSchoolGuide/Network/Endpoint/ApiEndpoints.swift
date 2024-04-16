@@ -88,6 +88,27 @@ struct APIEndpoints {
             queryParameters: location
         )
     }
+    
+    static func getExternalFineStatus(with location: ExternalFineStatusRequestDto) -> Endpoint<FineStatusModel?> {
+        
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/finestatus/get",
+            method: .get,
+            queryParameters: location
+        )
+    }
+    
+    static func getIntertalFineStatus(with schoolInfo: InternalFineStatusRequestDto) -> Endpoint<InternalFineStatusModel?> {
+        
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/classroom/get",
+            method: .get,
+            queryParameters: schoolInfo
+        )
+    }
+    
 }
 
 extension Encodable {
