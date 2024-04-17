@@ -31,7 +31,7 @@ final class SurveyStartViewModel {
         && !school.isNil
         && !grade.isNil
         && !classNumber.isNil
-        && !studentNumber.isNil
+        && (Preferences.selectedUserType == .teacher || !studentNumber.isNil)
         && isAgreed
     }
     private var cancellable = Set<AnyCancellable>()

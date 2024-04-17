@@ -60,7 +60,7 @@ final class SurveyStartViewController: BaseViewController {
         textField.attributedPlaceholder = NSAttributedString(string: "이름을 입력해주세요", attributes: [.foregroundColor: UIColor.gray500])
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
-        
+        textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
     private let schoolBackground: UIView = {
@@ -104,6 +104,7 @@ final class SurveyStartViewController: BaseViewController {
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
     private let classBackground: UIView = {
@@ -127,6 +128,7 @@ final class SurveyStartViewController: BaseViewController {
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
     private let numberBackground: UIView = {
@@ -150,6 +152,7 @@ final class SurveyStartViewController: BaseViewController {
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
     
@@ -297,7 +300,11 @@ final class SurveyStartViewController: BaseViewController {
             $0.leading.equalTo(numberTextField.snp.trailing).offset(8).priority(.high)
             $0.trailing.equalToSuperview().inset(16)
         }
-        infoStackView.addArrangedSubViews([gradeBackground, classBackground, numberBackground])
+        if Preferences.selectedUserType == .teacher {
+            infoStackView.addArrangedSubViews([gradeBackground, classBackground])
+        } else {
+            infoStackView.addArrangedSubViews([gradeBackground, classBackground, numberBackground])
+        }
         gradeBackground.snp.makeConstraints {
             $0.height.equalTo(62)
         }

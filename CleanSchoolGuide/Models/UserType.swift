@@ -12,4 +12,17 @@ enum UserType: String, Codable {
     case middle
     case high
     case teacher
+    
+    var description: String {
+        switch self {
+        case .elementary:
+            return "초등학생"
+        case .middle:
+            return "중학생"
+        case .high:
+            return "고등학생"
+        case .teacher:
+            return "선생님"
+        }
+    }
 }

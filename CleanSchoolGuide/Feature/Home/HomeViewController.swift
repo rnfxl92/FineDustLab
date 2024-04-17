@@ -435,7 +435,7 @@ final class HomeViewController: BaseViewController {
     }
     
     @objc private func settingButtonTapped(_ sender: UITapGestureRecognizer) {
-        print("setting button tapped")
+        AppRouter.shared.route(to: .setting)
     }
     
     func showRequestLocationServiceAlert() {

@@ -107,6 +107,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         } else {
             dateLabel.textColor = .gray500
             dayLabel.textColor = .gray500
+            startButton.isEnabled = false
             startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .disabled)
             startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .normal)
             startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .highlighted)
@@ -139,8 +140,7 @@ extension CardCollectionViewCell {
         let isHoliday: Bool
         
         var isToday: Bool {
-            true
-//            date.isToday
+            date.isToday
         }
     }
 }

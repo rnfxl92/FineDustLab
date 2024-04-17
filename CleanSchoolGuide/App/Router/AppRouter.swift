@@ -72,6 +72,10 @@ public final class AppRouter: Router {
             let vc = ManualDetailViewController(title: title, fileName: fileName, searchWords: searchWords)
             
             presenter?.push(vc, animated: true)
+        case .setting:
+            let vc = SettingsViewController()
+            
+            presenter?.push(vc, animated: true)
         default:
             break
         }
