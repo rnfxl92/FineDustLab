@@ -12,6 +12,7 @@ enum PreferencesKey: String, UserDefaultsKeyType {
     case userInfo
     case surveyCompletedDates
     case surveyData
+    case userToken
     
     var value: String { rawValue }
 }
@@ -29,4 +30,7 @@ public struct Preferences {
     
     @UserDefaultsWrapper(key: PreferencesKey.surveyData, defaultValue: nil)
     static var surveyData: SurveyData?
+    
+    @UserDefaultsWrapper(key: PreferencesKey.userToken, defaultValue: nil)
+    static var userToken: String?
 }

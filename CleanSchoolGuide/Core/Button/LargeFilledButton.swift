@@ -18,7 +18,7 @@ final class LargeFilledButton: UIButton {
          defaultColor: UIColor = .green400,
          disabledTitleColor: UIColor = .gray400,
          disabledColor: UIColor = .gray200,
-         font: UIFont = .body.bold
+         font: UIFont = .systemFont(ofSize: 16, weight: .semibold)
     ) {
         self.defaultColor = defaultColor
         self.defaultTitleColor = defaultTitleColor

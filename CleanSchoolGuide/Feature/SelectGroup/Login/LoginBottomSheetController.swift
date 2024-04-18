@@ -128,6 +128,7 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
     private let emailCharRegex: String = "[@A-Z0-9a-z._-]"
     
     private var cancellable = Set<AnyCancellable>()
+    private let viewModel = LoginBottomSheetViewModel()
     
     override func setUserInterface() {
         view.backgroundColor = .gray0
@@ -205,13 +206,43 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
                 self.checkLogin()
             }
             .store(in: &cancellable)
+        
+        viewModel
+            .$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                state.isLoading ? CSGIndicator.shared.show() : CSGIndicator.shared.hide()
+                switch state {
+                case .loginSuccessed:
+                    Preferences.selectedUserType = .teacher
+                    AppRouter.shared.route(to: .home)
+                case .loginFailed:
+                    let vc = PopupViewController(type: .single, description: "아이디 또는 비밀번호가\n잘못되었습니다.", defualtTitle: "확인")
+                    vc.modalTransitionStyle = .crossDissolve
+                    vc.modalPresentationStyle = .overFullScreen
+                    self?.present(vc: vc, animated: true)
+                default:
+                    break
+                }
+            }
+            .store(in: &cancellable)
+        
+        logInButton
+            .defaultTapPublisher
+            .sink { [weak self] in
+                guard let self,
+                      let email = emailTextField.text,
+                      let password = passwordTextField.text else { return }
+                self.viewModel.requestLogin(email: email, password: password)
+            }
+            .store(in: &cancellable)
     }
     
     private func checkLogin() {
         
         guard let email = emailTextField.text,
               let password = passwordTextField.text else { return }
-        logInButton.isEnable = email.validateRegex(with: emailRegex) && password.count > 5
+        logInButton.isEnable = email.validateRegex(with: emailRegex) && password.count > 7
     }
 }
 
