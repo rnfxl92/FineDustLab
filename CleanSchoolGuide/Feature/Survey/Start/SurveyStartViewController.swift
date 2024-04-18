@@ -13,7 +13,7 @@ final class SurveyStartViewController: BaseViewController {
     private let navigationBar = CustomNavigationBar()
     private let backButton = CustomNavigationButton(.back)
     private let backgroundImageView: UIImageView = {
-        let imageView = UIImageView(image: .mimunBackgound)
+        let imageView = UIImageView(image: .imgSurvey)
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()

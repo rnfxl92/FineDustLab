@@ -6,8 +6,15 @@
 //
 
 import UIKit
+import Foundation
 
 public extension String {
+    
+    func validateRegex(with regex: String) -> Bool {
+        let regex = NSRegularExpression(regex)
+        return regex.matches(self)
+    }
+    
     func convertDate(
         beforeFormatter: DateFormatter,
         afterFormatter: DateFormatter
@@ -248,4 +255,19 @@ public extension Optional where Wrapped == String {
     }
     
     var isNotNilOrEmpty: Bool { !isNilOrEmpty }
+}
+
+public extension NSRegularExpression {
+    convenience init(_ pattern: String) {
+        do {
+            try self.init(pattern: pattern)
+        } catch {
+            preconditionFailure("Illegal regular expression: \(pattern).")
+        }
+    }
+    
+    func matches(_ string: String) -> Bool {
+        let range = NSRange(location: 0, length: string.utf16.count)
+        return firstMatch(in: string, options: [], range: range) != nil
+    }
 }

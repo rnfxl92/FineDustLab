@@ -14,10 +14,11 @@ final class SelectGroupViewController: BaseViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .systemFont(ofSize: 26, weight: .bold)
         label.textColor = .gray900
-        label.text = "반가워요!"
-        label.textAlignment = .center
+        label.text = "반가워요!\n누구로 접속할까요?"
+        label.textAlignment = .left
+        label.numberOfLines = 2
         return label
     }()
     
@@ -26,30 +27,37 @@ final class SelectGroupViewController: BaseViewController {
         label.font = .systemFont(ofSize: 16)
         label.textColor = .gray700
         label.numberOfLines = 2
-        label.text = "학습자에 따라 매뉴얼 및 설문 내용이 달라집니다.\n현재 학년에 맞게 학습자를 골라주세요."
-        label.textAlignment = .center
+        label.text = "학습자에 따라 매뉴얼과 설문 내용이 달라요!"
+        label.textAlignment = .left
         return label
     }()
     
     private let backgoundImageView: UIImageView = {
-       let imageView = UIImageView(image: .mimunBackgound)
+       let imageView = UIImageView(image: .imgMainBg)
+        imageView.contentMode = .scaleAspectFill
+        
+        return imageView
+    }()
+    
+    private let mainImageView: UIImageView = {
+       let imageView = UIImageView(image: .imgMain)
         imageView.contentMode = .scaleAspectFit
         
         return imageView
     }()
     
     private let buttonStackView = UIStackView(axis: .vertical)
-    private let elementaryButton: LargeFilledButton = LargeFilledButton(title: "초등학생", defaultTitleColor: UIColor.gray900, defaultColor: UIColor.gray200, font: UIFont.systemFont(ofSize: 16))
+    private let elementaryButton: LargeFilledButton = LargeFilledButton(title: "초등학생", defaultTitleColor: UIColor.gray900, defaultColor: UIColor.gray100, font: UIFont.systemFont(ofSize: 16))
     
-    private let middleButton: LargeFilledButton = LargeFilledButton(title: "중학생", defaultTitleColor: UIColor.gray900, defaultColor: UIColor.gray200, font: UIFont.systemFont(ofSize: 16))
+    private let middleButton: LargeFilledButton = LargeFilledButton(title: "중학생", defaultTitleColor: UIColor.gray900, defaultColor: UIColor.gray100, font: UIFont.systemFont(ofSize: 16))
     
-    private let highButton: LargeFilledButton = LargeFilledButton(title: "고등학생", defaultTitleColor: UIColor.gray900, defaultColor: UIColor.gray200, font: UIFont.systemFont(ofSize: 16))
+    private let highButton: LargeFilledButton = LargeFilledButton(title: "고등학생", defaultTitleColor: UIColor.gray900, defaultColor: UIColor.gray100, font: UIFont.systemFont(ofSize: 16))
     
     private let teacherButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = .systemFont(ofSize: 14)
-        button.setTitle("선생님입니다", for: .normal)
-        button.setTitleColor(.gray600, for: .normal)
+        button.setTitle("선생님으로 로그인", for: .normal)
+        button.setTitleColor(.gray700, for: .normal)
         
         button.setUnderlined()
         
@@ -65,11 +73,21 @@ final class SelectGroupViewController: BaseViewController {
         titleStackView.addArrangedSubViews([titleLabel, descriptionLabel])
         
         buttonStackView.spacing = 12
+        elementaryButton.borderColor = .gray200
+        elementaryButton.borderWidth = 1
+        middleButton.borderColor = .gray200
+        middleButton.borderWidth = 1
+        highButton.borderColor = .gray200
+        highButton.borderWidth = 1
         buttonStackView.addArrangedSubViews([elementaryButton, middleButton, highButton])
         
-        view.addSubViews([backgoundImageView, titleStackView, buttonStackView, teacherButton])
+        view.addSubViews([backgoundImageView, mainImageView, titleStackView, buttonStackView, teacherButton])
         
         backgoundImageView.snp.makeConstraints {
+            $0.directionalEdges.equalToSuperview()
+        }
+        
+        mainImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview().dividedBy(1.3)
             $0.directionalHorizontalEdges.equalToSuperview()
         }
@@ -118,5 +136,12 @@ final class SelectGroupViewController: BaseViewController {
             .sink { [weak self] _ in
                 self?.viewModel.setUserType(.high)
             }.store(in: &cancellables)
+        
+        teacherButton.tapPublisher
+            .sink { [weak self] _ in
+                let vc = LoginBottomSheetController()
+                self?.presentBottomSheet(vc)
+            }
+            .store(in: &cancellables)
     }
 }
