@@ -93,14 +93,19 @@ final class SignUpViewModel {
     func requestSignUp() {
         state = .loading
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] (authresult, error) in
+            guard let self else { return }
             if let error {
-                self?.state = .error(error.localizedDescription)
+                self.state = .error(error.localizedDescription)
                 return
             }
             if let user = authresult?.user {
                 // user 데이터 등록
             }
-            self?.state = .signUpSuccessed
+            if let school = self.school {
+                // TODO: - 학년 반 데이터도 넣기
+                Preferences.userInfo = .init(name: self.name, school: school, grade: 1, classNum: 2, studentNum: nil)
+            }
+            self.state = .signUpSuccessed
         }
     }
     

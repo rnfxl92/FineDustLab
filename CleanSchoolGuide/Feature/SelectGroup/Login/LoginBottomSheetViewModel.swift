@@ -35,7 +35,6 @@ final class LoginBottomSheetViewModel {
                 Preferences.userToken = user.uid
                 self?.state = .loginSuccessed
             } else {
-                print(error?.localizedDescription)
                 self?.state = .loginFailed
             }
         }
