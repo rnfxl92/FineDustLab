@@ -35,6 +35,7 @@ final class SettingsViewController: BaseViewController {
     private var cancellable = Set<AnyCancellable>()
     
     override func setUserInterface() {
+        hideKeyboardWhenTappedAround()
         tableView.delegate = self
         tableView.dataSource = self
         

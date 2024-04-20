@@ -97,6 +97,14 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
         stackView.spacing = 12
         return stackView
     }()
+    private let signUpButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.titleLabel?.font = .systemFont(ofSize: 14)
+        button.setTitle("회원가입", for: .normal)
+        button.setTitleColor(.gray700, for: .normal)
+        
+        return button
+    }()
     private let findEmailButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = .systemFont(ofSize: 14)
@@ -105,7 +113,6 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
         
         return button
     }()
-    
     private let resetPasswordButton: UIButton = {
         let button = UIButton(type: .custom)
         button.titleLabel?.font = .systemFont(ofSize: 14)
@@ -114,7 +121,13 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
         
         return button
     }()
-    private let divider: UIView = {
+    private let divider1: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray400
+        
+        return view
+    }()
+    private let divider2: UIView = {
         let view = UIView()
         view.backgroundColor = .gray400
         
@@ -131,6 +144,7 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
     private let viewModel = LoginBottomSheetViewModel()
     
     override func setUserInterface() {
+        hideKeyboardWhenTappedAround()
         view.backgroundColor = .gray0
         titleStackView.addArrangedSubViews([titleLabel, decriptionLabel])
         
@@ -143,10 +157,14 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
             $0.centerY.equalToSuperview()
             $0.directionalHorizontalEdges.equalToSuperview().inset(16)
         }
-        buttonStackView.addArrangedSubViews([findEmailButton, divider, resetPasswordButton])
+        buttonStackView.addArrangedSubViews([signUpButton, divider1, findEmailButton, divider2, resetPasswordButton])
         
-        divider.snp.makeConstraints {
-            $0.width.equalTo(2)
+        divider1.snp.makeConstraints {
+            $0.width.equalTo(1)
+            $0.height.equalTo(14)
+        }
+        divider2.snp.makeConstraints {
+            $0.width.equalTo(1)
             $0.height.equalTo(14)
         }
         
@@ -234,6 +252,14 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
                       let email = emailTextField.text,
                       let password = passwordTextField.text else { return }
                 self.viewModel.requestLogin(email: email, password: password)
+            }
+            .store(in: &cancellable)
+        
+        signUpButton.tapPublisher
+            .sink { [weak self] in
+                self?.dismiss(animated: true) {
+                    AppRouter.shared.route(to: .signUp)
+                }
             }
             .store(in: &cancellable)
     }

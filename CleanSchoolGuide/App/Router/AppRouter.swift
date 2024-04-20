@@ -16,6 +16,7 @@ public final class AppRouter: Router {
         case splash
         case home
         case login
+        case signUp
         case selectGroup
         case setting
         case manualList
@@ -52,8 +53,8 @@ public final class AppRouter: Router {
             nav.setRoot(for: presenter)
         case .selectGroup:
             let vc = SelectGroupViewController()
-            
-            vc.setRoot(for: presenter)
+            let nav = UINavigationController(rootViewController: vc)
+            nav.setRoot(for: presenter)
         case .surveyStart:
             let vc = SurveyStartViewController()
             
@@ -64,6 +65,9 @@ public final class AppRouter: Router {
             presenter?.push(vc, animated: true)
         case .login:
             break
+        case .signUp:
+            let vc = SignUpViewController()
+            presenter?.push(vc, animated: true)
         case .manualList:
             let vc = ManualListViewController()
             

@@ -34,7 +34,7 @@ final class LargeFilledButton: UIButton {
         setBackgroundColor(color: defaultColor, forState: .normal)
         setBackgroundColor(color: disabledColor, forState: .disabled)
         setTitleColor(defaultTitleColor, for: .normal)
-        setTitleColor(disabledColor, for: .disabled)
+        setTitleColor(disabledTitleColor, for: .disabled)
         
         layer.cornerRadius = 16
         layer.masksToBounds = true

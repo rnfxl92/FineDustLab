@@ -33,7 +33,7 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
-        
+        textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
     
@@ -64,6 +64,7 @@ final class SchoolSearchBottomSheetController: BaseViewController, BottomSheetPr
     }
     
     override func setUserInterface() {
+        hideKeyboardWhenTappedAround()
         searchTextField.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
