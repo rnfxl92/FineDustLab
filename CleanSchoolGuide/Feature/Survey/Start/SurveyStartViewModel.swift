@@ -79,7 +79,7 @@ final class SurveyStartViewModel {
     }
     
     func saveUserData() {
-        guard let name, name.isNotEmpty, let school, let grade, let classNumber, let studentNumber else {
+        guard let name, name.isNotEmpty, let school, let grade, let classNumber else {
             state = .userDataSaved(false)
             return
         }

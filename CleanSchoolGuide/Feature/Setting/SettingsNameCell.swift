@@ -9,6 +9,10 @@ import UIKit
 import CombineCocoa
 import Combine
 
+protocol SettingsNameCellDelegate: AnyObject {
+    func nameUpdated(_ name: String)
+}
+
 final class SettingsNameCell: UITableViewCell {
     
     private let stackView: UIStackView = {
@@ -42,13 +46,13 @@ final class SettingsNameCell: UITableViewCell {
         textField.attributedPlaceholder = NSAttributedString(string: "이름을 입력해주세요", attributes: [.foregroundColor: UIColor.gray500])
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
-        if let name = Preferences.userInfo?.name {
-            textField.text = name
-        }
         
         textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
+    
+    weak var delegate: SettingsNameCellDelegate?
+    private var cancellable = Set<AnyCancellable>()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -79,10 +83,19 @@ final class SettingsNameCell: UITableViewCell {
             $0.top.directionalHorizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(32)
         }
+        
+        nameTextField.textPublisher
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sink { [weak self] text in
+                guard let text, text.isNotEmpty else { return }
+                self?.delegate?.nameUpdated(text)
+            }
+            .store(in: &cancellable)
+        
     }
     
-    func getName() -> String? {
-        return nameTextField.text
+    func setName(_ name: String?) {
+        nameTextField.text = name
     }
 }
 

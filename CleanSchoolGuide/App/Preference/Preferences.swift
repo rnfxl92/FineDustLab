@@ -45,4 +45,15 @@ public struct Preferences {
     
     @UserDefaultsWrapper(key: PreferencesKey.fineData, defaultValue: nil)
     static var fineData: SelectedFineData?
+    
+    static func clearUserDefault() {
+        Preferences.selectedUserType = nil
+        Preferences.userInfo = nil
+        Preferences.surveyCompletedDates = []
+        Preferences.surveyData = nil
+        Preferences.userToken = nil
+        Preferences.surveyTemp = []
+        Preferences.ultraFineData = nil
+        Preferences.fineData = nil
+    }
 }

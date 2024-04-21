@@ -11,6 +11,9 @@ import Combine
 
 protocol SettingsSchoolInfoCellDelegate: AnyObject {
     func schoolChangeButtonTapped()
+    func gradeUpdated(_ grade: Int)
+    func classNumUpdated(_ classNum: Int)
+    func studentNumUpdated(_ studentNum: Int)
 }
 
 final class SettingsSchoolInfoCell: UITableViewCell {
@@ -46,7 +49,6 @@ final class SettingsSchoolInfoCell: UITableViewCell {
         label.textColor = .gray900
         label.font = .systemFont(ofSize: 16, weight: .regular)
         label.textAlignment = .left
-        label.text = Preferences.userInfo?.school.schulNm
         
         return label
     }()
@@ -88,9 +90,7 @@ final class SettingsSchoolInfoCell: UITableViewCell {
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        if let grade = Preferences.userInfo?.grade {
-            textField.text = String(grade)
-        }
+        
         textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
@@ -115,9 +115,6 @@ final class SettingsSchoolInfoCell: UITableViewCell {
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        if let classNum = Preferences.userInfo?.classNum {
-            textField.text = String(classNum)
-        }
         textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
@@ -143,9 +140,6 @@ final class SettingsSchoolInfoCell: UITableViewCell {
         textField.autocorrectionType = .no
         textField.keyboardType = .numberPad
         textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        if let studentNum = Preferences.userInfo?.studentNum {
-            textField.text = String(studentNum)
-        }
         textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
@@ -243,10 +237,54 @@ final class SettingsSchoolInfoCell: UITableViewCell {
             }
             .store(in: &cancellable)
         
+        gradeTextField.textPublisher
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sink { [weak self] text in
+                if let text, let grade = Int(text) {
+                    self?.delegate?.gradeUpdated(grade)
+                }
+            }
+            .store(in: &cancellable)
+        
+        classTextField.textPublisher
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sink { [weak self] text in
+                if let text, let classNum = Int(text) {
+                    self?.delegate?.classNumUpdated(classNum)
+                }
+            }
+            .store(in: &cancellable)
+        
+        numberTextField.textPublisher
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+            .sink { [weak self] text in
+                if let text, let studentNum = Int(text) {
+                    self?.delegate?.studentNumUpdated(studentNum)
+                }
+            }
+            .store(in: &cancellable)
     }
     
-    func setSchool(_ school: SchoolModel) {
-        schoolLabel.text = school.schulNm
+    func setSchool(_ school: SchoolModel?) {
+        schoolLabel.text = school?.schulNm
+    }
+    
+    func setGrade(_ grade: Int?) {
+        if let grade {
+            gradeTextField.text = "\(grade)"
+        }
+    }
+    
+    func setClassNum(_ classNum: Int?) {
+        if let classNum {
+            classTextField.text = "\(classNum)"
+        }
+    }
+    
+    func setStudentNum(_ studentNum: Int?) {
+        if let studentNum {
+            numberTextField.text = "\(studentNum)"
+        }
     }
     
     func getSchoolInfo() -> (grade: Int?, classNum: Int?, studentNum: Int?)  {

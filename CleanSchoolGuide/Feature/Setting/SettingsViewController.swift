@@ -65,7 +65,26 @@ final class SettingsViewController: BaseViewController {
         saveButton.tapPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                self?.pop(animated: true)
+                self?.viewModel.saveButtonTapped()
+            }
+            .store(in: &cancellable)
+        viewModel.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                switch state {
+                case .saveFailed:
+                    let vc = PopupViewController(type: .single, description: "정보 저장에 실패하였습니다.\n정보를 모두 입력해주세요", defualtTitle: "확인")
+                    vc.modalTransitionStyle = .crossDissolve
+                    vc.modalPresentationStyle = .overFullScreen
+                    self?.present(vc: vc, animated: true)
+                case .saveSuccess:
+                    let vc = PopupViewController(type: .single, description: "정보가 저장되었습니다.", defualtTitle: "확인")
+                    vc.modalTransitionStyle = .crossDissolve
+                    vc.modalPresentationStyle = .overFullScreen
+                    self?.present(vc: vc, animated: true)
+                default:
+                    break
+                }
             }
             .store(in: &cancellable)
     }
@@ -85,10 +104,16 @@ extension SettingsViewController: UITableViewDataSource {
             return cell
         case .schoolInfo:
             let cell: SettingsSchoolInfoCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.setSchool(viewModel.school)
+            cell.setGrade(viewModel.grade)
+            cell.setClassNum(viewModel.classNum)
+            cell.setStudentNum(viewModel.studentNum)
             cell.delegate = self
             return cell
         case .name:
             let cell: SettingsNameCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.delegate = self
+            cell.setName(viewModel.name)
             return cell
         case .inquiry:
             let cell: SettingsInquiryCell = tableView.dequeueReusableCell(for: indexPath)
@@ -98,8 +123,6 @@ extension SettingsViewController: UITableViewDataSource {
             return cell
         }
     }
-    
-    
 }
 
 extension SettingsViewController: UITableViewDelegate {
@@ -108,22 +131,47 @@ extension SettingsViewController: UITableViewDelegate {
 
 extension SettingsViewController: SettingsGroupCellDelegate {
     func changeButtonTapped() {
-//    
-//        let vc = PopupViewController(type: .dual, description: errorStr, defualtTitle: "확인")
+    
+        let vc = PopupViewController(type: .dual, description: "학습자를 다시 선택하면\n저장된 정보가 사라집니다.", defualtTitle: "다시 선택", cancelTitle: "취소") {
+            Preferences.clearUserDefault()
+            AppRouter.shared.route(to: .selectGroup)
+        }
         
-        Preferences.selectedUserType = nil
-        Preferences.userInfo = nil
-        AppRouter.shared.route(to: .selectGroup)
+        vc.modalTransitionStyle = .crossDissolve
+        vc.modalPresentationStyle = .overFullScreen
+        present(vc: vc, animated: true)
     }
 }
 
 extension SettingsViewController: SettingsSchoolInfoCellDelegate {
+    func gradeUpdated(_ grade: Int) {
+        viewModel.setGrade(grade)
+    }
+    
+    func classNumUpdated(_ classNum: Int) {
+        viewModel.setClassNum(classNum)
+    }
+    
+    func studentNumUpdated(_ studentNum: Int) {
+        viewModel.setStudentNum(studentNum)
+    }
+    
     func schoolChangeButtonTapped() {
         let vc = SchoolSearchBottomSheetController { [weak self] school in
-            // TODO: school update
+            guard let self else { return }
+            self.viewModel.setSchool(school)
+            
+            if let cell = self.tableView.cellForRow(at: IndexPath(item: SettingsViewModel.Items.schoolInfo.rawValue, section: 0)) as? SettingsSchoolInfoCell {
+                cell.setSchool(school)
+            }
         }
         
         presentBottomSheet(vc)
-        
+    }
+}
+
+extension SettingsViewController: SettingsNameCellDelegate {
+    func nameUpdated(_ name: String) {
+        viewModel.setName(name)
     }
 }

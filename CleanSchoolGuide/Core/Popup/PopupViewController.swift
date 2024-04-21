@@ -57,6 +57,7 @@ final class PopupViewController: BaseViewController {
     private let buttonStackView: UIStackView = {
         let stackView = UIStackView(axis: .horizontal)
         stackView.spacing = 10
+        stackView.distribution = .fillEqually
         
         return stackView
     }()
