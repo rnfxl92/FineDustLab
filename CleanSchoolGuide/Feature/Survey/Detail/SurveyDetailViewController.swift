@@ -60,6 +60,7 @@ final class SurveyDetailViewController: BaseViewController {
     }
     
     override func setUserInterface() {
+        hideKeyboardWhenTappedAround()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(SurveySubQuestionOXCell.self)
@@ -127,6 +128,7 @@ final class SurveyDetailViewController: BaseViewController {
                 switch state {
                 case .postAnswerSuccess:
                     if self.viewModel.isEnd {
+                        Preferences.surveyCompletedDates.append(Date())
                         AppRouter.shared.route(to: .home)
                     } else {
                         AppRouter.shared.route(to: .surveyDetail(currentIndex: viewModel.currentIndex + 1))
@@ -193,14 +195,11 @@ extension SurveyDetailViewController: SurveySubQuestionNumberPickerCellDelegate 
     func numberPicked(subQuestionId: Int, answer: String) {
         viewModel.answered(subQuestionId: subQuestionId, answer: answer)
     }
-    
 }
 
 extension SurveyDetailViewController: SurveySubQuestionCheckboxCellDelegate {
     func checkboxTapped(subQuestionId: Int, answer: String) {
         viewModel.answered(subQuestionId: subQuestionId, answer: answer)
     }
-    
-    
 }
                                             

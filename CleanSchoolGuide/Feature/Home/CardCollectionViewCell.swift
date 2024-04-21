@@ -39,6 +39,16 @@ final class CardCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        
+        label.font = .systemFont(ofSize: 14, weight: .regular)
+        label.textAlignment = .center
+        label.textColor = .gray0
+        label.text = "오늘은 쉬어 갈께요"
+        return label
+    }()
+    
     private let startButton = SmallFilledButton(title: "설문 시작하기", font: .systemFont(ofSize: 14, weight: .medium))
     
     weak var delegate: CardCollectionViewCellDelegate?
@@ -55,7 +65,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
     }
 
     private func setupUI() {
-        mainView.addSubViews([dateLabel, imageView, dayLabel, startButton])
+        mainView.addSubViews([dateLabel, imageView, dayLabel, startButton, descriptionLabel])
         
         dateLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
@@ -78,6 +88,11 @@ final class CardCollectionViewCell: UICollectionViewCell {
             $0.bottom.equalToSuperview().inset(12)
         }
         
+        descriptionLabel.snp.makeConstraints {
+            $0.center.equalTo(startButton.snp.center)
+        }
+        
+        descriptionLabel.isHidden = true
         mainView.backgroundColor = .gray200
         contentView.addSubview(mainView)
         mainView.layer.cornerRadius = 18
@@ -90,35 +105,81 @@ final class CardCollectionViewCell: UICollectionViewCell {
     
     func setUIModel(_ model: CardUIModel) {
         dateLabel.text = model.date.toString(dateFormat: .Md)
-        
         dayLabel.isHidden = model.isSuveyed || model.isHoliday
         dayLabel.text = model.date.toString(dateFormat: .E)
+        
         if model.isToday {
             dateLabel.textColor = .gray0
             dayLabel.textColor = .gray0
             startButton.setBackgroundColor(color: .blue400, forState: .normal)
             mainView.backgroundColor = .blue300
             if model.isSuveyed {
-                imageView.image = UIImage.mainCharacter
+                startButton.isHidden = false
+                descriptionLabel.isHidden = true
+                imageView.image = UIImage.character02
+                startButton.setTitle("설문 완료!", for: .disabled)
+                startButton.setBackgroundColor(color: .blue400.withAlphaComponent(0.2), forState: .disabled)
+                startButton.isEnabled = false
+            } else if model.isHoliday {
+                descriptionLabel.isHidden = false
+                startButton.isHidden = true
+                imageView.image = UIImage.characterHoliday
             } else {
+                dayLabel.isHidden = false
                 imageView.image = UIImage.cloud
                 mainView.bringSubviewToFront(dayLabel)
+                startButton.isHidden = false
+                descriptionLabel.isHidden = true
+                startButton.isEnabled = true
+            }
+        } else if Date.now > model.date { // 이전일
+            dateLabel.textColor = .gray500
+            dayLabel.isHidden = true
+            startButton.isEnabled = false
+           
+            if model.isSuveyed || model.isHoliday {
+                if model.isHoliday {
+                    imageView.image = UIImage.characterHoliday
+                    startButton.isHidden = true
+                    descriptionLabel.isHidden = false
+                } else { // 설문하고 오늘이 아닌경우
+                    imageView.image = UIImage.character01
+                    startButton.isHidden = false
+                    descriptionLabel.isHidden = true
+                    startButton.setTitle("설문 완료!", for: .disabled)
+                    startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .disabled)
+                }
+                mainView.backgroundColor = .green300
+            } else {
+                imageView.image = UIImage.character05
+                mainView.backgroundColor = .gray200
+                startButton.isHidden = false
+                descriptionLabel.isHidden = true
+                startButton.setTitle("설문지 작성 실패!", for: .disabled)
+                startButton.setBackgroundColor(color: .gray300, forState: .disabled)
             }
         } else {
             dateLabel.textColor = .gray500
             dayLabel.textColor = .gray500
             startButton.isEnabled = false
-            startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .disabled)
-            startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .normal)
-            startButton.setBackgroundColor(color: .green400.withAlphaComponent(0.2), forState: .highlighted)
-            if model.isSuveyed {
-                imageView.image = UIImage.mainCharacter
-                mainView.backgroundColor = .green300
+            dayLabel.isHidden = false
+           
+            if model.isSuveyed || model.isHoliday {
+                if model.isHoliday {
+                    dayLabel.isHidden = true
+                    imageView.image = UIImage.characterHoliday
+                    startButton.isHidden = true
+                    descriptionLabel.isHidden = false
+                }
             } else {
-                imageView.image = UIImage.failCharacter
+                imageView.image = UIImage.cloud
                 mainView.backgroundColor = .gray200
+                startButton.isHidden = false
+                descriptionLabel.isHidden = true
+                startButton.setTitle("설문시작하기", for: .disabled)
+                startButton.setBackgroundColor(color: .gray300, forState: .disabled)
             }
-        } 
+        }
     }
     
     private func bind() {

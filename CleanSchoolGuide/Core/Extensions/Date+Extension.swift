@@ -223,7 +223,7 @@ extension Date {
         }
         
         // 이번 주 월요일부터 금요일까지의 날짜를 계산하여 배열에 추가합니다.
-        for dayOffset in 1..<6 {
+        for dayOffset in 0..<6 {
             if let weekday = calendar.date(byAdding: .day, value: dayOffset, to: sundayThisWeek) {
                 dates.append(weekday)
             }
@@ -250,6 +250,12 @@ extension Date {
         
         // 년도와 주가 모두 일치하는지 확인합니다.
         return currentYear == compareYear && currentWeek == compareWeek
+    }
+    
+    static func isWeekend(_ date: Date) -> Bool {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: date)
+        return weekday == 1 || weekday == 7
     }
 }
 
