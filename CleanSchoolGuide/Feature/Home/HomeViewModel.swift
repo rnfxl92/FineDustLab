@@ -28,7 +28,7 @@ final class HomeViewModel: NSObject {
     var isChecked: Bool = false
     
     var dataSource: [CardCollectionViewCell.CardUIModel] {
-        let dates = Date.getWeekdaysAndNextMonday()
+        let dates = Date.get3days()
         var models: [CardCollectionViewCell.CardUIModel] = []
         let surveyedDates = Preferences.surveyCompletedDates
         

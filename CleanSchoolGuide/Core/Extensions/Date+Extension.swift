@@ -212,6 +212,21 @@ extension Date {
         }
     }
     
+    static func get3days() -> [Date] {
+        var dates: [Date] = []
+        let calendar = Calendar.current
+        
+        if let yesterday = calendar.date(byAdding: .day, value: -1, to: Date.now) {
+            dates.append(yesterday)
+        }
+        dates.append(Date.now)
+        if let tomarrow =
+            calendar.date(byAdding: .day, value: 1, to: Date.now) {
+            dates.append(tomarrow)
+        }
+        return dates
+    }
+    
     static func getWeekdaysAndNextMonday() -> [Date] {
         var dates: [Date] = []
         let calendar = Calendar.current

@@ -105,7 +105,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
     
     func setUIModel(_ model: CardUIModel) {
         dateLabel.text = model.date.toString(dateFormat: .Md)
-        dayLabel.isHidden = model.isSuveyed || model.isHoliday
+        dayLabel.isHidden = model.isSuveyed || model.isDayOff
         dayLabel.text = model.date.toString(dateFormat: .E)
         
         if model.isToday {
@@ -120,7 +120,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 startButton.setTitle("설문 완료!", for: .disabled)
                 startButton.setBackgroundColor(color: .blue400.withAlphaComponent(0.2), forState: .disabled)
                 startButton.isEnabled = false
-            } else if model.isHoliday {
+            } else if model.isDayOff {
                 descriptionLabel.isHidden = false
                 startButton.isHidden = true
                 imageView.image = UIImage.characterHoliday
@@ -133,12 +133,12 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 startButton.isEnabled = true
             }
         } else if Date.now > model.date { // 이전일
-            dateLabel.textColor = .gray500
             dayLabel.isHidden = true
             startButton.isEnabled = false
            
-            if model.isSuveyed || model.isHoliday {
-                if model.isHoliday {
+            if model.isSuveyed || model.isDayOff {
+                dateLabel.textColor = .gray0
+                if model.isDayOff {
                     imageView.image = UIImage.characterHoliday
                     startButton.isHidden = true
                     descriptionLabel.isHidden = false
@@ -151,11 +151,12 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 }
                 mainView.backgroundColor = .green300
             } else {
+                dateLabel.textColor = .gray500
                 imageView.image = UIImage.character05
                 mainView.backgroundColor = .gray200
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
-                startButton.setTitle("설문지 작성 실패!", for: .disabled)
+                startButton.setTitle("설문 작성을 못했어요", for: .disabled)
                 startButton.setBackgroundColor(color: .gray300, forState: .disabled)
             }
         } else {
@@ -164,8 +165,8 @@ final class CardCollectionViewCell: UICollectionViewCell {
             startButton.isEnabled = false
             dayLabel.isHidden = false
            
-            if model.isSuveyed || model.isHoliday {
-                if model.isHoliday {
+            if model.isSuveyed || model.isDayOff {
+                if model.isDayOff {
                     dayLabel.isHidden = true
                     imageView.image = UIImage.characterHoliday
                     startButton.isHidden = true
@@ -202,6 +203,9 @@ extension CardCollectionViewCell {
         
         var isToday: Bool {
             date.isToday
+        }
+        var isDayOff: Bool {
+            isHoliday || Date.isWeekend(date)
         }
     }
 }
