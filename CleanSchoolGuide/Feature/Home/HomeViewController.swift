@@ -12,14 +12,7 @@ import Combine
 final class HomeViewController: BaseViewController {
     
     private let searchStackView = UIStackView(axis: .horizontal)
-    
-    private let searchBar: CSGSearchBar = {
-        let searchBar = CSGSearchBar()
-        searchBar.setPlaceHolderText("미세먼지에 대해 검색해 보세요")
-        
-        return searchBar
-    }()
-    
+    private let searchBar = TopSearchTextFieldView()
     private let settingButtonView: UIView = {
         
         let view = UIView()
@@ -287,6 +280,7 @@ final class HomeViewController: BaseViewController {
     }
     
     override func setUserInterface() {
+        hideKeyboardWhenTappedAround()
         searchStackView.addArrangedSubViews([searchBar, settingButtonView])
         searchStackView.spacing = 8
         searchBar.snp.makeConstraints {
@@ -581,7 +575,19 @@ final class HomeViewController: BaseViewController {
                 }
             }
             .store(in: &cancellable)
-            
+        
+        searchBar
+            .searchButtonTapPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self else { return }
+                if self.viewModel.checkPdf(self.searchBar.searchText) {
+                    AppRouter.shared.route(to: .manualDetail(title: "미세먼지 매뉴얼", fileName: Preferences.selectedUserType?.rawValue ?? "", searchWords: self.searchBar.searchText))
+                } else {
+                    CSGToast.show("'\(self.searchBar.searchText)' 검색자료가 없습니다.", view: UIApplication.shared.keyWindows?.last ?? view)
+                }
+            }
+            .store(in: &cancellable)
     }
 }
 

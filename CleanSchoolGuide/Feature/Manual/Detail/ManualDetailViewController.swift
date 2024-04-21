@@ -208,6 +208,13 @@ final class ManualDetailViewController: BaseViewController {
         }
         searchedWordsView.isHidden = true
         searchContainerView.isHidden = true
+        
+        if searchWords.isNotNilOrEmpty {
+            searchedWordsView.isHidden = false
+            searchContainerView.isHidden = false
+            searchTextField.text = searchWords
+            searchForText(searchWords ?? "")
+        }
     }
     
     override func bind() {

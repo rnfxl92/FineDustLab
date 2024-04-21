@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import PDFKit
 
 final class HomeViewModel: NSObject {
     struct Input {
@@ -193,5 +194,15 @@ final class HomeViewModel: NSObject {
                 self?.state = .fineDustPosted
             }
             .store(in: &cancellable)
+    }
+    
+    func checkPdf(_ searchWord: String) -> Bool {
+        let fileName: String = Preferences.selectedUserType?.rawValue ?? ""
+        
+        guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "pdf"),  let document = PDFDocument(url: fileURL) else { return false }
+            
+        let searchSelections = document.findString(searchWord, withOptions: .caseInsensitive)
+        
+        return searchSelections.isNotEmpty
     }
 }
