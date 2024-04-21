@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 import CombineCocoa
+import SnapKit
 
 final class LoginBottomSheetController: BaseViewController, BottomSheetPresentable {
     
@@ -26,23 +27,9 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
         return label
     }()
     
-    private let decriptionLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .gray500
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textAlignment = .center
-        
-        let str = "회원가입 후 만드신 이메일로 로그인해 주세요.".underlined(string: "회원가입")
-        label.attributedText = str.addAttributes(
-            "회원가입 후 만드신 이메일로 로그인해 주세요.",
-            attributes: [.foregroundColor: UIColor.gray500]
-        )
-        return label
-    }()
-    
     private let emailStackView: UIStackView = {
         let stacView = UIStackView(axis: .vertical)
-        stacView.spacing = 8
+        stacView.spacing = 12
         return stacView
     }()
     private let emailBackground: UIView = {
@@ -99,9 +86,9 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
     }()
     private let signUpButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.titleLabel?.font = .systemFont(ofSize: 14)
+        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .bold)
         button.setTitle("회원가입", for: .normal)
-        button.setTitleColor(.gray700, for: .normal)
+        button.setTitleColor(.blue300, for: .normal)
         
         return button
     }()
@@ -142,11 +129,23 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
     
     private var cancellable = Set<AnyCancellable>()
     private let viewModel = LoginBottomSheetViewModel()
+    private var contentBottomConstraint: Constraint?
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+    }
     
     override func setUserInterface() {
         hideKeyboardWhenTappedAround()
         view.backgroundColor = .gray0
-        titleStackView.addArrangedSubViews([titleLabel, decriptionLabel])
+        titleStackView.addArrangedSubViews([titleLabel])
         
         emailStackView.addArrangedSubViews([emailBackground, warningLabel])
         emailBackground.snp.makeConstraints {
@@ -171,11 +170,11 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
         view.addSubViews([titleStackView, emailStackView, passwordBackground, buttonStackView, logInButton])
         
         titleStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(36)
+            $0.top.equalToSuperview().inset(24)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         emailStackView.snp.makeConstraints {
-            $0.top.equalTo(titleStackView.snp.bottom).offset(36)
+            $0.top.equalTo(titleStackView.snp.bottom).offset(24)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         passwordBackground.addSubview(passwordTextField)
@@ -189,13 +188,13 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
             $0.directionalHorizontalEdges.equalToSuperview().inset(16)
         }
         buttonStackView.snp.makeConstraints {
-            $0.top.equalTo(passwordBackground.snp.bottom).offset(24)
+            $0.top.equalTo(passwordBackground.snp.bottom).offset(60)
             $0.centerX.equalToSuperview()
         }
-        logInButton.snp.makeConstraints {
-            $0.top.equalTo(buttonStackView.snp.bottom)
-            $0.directionalHorizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
+        logInButton.snp.makeConstraints { make in
+            make.top.equalTo(buttonStackView.snp.bottom)
+            make.directionalHorizontalEdges.equalToSuperview().inset(16)
+            contentBottomConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide).inset(16).constraint
         }
         
         warningLabel.isHidden = true
@@ -204,7 +203,7 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
     
     override func bind() {
         emailTextField.textPublisher
-            .debounce(for: 1, scheduler: DispatchQueue.main)
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { [weak self] text in
                 guard let self, let text else { return }
                 if text.isEmpty {
@@ -214,11 +213,16 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
                 
                 self.warningLabel.isHidden = text.validateRegex(with: emailRegex)
                 self.checkLogin()
+                DispatchQueue.main.async {
+                    UIView.animate(withDuration: 0.1) {
+                        self.view.layoutIfNeeded()
+                    }
+                }
             }
             .store(in: &cancellable)
         
         passwordTextField.textPublisher
-            .debounce(for: 1, scheduler:  DispatchQueue.main)
+            .debounce(for: 0.5, scheduler:  DispatchQueue.main)
             .sink { [weak self] text in
                 guard let self, let text else { return }
                 self.checkLogin()
@@ -276,5 +280,23 @@ extension LoginBottomSheetController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if !string.isEmpty && !string.validateRegex(with: emailCharRegex) { return false }
         return true
+    }
+}
+
+extension LoginBottomSheetController {
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            contentBottomConstraint?.update(inset: (keyboardSize.height * 2 / 3) - view.safeAreaInsets.bottom)
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        contentBottomConstraint?.update(inset: 16)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 }

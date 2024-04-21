@@ -8,13 +8,20 @@
 import UIKit
 import CombineCocoa
 import Combine
+import SnapKit
 
 final class SurveyStartViewController: BaseViewController {
     private let navigationBar = CustomNavigationBar()
     private let backButton = CustomNavigationButton(.back)
+    
+    private let backgroundColorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .blue100
+        return view
+    }()
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView(image: .imgSurvey)
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     private let titleStackView: UIStackView = {
@@ -192,6 +199,7 @@ final class SurveyStartViewController: BaseViewController {
     
     private let viewModel = SurveyStartViewModel()
     private var cancellable = Set<AnyCancellable>()
+    private var contentBottomConstraint: Constraint?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -200,8 +208,19 @@ final class SurveyStartViewController: BaseViewController {
         viewModel.getUserInfo()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func setUserInterface() {
-        
+        hideKeyboardWhenTappedAround()
         navigationBar.setNavigation(leftItems: [backButton])
         titleStackView.addArrangedSubViews([titleLabel, descriptionLabel])
         let schoolTapGesture = UITapGestureRecognizer(target: self, action: #selector(showSchoolSearchBottomSheet))
@@ -214,8 +233,9 @@ final class SurveyStartViewController: BaseViewController {
         termsAgreeView.addGestureRecognizer(agreeTapGesture)
         startButton.isEnabled = false
         
+        backgroundColorView.addSubview(backgroundImageView)
         view.backgroundColor = .gray0
-        view.addSubViews([navigationBar, backgroundImageView, titleStackView, textFieldStackView, termsAgreeView, startButton])
+        view.addSubViews([backgroundColorView, navigationBar, titleStackView, textFieldStackView, termsAgreeView, startButton])
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.directionalHorizontalEdges.equalToSuperview()
@@ -225,13 +245,18 @@ final class SurveyStartViewController: BaseViewController {
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         
+        backgroundColorView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.directionalHorizontalEdges.equalToSuperview()
+            $0.height.equalToSuperview().dividedBy(1.9)
+        }
         backgroundImageView.snp.makeConstraints {
             $0.directionalHorizontalEdges.equalToSuperview()
-            $0.centerY.equalToSuperview().dividedBy(1.2)
+            $0.bottom.equalToSuperview()
         }
         
         startButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
+            contentBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16).constraint
             $0.directionalHorizontalEdges.equalToSuperview().inset(16)
         }
         
@@ -415,5 +440,23 @@ extension SurveyStartViewController: UITextFieldDelegate {
             return CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string)) && updatedText.count <= 1
         }
         return CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string)) && updatedText.count <= 2
+    }
+}
+
+extension SurveyStartViewController {
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            contentBottomConstraint?.update(inset: (keyboardSize.height * 1 / 3) - view.safeAreaInsets.bottom)
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        contentBottomConstraint?.update(inset: 16)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 }

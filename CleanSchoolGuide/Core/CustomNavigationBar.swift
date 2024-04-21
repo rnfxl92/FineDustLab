@@ -78,7 +78,7 @@ extension CustomNavigationBar {
                        bottomLineColor: UIColor = .gray100) {
         self.prefersLargeTitles = prefersLargeTitles
         self.titleAlwaysVisible = titleAlwaysVisible
-        contentView.backgroundColor = backgroundColor
+        contentView.backgroundColor = .clear
         bottomLine.backgroundColor = bottomLineColor
         
         stackView.addArrangedSubViews(leftItems)

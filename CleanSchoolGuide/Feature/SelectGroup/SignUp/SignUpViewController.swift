@@ -78,6 +78,13 @@ final class SignUpViewController: BaseViewController {
                 }
             }
             .store(in: &cancellable)
+        
+        backButton.tapPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.pop(animated: true)
+            }
+            .store(in: &cancellable)
     }
     private func updateSignAble() {
         if let cell = tableView.cellForRow(at: IndexPath(item: SignUpViewModel.Items.signUpButton.rawValue, section: 0)) as? SignUpButtonCell {
