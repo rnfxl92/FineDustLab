@@ -62,6 +62,8 @@ final class SplashViewController: BaseViewController {
     override func viewDidLoad() {
          super.viewDidLoad()
         
+        checkDatas()
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             self?.completion?()
         }
@@ -89,6 +91,20 @@ final class SplashViewController: BaseViewController {
         bottomStackView.snp.makeConstraints {
             $0.directionalHorizontalEdges.equalToSuperview().inset(30)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(30)
+        }
+    }
+    
+    private func checkDatas() {
+        if let fine = Preferences.fineData {
+            if !fine.time.isToday {
+                Preferences.fineData = nil
+            }
+        }
+        
+        if let fine = Preferences.ultraFineData {
+            if !fine.time.isToday {
+                Preferences.ultraFineData = nil
+            }
         }
     }
 }

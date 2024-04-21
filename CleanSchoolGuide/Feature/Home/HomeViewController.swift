@@ -43,7 +43,7 @@ final class HomeViewController: BaseViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = .gray900
-        label.text = "오늘도 청소했다면?"
+        label.text = Preferences.selectedUserType == .teacher ? "오늘의 미세먼지 정보": "오늘도 청소했다면?"
         label.textAlignment = .left
         return label
     }()
@@ -53,7 +53,7 @@ final class HomeViewController: BaseViewController {
         label.font = .systemFont(ofSize: 16)
         label.textColor = .gray700
         label.numberOfLines = 2
-        label.text = "설문조사를 완료해 주세요!"
+        label.text = Preferences.selectedUserType == .teacher ? "등록된 정보는 학생들에게 공유됩니다." : "설문조사를 완료해 주세요!"
         label.textAlignment = .left
         return label
     }()
@@ -73,6 +73,32 @@ final class HomeViewController: BaseViewController {
         
         return collectionView
     }()
+    
+    private lazy var ultraFineDustView = HomeFineDustView(type: .ultraFineDust, selectedIndex: Preferences.ultraFineData?.selectedIndex)
+    private lazy var fineDustView = HomeFineDustView(type: .fineDust, selectedIndex: Preferences.fineData?.selectedIndex)
+    
+    private let surveyButtonView: UIView = {
+        let view = UIView()
+        
+        view.layer.cornerRadius = 14
+        view.backgroundColor = .blue300
+        view.isUserInteractionEnabled = true
+        
+        return view
+    }()
+    private let surveyTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .gray0
+        label.textAlignment = .left
+        let str1 = "🪠 청소 후 점검 설문조사"
+        let highlighted = "설문조사"
+        
+        label.attributedText = str1.emphasized(.systemFont(ofSize: 16, weight: .bold), string: highlighted)
+        
+        return label
+    }()
+    private let surveyImageView: UIImageView = UIImageView(image: .chevronRight)
     
     private let manualButtonView: UIView = {
         let view = UIView()
@@ -243,6 +269,8 @@ final class HomeViewController: BaseViewController {
     
     private let fetchWeatherPublisher = PassthroughSubject<(lat: Double?, lng: Double?), Never>()
     private let fetchFineDustPublisher = PassthroughSubject<Void, Never>()
+    private let postFineDustPublisher = PassthroughSubject<(Int, Int), Never>() // 개선 필요
+    private let postUltraFineDustPublisher = PassthroughSubject<(Int, Int), Never>() // 개선 필요
     private var cancellable = Set<AnyCancellable>()
     
     override func viewDidLoad() {
@@ -279,7 +307,6 @@ final class HomeViewController: BaseViewController {
         manualButtonView.addSubViews([manualTitleLabel, manualImageView])
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(manualButtonTapped))
         manualButtonView.addGestureRecognizer(tapGesture)
-        
         manualTitleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(24)
             $0.centerY.equalToSuperview()
@@ -291,7 +318,27 @@ final class HomeViewController: BaseViewController {
             $0.trailing.equalToSuperview().inset(16)
         }
         
-        mainSurveyView.addSubViews([titleStackView, cardCollectionView, manualButtonView])
+        surveyButtonView.addSubViews([surveyTitleLabel, surveyImageView])
+        let surveyTapGesture = UITapGestureRecognizer(target: self, action: #selector(surveyButtonTapped))
+        surveyButtonView.addGestureRecognizer(surveyTapGesture)
+        surveyTitleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(24)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(surveyImageView.snp.leading).offset(6).priority(.high)
+        }
+        surveyImageView.snp.makeConstraints {
+            $0.size.equalTo(18)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
+        }
+        
+        if Preferences.selectedUserType == .teacher {
+            mainSurveyView.addSubViews([titleStackView, ultraFineDustView, fineDustView, surveyButtonView, manualButtonView])
+            ultraFineDustView.delegate = self
+            fineDustView.delegate = self
+        } else {
+            mainSurveyView.addSubViews([titleStackView, cardCollectionView, manualButtonView])
+        }
         mainSurveyView.backgroundColor = .gray0
         mainSurveyView.layer.cornerRadius = 20
         
@@ -299,18 +346,45 @@ final class HomeViewController: BaseViewController {
             $0.directionalHorizontalEdges.top.equalToSuperview().inset(24)
         }
         
-        cardCollectionView.snp.makeConstraints {
-            $0.top.equalTo(titleStackView.snp.bottom).inset(-32)
-            $0.directionalHorizontalEdges.equalToSuperview()
-            $0.height.equalTo(floor((UIScreen.main.bounds.width - 16) / 2) * 1.2)
+        if Preferences.selectedUserType == .teacher {
+            ultraFineDustView.snp.makeConstraints {
+                $0.top.equalTo(titleStackView.snp.bottom).offset(32)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+                
+            }
+            fineDustView.snp.makeConstraints {
+                $0.top.equalTo(ultraFineDustView.snp.bottom)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+                
+            }
+            
+            surveyButtonView.snp.makeConstraints {
+                $0.top.equalTo(fineDustView.snp.bottom).offset(20)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(56)
+            }
+            
+            manualButtonView.snp.makeConstraints {
+                $0.height.equalTo(56)
+                $0.top.equalTo(surveyButtonView.snp.bottom).offset(8)
+                $0.bottom.equalToSuperview().inset(24)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            }
+        } else {
+            cardCollectionView.snp.makeConstraints {
+                $0.top.equalTo(titleStackView.snp.bottom).inset(-32)
+                $0.directionalHorizontalEdges.equalToSuperview()
+                $0.height.equalTo(floor((UIScreen.main.bounds.width - 16) / 2) * 1.2)
+            }
+            
+            manualButtonView.snp.makeConstraints {
+                $0.height.equalTo(56)
+                $0.top.equalTo(cardCollectionView.snp.bottom).inset(-24)
+                $0.bottom.equalToSuperview().inset(24)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            }
         }
         
-        manualButtonView.snp.makeConstraints {
-            $0.height.equalTo(56)
-            $0.top.equalTo(cardCollectionView.snp.bottom).inset(-24)
-            $0.bottom.equalToSuperview().inset(24)
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-        }
         
         humidityView.addSubViews([humidityImageView, humidityTitleLabel, humidityLabel])
         
@@ -434,6 +508,10 @@ final class HomeViewController: BaseViewController {
         AppRouter.shared.route(to: .manualList)
     }
     
+    @objc private func surveyButtonTapped(_ sender: UITapGestureRecognizer) {
+        AppRouter.shared.route(to: .surveyStart)
+    }
+    
     @objc private func settingButtonTapped(_ sender: UITapGestureRecognizer) {
         AppRouter.shared.route(to: .setting)
     }
@@ -475,7 +553,9 @@ final class HomeViewController: BaseViewController {
         viewModel.bind(
             .init(
                 fetchWeather: fetchWeatherPublisher.eraseToAnyPublisher(),
-                fetchFineDust: fetchFineDustPublisher.eraseToAnyPublisher()
+                fetchFineDust: fetchFineDustPublisher.eraseToAnyPublisher(),
+                postFineDust: postFineDustPublisher.eraseToAnyPublisher(),
+                postUltraFineDust: postUltraFineDustPublisher.eraseToAnyPublisher()
             )
         )
         
@@ -494,6 +574,8 @@ final class HomeViewController: BaseViewController {
                 case .internalFineUpdate(let state):
                     self?.internalDustLabel.text = state.description
                     self?.internalImageView.image = state == .bad ? .imgBad : .imgGood
+                case .fineDustPosted:
+                    self?.fetchFineDustPublisher.send()
                 default:
                     break
                 }
@@ -562,6 +644,17 @@ extension HomeViewController: CLLocationManagerDelegate {
             
             // 현재 위치를 얻은 후 위치 업데이트 중지
             locationManager.stopUpdatingLocation()
+        }
+    }
+}
+
+extension HomeViewController: HomeFineDustViewDelegate {
+    func buttonTapped(type: HomeFineDustView.ViewType, value: Int, selectedIndex: Int) {
+        switch type {
+        case .fineDust:
+            postFineDustPublisher.send((value, selectedIndex))
+        case .ultraFineDust:
+            postUltraFineDustPublisher.send((value, selectedIndex))
         }
     }
 }

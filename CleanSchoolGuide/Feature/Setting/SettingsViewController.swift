@@ -108,7 +108,9 @@ extension SettingsViewController: UITableViewDelegate {
 
 extension SettingsViewController: SettingsGroupCellDelegate {
     func changeButtonTapped() {
-        // TODO: - 경고 팝업
+//    
+//        let vc = PopupViewController(type: .dual, description: errorStr, defualtTitle: "확인")
+        
         Preferences.selectedUserType = nil
         Preferences.userInfo = nil
         AppRouter.shared.route(to: .selectGroup)

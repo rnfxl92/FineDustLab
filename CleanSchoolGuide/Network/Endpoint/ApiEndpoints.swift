@@ -109,6 +109,16 @@ struct APIEndpoints {
         )
     }
     
+    static func postClassroomFineData(with data: FineDustPostRequestDto) -> Endpoint<EmptyData?> {
+        
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/classroom/set",
+            method: .post,
+            bodyParameters: data
+        )
+    }
+    
 }
 
 extension Encodable {

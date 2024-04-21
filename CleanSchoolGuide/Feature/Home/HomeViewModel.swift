@@ -12,12 +12,15 @@ final class HomeViewModel: NSObject {
     struct Input {
         let fetchWeather: AnyPublisher<(lat: Double?, lng: Double?), Never>
         let fetchFineDust: AnyPublisher<Void, Never>
+        let postFineDust: AnyPublisher<(Int, Int), Never>
+        let postUltraFineDust: AnyPublisher<(Int, Int), Never>
     }
     
     enum State {
         case wetherUpdated(humidity: String, temperature: String, date: String)
         case externalFineUpdate(state: FineStatusModel.Status)
         case internalFineUpdate(state: InternalFineStatusModel.Status)
+        case fineDustPosted
         case none
     }
     
@@ -104,6 +107,20 @@ final class HomeViewModel: NSObject {
                 self?.state = .internalFineUpdate(state: fineStatusModel.finedustFactor > 60 ? .bad : .good)
             }
             .store(in: &cancellable)
+        
+        input.postFineDust
+            .sink { [weak self] value, selectedIndex in
+                Preferences.fineData = .init(value: value, selectedIndex: selectedIndex, time: Date())
+                self?.postFineDust()
+            }
+            .store(in: &cancellable)
+        
+        input.postUltraFineDust
+            .sink { [weak self] value, selectedIndex in
+                Preferences.ultraFineData = .init(value: value, selectedIndex: selectedIndex, time: Date())
+                self?.postFineDust()
+            }
+            .store(in: &cancellable)
     }
     
     private func getWeather(
@@ -143,5 +160,38 @@ final class HomeViewModel: NSObject {
             .request(endPoint)
             .replaceError(with: nil)
             .eraseToAnyPublisher()
+    }
+    
+    private func postFineDust() {
+        if !(Preferences.fineData?.time.isToday ?? false) {
+            Preferences.fineData = nil
+        }
+        if !(Preferences.ultraFineData?.time.isToday ?? false) {
+            Preferences.ultraFineData = nil
+        }
+        
+        guard let fineData = Preferences.fineData, let ultraFineData = Preferences.ultraFineData, let userData = Preferences.userInfo else { return }
+    
+        let endPoint = APIEndpoints
+            .postClassroomFineData(
+                with: .init(
+                    classroom: .init(finedustFactor: fineData.value, ultrafineFactor: ultraFineData.value),
+                    userProfile: .init(
+                        schoolCode: userData.school.sdSchulCode,
+                        grade: userData.grade,
+                        classNum: userData.classNum,
+                        studentNum: userData.studentNum ?? 0,
+                        name: userData.name,
+                        userType: .teacher)
+                )
+            )
+        NetworkService
+            .shared
+            .request(endPoint)
+            .replaceError(with: nil)
+            .sink { [weak self] _ in
+                self?.state = .fineDustPosted
+            }
+            .store(in: &cancellable)
     }
 }
