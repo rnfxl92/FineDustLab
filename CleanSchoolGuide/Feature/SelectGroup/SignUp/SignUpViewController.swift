@@ -11,6 +11,7 @@ import Combine
 final class SignUpViewController: BaseViewController {
     private let navigationBar = CustomNavigationBar()
     private let backButton = CustomNavigationButton(.back)
+    private let nilButton = CustomNavigationButton(.text(" "))
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(SignUpSchoolCell.self)
@@ -38,7 +39,7 @@ final class SignUpViewController: BaseViewController {
         
         view.backgroundColor = .gray0
         
-        navigationBar.setNavigation(title: "회원가입", titleAlwaysVisible: true, leftItems: [backButton])
+        navigationBar.setNavigation(title: "회원가입", titleAlwaysVisible: true, leftItems: [backButton], rightItems: [nilButton])
         
         view.addSubViews([navigationBar, tableView])
         navigationBar.snp.makeConstraints {

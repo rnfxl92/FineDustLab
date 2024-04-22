@@ -12,6 +12,20 @@ final class ManualListViewController: BaseViewController {
     private let navigationBar = CustomNavigationBar()
     private let backButton = CustomNavigationButton(.back)
     private let searhButton = CustomNavigationButton(.search)
+    private let searchBarContainerView: UIView = {
+       let view = UIView()
+        view.backgroundColor = .gray0
+        return view
+    }()
+    private let searchBar = TopSearchTextFieldView()
+    private let cancelButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.setTitle("취소", for: .normal)
+        button.setTitleColor(.blue300, for: .normal)
+        
+        return button
+    }()
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -26,20 +40,39 @@ final class ManualListViewController: BaseViewController {
     }()
     
     private var cancellable = Set<AnyCancellable>()
+    private let viewModel = ManualListViewModel()
     
     override func setUserInterface() {
+        hideKeyboardWhenTappedAround()
         tableView.register(ManualListCell.self)
         tableView.delegate = self
         tableView.dataSource = self
         
         navigationBar.setNavigation(title: "미세먼지 매뉴얼", titleAlwaysVisible: true, leftItems: [backButton], rightItems: [searhButton])
         
+        searchBarContainerView.addSubViews([searchBar, cancelButton])
+        searchBar.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(16)
+            $0.centerY.equalToSuperview()
+            $0.height.equalTo(48)
+        }
+        cancelButton.snp.makeConstraints {
+            $0.leading.equalTo(searchBar.snp.trailing).offset(16)
+            $0.width.equalTo(30)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
+        }
         view.backgroundColor = .gray0
-        view.addSubViews([navigationBar, tableView])
+        view.addSubViews([navigationBar, searchBarContainerView, tableView])
         
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.directionalHorizontalEdges.equalToSuperview()
+        }
+        searchBarContainerView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.directionalHorizontalEdges.equalToSuperview()
+            $0.height.equalTo(navigationBar.snp.height).priority(.high)
         }
         
         tableView.snp.makeConstraints {
@@ -47,12 +80,38 @@ final class ManualListViewController: BaseViewController {
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+        searchBarContainerView.isHidden = true
     }
     
     override func bind() {
         backButton.tapPublisher
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.pop(animated: true)
+            }
+            .store(in: &cancellable)
+        searhButton.tapPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.searchBarContainerView.isHidden = false
+            }
+            .store(in: &cancellable)
+        
+        cancelButton.tapPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.searchBarContainerView.isHidden = true
+            }
+            .store(in: &cancellable)
+        searchBar.searchButtonTapPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                guard let self, self.searchBar.searchText.isNotEmpty else { return }
+                if self.viewModel.checkPdf(self.searchBar.searchText) {
+                    AppRouter.shared.route(to: .manualDetail(title: "미세먼지 매뉴얼", fileName: Preferences.selectedUserType?.rawValue ?? "", searchWords: self.searchBar.searchText))
+                } else {
+                    CSGToast.show("'\(self.searchBar.searchText)' 검색자료가 없습니다.", view: UIApplication.shared.keyWindows?.last ?? view)
+                }
             }
             .store(in: &cancellable)
     }
