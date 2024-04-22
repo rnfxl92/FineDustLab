@@ -12,6 +12,10 @@ protocol SurveySubQuestionOXCellDelegate: AnyObject {
 }
 
 final class SurveySubQuestionOXCell: UITableViewCell {
+    enum OX: Int {
+        case O = 0
+        case X = 1
+    }
     
     private let oxStackView: UIStackView = {
         let stackView = UIStackView(axis: .horizontal)
@@ -118,29 +122,41 @@ final class SurveySubQuestionOXCell: UITableViewCell {
         }
     }
     
-    func setUIModel(_ subQuestion: SubQuestion, delegate: SurveySubQuestionOXCellDelegate?) {
+    func setUIModel(_ subQuestion: SubQuestion, answer: Int? = nil, delegate: SurveySubQuestionOXCellDelegate?) {
         self.delegate = delegate
         self.subQuestion = subQuestion
         
         oLabel.text = subQuestion.options[safe: 0]?.text
         xLabel.text = subQuestion.options[safe: 1]?.text
+        if let answer, let ox = OX(rawValue: answer) {
+            oxButtonUpdate(answer: ox)
+        }
+    }
+    
+    private func oxButtonUpdate(answer: OX) {
+        switch answer {
+        case .O:
+            oLabel.font = .systemFont(ofSize: 16, weight: .bold)
+            oView.borderWidth = 2
+            
+            xLabel.font = .systemFont(ofSize: 16, weight: .regular)
+            xView.borderWidth = 0
+        case .X:
+            oLabel.font = .systemFont(ofSize: 16, weight: .regular)
+            oView.borderWidth = 0
+            
+            xLabel.font = .systemFont(ofSize: 16, weight: .bold)
+            xView.borderWidth = 2
+        }
     }
     
     @objc private func oButtonTapped(_ sender: UITapGestureRecognizer) {
-        oLabel.font = .systemFont(ofSize: 16, weight: .bold)
-        oView.borderWidth = 2
-        
-        xLabel.font = .systemFont(ofSize: 16, weight: .regular)
-        xView.borderWidth = 0
+        oxButtonUpdate(answer: .O)
         delegate?.oxButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: subQuestion?.options[safe: 0]?.id ?? 0)
     }
     
     @objc private func xButtonTapped(_ sender: UITapGestureRecognizer) {
-        oLabel.font = .systemFont(ofSize: 16, weight: .regular)
-        oView.borderWidth = 0
-        
-        xLabel.font = .systemFont(ofSize: 16, weight: .bold)
-        xView.borderWidth = 2
+        oxButtonUpdate(answer: .X)
         
         delegate?.oxButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: subQuestion?.options[safe: 1]?.id ?? 0)
     }

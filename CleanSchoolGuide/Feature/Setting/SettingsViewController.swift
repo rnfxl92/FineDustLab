@@ -12,7 +12,8 @@ final class SettingsViewController: BaseViewController {
    
     private let navigationBar = CustomNavigationBar()
     private let backButton = CustomNavigationButton(.back)
-    private let saveButton = CustomNavigationButton(.text("저장"))
+    
+    private let saveButton = CustomNavigationButton(.attributedText( "저장".foregroundColor(.green400).addAttributes("저장", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold)])))
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)

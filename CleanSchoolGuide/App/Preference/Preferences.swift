@@ -37,8 +37,8 @@ public struct Preferences {
     @UserDefaultsWrapper(key: PreferencesKey.userToken, defaultValue: nil)
     static var userToken: String?
     
-    @UserDefaultsWrapper(key: PreferencesKey.surveyTemp, defaultValue: [])
-    static var surveyTemp: [Int]
+    @UserDefaultsWrapper(key: PreferencesKey.surveyTemp, defaultValue: nil)
+    static var surveyTemp: TempAnswerModel?
  
     @UserDefaultsWrapper(key: PreferencesKey.ultraFineData, defaultValue: nil)
     static var ultraFineData: SelectedFineData?
@@ -52,7 +52,7 @@ public struct Preferences {
         Preferences.surveyCompletedDates = []
         Preferences.surveyData = nil
         Preferences.userToken = nil
-        Preferences.surveyTemp = []
+        Preferences.surveyTemp = nil
         Preferences.ultraFineData = nil
         Preferences.fineData = nil
     }

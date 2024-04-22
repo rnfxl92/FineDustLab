@@ -43,7 +43,7 @@ final class SurveyDetailViewModel {
     }
     
     func postAnswer() {
-        guard 
+        guard
             let user = Preferences.userInfo,
             let userType = Preferences.selectedUserType,
             let survey,
@@ -51,16 +51,22 @@ final class SurveyDetailViewModel {
         else { return }
         cancellable.removeAll()
         
+        var temp = Preferences.surveyTemp ?? .init(answers: [], date: Date(), lastIndex: currentIndex)
+        temp.lastIndex = currentIndex
+        
         var answers: [SetSurveyReqeustDto.SurveyData.Answer] = []
         
         for key in answerDic.keys {
+            temp.answers.append(.init(questionId: survey.id, subQuestionId: key, answer: answerDic[key] ?? ""))
             answers.append(
                 .init(
                     subQuestionId: key,
-                    subQuestionAnswer: "\(answerDic[key])",
+                    subQuestionAnswer: answerDic[key] ?? "",
                     type: survey.subQuestions.first(where: { $0.subQuestionID == key })?.type ?? .choice)
             )
         }
+        
+        Preferences.surveyTemp = temp
         
         let endPoint = APIEndpoints.postSurveyData(
             with: .init(
