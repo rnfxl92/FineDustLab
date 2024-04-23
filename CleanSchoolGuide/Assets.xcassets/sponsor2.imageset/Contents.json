@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "sponsor2.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

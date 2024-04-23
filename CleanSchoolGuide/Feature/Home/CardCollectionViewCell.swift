@@ -74,7 +74,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         }
         
         imageView.snp.makeConstraints {
-            $0.top.equalTo(dateLabel.snp.bottom).inset(-6)
+            $0.top.equalTo(dateLabel.snp.bottom).offset(6)
             $0.centerX.equalToSuperview()
         }
         
@@ -83,7 +83,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         }
         
         startButton.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).inset(-6)
+            $0.top.equalTo(imageView.snp.bottom).offset(6)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(12)
         }
@@ -96,7 +96,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         mainView.backgroundColor = .gray200
         contentView.addSubview(mainView)
         mainView.layer.cornerRadius = 18
-        mainView.clipsToBounds = true
+        
         mainView.snp.makeConstraints {
             $0.directionalEdges.equalToSuperview()
         }

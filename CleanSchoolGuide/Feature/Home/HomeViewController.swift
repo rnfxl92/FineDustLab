@@ -35,7 +35,7 @@ final class HomeViewController: BaseViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .bold)
-        label.textColor = .gray900
+        label.textColor = .gray1000
         label.text = Preferences.selectedUserType == .teacher ? "오늘의 미세먼지 정보": "오늘도 청소했다면?"
         label.textAlignment = .left
         return label
@@ -43,8 +43,8 @@ final class HomeViewController: BaseViewController {
     
     private let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
-        label.textColor = .gray700
+        label.font = .systemFont(ofSize: 22)
+        label.textColor = .gray1000
         label.numberOfLines = 2
         label.text = Preferences.selectedUserType == .teacher ? "등록된 정보는 학생들에게 공유됩니다." : "설문조사를 완료해 주세요!"
         label.textAlignment = .left
@@ -132,7 +132,7 @@ final class HomeViewController: BaseViewController {
     private let todayTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "오늘의 미세먼지"
-        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .bold)
         label.textColor = .gray1000
         
         return label
@@ -206,7 +206,7 @@ final class HomeViewController: BaseViewController {
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .gray500
         label.numberOfLines = 2
-        label.text = "학교를 등록해 주세요."
+        label.text = "설정에서 학교 정보를\n입력 후 확인 가능해요."
         return label
     }()
     private let externalStackView = UIStackView(axis: .horizontal)
@@ -397,7 +397,7 @@ final class HomeViewController: BaseViewController {
             cardCollectionView.snp.makeConstraints {
                 $0.top.equalTo(titleStackView.snp.bottom).offset(24)
                 $0.directionalHorizontalEdges.equalToSuperview()
-                $0.height.equalTo(floor((UIScreen.main.bounds.width - 16) / 2) * 1.2)
+                $0.height.equalTo(floor(floor((UIScreen.main.bounds.width * 0.51)) * 1.22))
             }
             
             manualButtonView.snp.makeConstraints {
@@ -680,9 +680,9 @@ extension HomeViewController: UICollectionViewDelegate {
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = floor((UIScreen.main.bounds.width - 32) / 2)
+        let width = floor((UIScreen.main.bounds.width * 0.51))
         
-        return .init(width: width, height: width * 1.2)
+        return .init(width: width, height: floor(width * 1.22))
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {

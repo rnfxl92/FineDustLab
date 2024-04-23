@@ -18,6 +18,7 @@ final class SplashViewController: BaseViewController {
     private let iconImageView: UIImageView = {
         let imageView = UIImageView(image: .mainAppIcon)
         imageView.contentMode = .scaleAspectFit
+        imageView.cornerRadius = 36
         return imageView
     }()
     private let appNameImageView: UIImageView = {
@@ -25,28 +26,38 @@ final class SplashViewController: BaseViewController {
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
-    private let bottomStackView: UIStackView = {
+    private let bottomStackView1: UIStackView = {
         let stackView = UIStackView(axis: .horizontal)
         stackView.distribution = .fillProportionally
         stackView.spacing = 17
         return stackView
     }()
-    private let company1ImageView: UIImageView = {
-        let imageView = UIImageView(image: .company1)
-        imageView.contentMode = .scaleAspectFill
+    private let bottomStackView2: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal)
+        stackView.distribution = .fillProportionally
+        stackView.spacing = 17
+        return stackView
+    }()
+    private let sponsor1ImageView: UIImageView = {
+        let imageView = UIImageView(image: .sponsor1)
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    private let company2ImageView: UIImageView = {
-        let imageView = UIImageView(image: .company2)
-        imageView.contentMode = .scaleAspectFill
+    private let sponsor2ImageView: UIImageView = {
+        let imageView = UIImageView(image: .sponsor2)
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    private let company3ImageView: UIImageView = {
-        let imageView = UIImageView(image: .company3)
-        imageView.contentMode = .scaleAspectFill
+    private let sponsor3ImageView: UIImageView = {
+        let imageView = UIImageView(image: .sponsor3)
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    
+    private let sponsor4ImageView: UIImageView = {
+        let imageView = UIImageView(image: .sponsor4)
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     private var completion: (() -> Void)?
     
     init(completion: (() -> Void)?
@@ -79,18 +90,26 @@ final class SplashViewController: BaseViewController {
             $0.width.equalTo(160)
             $0.height.equalTo(30)
         }
-        bottomStackView.addArrangedSubViews([company1ImageView, company2ImageView, company3ImageView])
+        bottomStackView1.addArrangedSubViews([sponsor1ImageView, sponsor2ImageView])
+        bottomStackView2.addArrangedSubViews([sponsor3ImageView, sponsor4ImageView])
         
-        
-        view.addSubViews([centerStackView, bottomStackView])
+        view.addSubViews([centerStackView, bottomStackView1, bottomStackView2])
         
         centerStackView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        bottomStackView1.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(bottomStackView2.snp.top).offset(-20)
+            $0.leading.greaterThanOrEqualToSuperview().inset(24)
+            $0.trailing.lessThanOrEqualToSuperview().inset(24)
+        }
         
-        bottomStackView.snp.makeConstraints {
-            $0.directionalHorizontalEdges.equalToSuperview().inset(30)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(30)
+        bottomStackView2.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(50)
+            $0.leading.greaterThanOrEqualToSuperview().inset(24)
+            $0.trailing.lessThanOrEqualToSuperview().inset(24)
         }
     }
     
