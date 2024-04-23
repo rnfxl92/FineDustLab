@@ -191,7 +191,7 @@ final class HomeViewController: BaseViewController {
         let stackView = UIStackView(axis: .vertical)
         stackView.distribution = .fill
         stackView.alignment = .center
-        stackView.spacing = 16
+        stackView.spacing = 12
         return stackView
     }()
     private let externalTitleLabel: UILabel = {
@@ -199,6 +199,14 @@ final class HomeViewController: BaseViewController {
         label.font = .systemFont(ofSize: 13, weight: .medium)
         label.textColor = .gray600
         label.text = "학교 외부"
+        return label
+    }()
+    private let externalDescriptionLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .gray500
+        label.numberOfLines = 2
+        label.text = "학교를 등록해 주세요."
         return label
     }()
     private let externalStackView = UIStackView(axis: .horizontal)
@@ -225,7 +233,7 @@ final class HomeViewController: BaseViewController {
         let stackView = UIStackView(axis: .vertical)
         stackView.distribution = .fill
         stackView.alignment = .center
-        stackView.spacing = 16
+        stackView.spacing = 12
         return stackView
     }()
     private let internalTitleLabel: UILabel = {
@@ -233,6 +241,15 @@ final class HomeViewController: BaseViewController {
         label.font = .systemFont(ofSize: 13, weight: .medium)
         label.textColor = .gray600
         label.text = "학교 내부"
+        return label
+    }()
+    private let internalDescriptionLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .gray500
+        label.numberOfLines = 2
+        label.text = "아직 등록된 미세먼지\n정보가 없어요."
+        label.textAlignment = .center
         return label
     }()
     private let internalStackView = UIStackView(axis: .horizontal)
@@ -254,7 +271,7 @@ final class HomeViewController: BaseViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .gray600
-        label.text = "서울 코인초등학교 날짜 땡땡" // TODO imageAttributed
+        label.text = Preferences.userInfo?.school.schulNm
         return label
     }()
     private var locationManager =  CLLocationManager()
@@ -277,6 +294,7 @@ final class HomeViewController: BaseViewController {
         
         checkUserCurrentLocationAuthorization()
         fetchFineDustPublisher.send()
+        locationManager.startUpdatingLocation()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -377,7 +395,7 @@ final class HomeViewController: BaseViewController {
             }
         } else {
             cardCollectionView.snp.makeConstraints {
-                $0.top.equalTo(titleStackView.snp.bottom).inset(-32)
+                $0.top.equalTo(titleStackView.snp.bottom).offset(24)
                 $0.directionalHorizontalEdges.equalToSuperview()
                 $0.height.equalTo(floor((UIScreen.main.bounds.width - 16) / 2) * 1.2)
             }
@@ -448,44 +466,62 @@ final class HomeViewController: BaseViewController {
         externalImageView.snp.makeConstraints {
             $0.size.equalTo(32)
         }
-        externalVstack.addArrangedSubViews([externalTitleLabel, externalStackView])
+        externalVstack.addArrangedSubViews([externalTitleLabel, externalDescriptionLabel, externalStackView])
         externalView.addSubViews([externalVstack])
         externalVstack.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        externalStackView.isHidden = true
         internalStackView.spacing = 12
         internalStackView.addArrangedSubViews([internalImageView, internalDustLabel])
         internalImageView.snp.makeConstraints {
             $0.size.equalTo(32)
         }
-        internalVstack.addArrangedSubViews([internalTitleLabel, internalStackView])
+        internalVstack.addArrangedSubViews([internalTitleLabel, internalDescriptionLabel, internalStackView])
         internalView.addSubViews([internalVstack])
         internalVstack.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-        
+        internalStackView.isHidden = true
         dustStackView.clipsToBounds = true
         dustStackView.distribution = .fillEqually
         dustStackView.cornerRadius = 16
         dustStackView.addArrangedSubViews([externalView, internalView])
         
-        todayWeatherView.addSubViews([todayTitleView, dustStackView, regionDateLabel])
-        
-        todayTitleView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(24)
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-        }
-        
-        dustStackView.snp.makeConstraints {
-            $0.top.equalTo(todayTitleView.snp.bottom).offset(16)
+        if UIDevice.current.hasNotch {
+            todayWeatherView.addSubViews([todayTitleView, dustStackView, regionDateLabel])
             
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-        }
-        
-        regionDateLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(dustStackView.snp.bottom).offset(24)
-            $0.bottom.equalTo(todayWeatherView.safeAreaLayoutGuide).inset(12)
+            todayTitleView.snp.makeConstraints {
+                $0.top.equalToSuperview().inset(24)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            }
+            
+            dustStackView.snp.makeConstraints {
+                $0.top.equalTo(todayTitleView.snp.bottom).offset(16)
+                $0.height.lessThanOrEqualTo(140)
+                $0.height.greaterThanOrEqualTo(100)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            }
+            
+            regionDateLabel.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.top.greaterThanOrEqualTo(dustStackView.snp.bottom).offset(24)
+                $0.bottom.equalTo(todayWeatherView.safeAreaLayoutGuide).inset(12)
+            }
+        } else {
+            todayWeatherView.addSubViews([todayTitleView, dustStackView])
+            
+            todayTitleView.snp.makeConstraints {
+                $0.top.equalToSuperview().inset(24)
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            }
+            
+            dustStackView.snp.makeConstraints {
+                $0.top.equalTo(todayTitleView.snp.bottom).offset(12)
+                
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+                $0.bottom.equalToSuperview().inset(4)
+            }
         }
         
         view.addSubViews([searchStackView, mainSurveyView, todayWeatherView])
@@ -572,11 +608,17 @@ final class HomeViewController: BaseViewController {
                 case .wetherUpdated(let humidity, let temperature, let date):
                     self?.humidityLabel.text = humidity
                     self?.temperatureLabel.text = temperature
-                    // TODO: date
+                    if let school = Preferences.userInfo?.school.schulNm {
+                        self?.regionDateLabel.text = school + date
+                    }
                 case .externalFineUpdate(let state):
+                    self?.externalStackView.isHidden = false
+                    self?.externalDescriptionLabel.isHidden = true
                     self?.externalDustLabel.text = state.description
                     self?.externalImageView.image = state == .bad ? .imgBad : .imgGood
                 case .internalFineUpdate(let state):
+                    self?.internalStackView.isHidden = false
+                    self?.internalDescriptionLabel.isHidden = true
                     self?.internalDustLabel.text = state.description
                     self?.internalImageView.image = state == .bad ? .imgBad : .imgGood
                 case .fineDustPosted:
@@ -638,7 +680,7 @@ extension HomeViewController: UICollectionViewDelegate {
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = floor((UIScreen.main.bounds.width - 16) / 2)
+        let width = floor((UIScreen.main.bounds.width - 32) / 2)
         
         return .init(width: width, height: width * 1.2)
     }

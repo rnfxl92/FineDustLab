@@ -76,11 +76,8 @@ final class HomeViewModel: NSObject {
         input
             .fetchFineDust
             .flatMap { [weak self] _ -> AnyPublisher<FineStatusModel?, Never> in
-                guard let self else { return Empty().eraseToAnyPublisher() }
-                var schoolCode: Int?
-                if let sdSchulCode = Preferences.userInfo?.school.sdSchulCode {
-                    schoolCode = Int(sdSchulCode)
-                }
+                guard let self, let sdSchulCode = Preferences.userInfo?.school.sdSchulCode, let schoolCode = Int(sdSchulCode) else { return Empty().eraseToAnyPublisher() }
+
                 return self.getExternalFineStatus(schoolCode: schoolCode)
             }
             .sink { [weak self] fineStatusModel in
@@ -145,10 +142,10 @@ final class HomeViewModel: NSObject {
     }
     
     private func getExternalFineStatus(
-        schoolCode: Int?
+        schoolCode: Int
     ) -> AnyPublisher<FineStatusModel?, Never> {
         
-        let endPoint = APIEndpoints.getExternalFineStatus(with: .init(location: schoolCode ?? 7201099))
+        let endPoint = APIEndpoints.getExternalFineStatus(with: .init(location: schoolCode))
         
         return NetworkService
             .shared
