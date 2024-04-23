@@ -79,18 +79,21 @@ final class SurveySubQuestionChoiceCell: UITableViewCell {
         }
     }
     
-    func setUIModel(_ subQuestion: SubQuestion, delegate: SurveySubQuestionChoiceCellDelegate?) {
+    func setUIModel(_ subQuestion: SubQuestion, answer: String? = nil, delegate: SurveySubQuestionChoiceCellDelegate?) {
         self.subQuestion = subQuestion
         self.delegate = delegate
         
         buttons.removeAll()
         stackView.removeAllArrangedSubviews()
         titleLabel.text = subQuestion.text
-        for option in subQuestion.options {
+        for (idx, option) in subQuestion.options.enumerated() {
             let button = SurveyChoiceButton(title: option.text ?? "")
             button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
             stackView.addArrangedSubview(button)
             buttons.append(button)
+            if let answer, let answerInt = Int(answer), let id = option.id, answerInt == id {
+                button.isSelected = true
+            }
         }
     }
     

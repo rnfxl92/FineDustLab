@@ -47,25 +47,33 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
         var answer = ""
         for idx in 0..<buttons.count {
             if buttons[safe: idx]?.isSelected ?? false {
-                answer += "\(subQuestion.options[safe: idx]?.id ?? 0)"
+                answer += "\(subQuestion.options[safe: idx]?.id ?? 0),"
             }
         }
         delegate?.checkboxTapped(subQuestionId: subQuestion.subQuestionID, answer: answer)
     }
     
-    func setUIModel(_ subQuestion: SubQuestion, delegate: SurveySubQuestionCheckboxCellDelegate?) {
+    func setUIModel(_ subQuestion: SubQuestion, answer: String? = nil, delegate: SurveySubQuestionCheckboxCellDelegate?) {
         self.subQuestion = subQuestion
         self.delegate = delegate
         
         buttons.removeAll()
         stackView.removeAllArrangedSubviews()
+        let defaultAnswer = answer?.components(separatedBy: ",")
+            .map { Int($0) }
+            .filter { $0 != nil }
+            .map { $0! }
         
         for option in subQuestion.options {
             let button = SurveyCheckboxButton(title: option.text ?? "")
             button.addTarget(self, action: #selector(toggleCheckBox), for: .touchUpInside)
             stackView.addArrangedSubview(button)
             buttons.append(button)
+            if let id = option.id, let defaultAnswer, defaultAnswer.contains(id) {
+                button.isSelected = true
+            }
         }
+        
     }
 }
 

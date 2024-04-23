@@ -47,16 +47,26 @@ final class SurveyDetailViewController: BaseViewController {
     private lazy var nextButton = LargeFloatingButtonView(.single, defaultTitle: viewModel.isEnd ? "완료!" : "다음")
         
     private let viewModel: SurveyDetailViewModel
+    private let isResumed: Bool
     
     private var cancellable = Set<AnyCancellable>()
     
-    init(viewModel: SurveyDetailViewModel) {
+    init(viewModel: SurveyDetailViewModel, isResumed: Bool) {
         self.viewModel = viewModel
+        self.isResumed = isResumed
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        if isResumed, viewModel.currentIndex < Preferences.surveyTemp?.lastIndex ?? 0 {
+            AppRouter.shared.route(to: .surveyDetail(currentIndex: viewModel.currentIndex + 1, isResumed: true))
+        }
     }
     
     override func setUserInterface() {
@@ -158,19 +168,19 @@ extension SurveyDetailViewController: UITableViewDataSource {
         switch subQuestion.type {
         case .ox:
             let cell: SurveySubQuestionOXCell = tableView.dequeueReusableCell(for: indexPath)
-            cell.setUIModel(subQuestion, delegate: self)
+            cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
             return cell
         case .choice:
             let cell: SurveySubQuestionChoiceCell = tableView.dequeueReusableCell(for: indexPath)
-            cell.setUIModel(subQuestion, delegate: self)
+            cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
             return cell
         case .numberPicker:
             let cell: SurveySubQuestionNumberPickerCell = tableView.dequeueReusableCell(for: indexPath)
-            cell.setUIModel(subQuestion, delegate: self)
+            cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
             return cell
         case .checkbox:
             let cell: SurveySubQuestionCheckboxCell = tableView.dequeueReusableCell(for: indexPath)
-            cell.setUIModel(subQuestion, delegate: self)
+            cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
             return cell
         default:
             return .init()

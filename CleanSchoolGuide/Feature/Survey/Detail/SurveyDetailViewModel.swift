@@ -27,6 +27,15 @@ final class SurveyDetailViewModel {
     var isEnd: Bool {
         currentIndex + 1 >= totalCount
     }
+    var anweredQustion: [AnswerModel]? {
+        guard let survey, let surveyTemp = Preferences.surveyTemp, surveyTemp.date.isToday  else {
+            Preferences.surveyTemp = nil
+            return nil
+        }
+        return surveyTemp.answers.filter {
+            $0.categoryId == survey.categoryID && $0.questionId == survey.id
+        }
+    }
     
     private var answerDic: [Int: String] = [:]
     private var cancellable = Set<AnyCancellable>()
@@ -57,7 +66,7 @@ final class SurveyDetailViewModel {
         var answers: [SetSurveyReqeustDto.SurveyData.Answer] = []
         
         for key in answerDic.keys {
-            temp.answers.append(.init(questionId: survey.id, subQuestionId: key, answer: answerDic[key] ?? ""))
+            temp.answers.append(.init(categoryId: survey.categoryID, questionId: survey.id, subQuestionId: key, answer: answerDic[key] ?? ""))
             answers.append(
                 .init(
                     subQuestionId: key,
@@ -66,7 +75,11 @@ final class SurveyDetailViewModel {
             )
         }
         
-        Preferences.surveyTemp = temp
+        if isEnd {
+            Preferences.surveyTemp = nil
+        } else {
+            Preferences.surveyTemp = temp
+        }
         
         let endPoint = APIEndpoints.postSurveyData(
             with: .init(

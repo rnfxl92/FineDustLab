@@ -122,13 +122,14 @@ final class SurveySubQuestionOXCell: UITableViewCell {
         }
     }
     
-    func setUIModel(_ subQuestion: SubQuestion, answer: Int? = nil, delegate: SurveySubQuestionOXCellDelegate?) {
+    func setUIModel(_ subQuestion: SubQuestion, answer: String? = nil, delegate: SurveySubQuestionOXCellDelegate?) {
         self.delegate = delegate
         self.subQuestion = subQuestion
         
         oLabel.text = subQuestion.options[safe: 0]?.text
         xLabel.text = subQuestion.options[safe: 1]?.text
-        if let answer, let ox = OX(rawValue: answer) {
+        
+        if let answer, let anserInt = Int(answer), let ox = OX(rawValue: anserInt) {
             oxButtonUpdate(answer: ox)
         }
     }

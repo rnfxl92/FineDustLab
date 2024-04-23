@@ -80,7 +80,7 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
         }
     }
     
-    func setUIModel(_ subQuestion: SubQuestion, delegate: SurveySubQuestionNumberPickerCellDelegate?) {
+    func setUIModel(_ subQuestion: SubQuestion, answer: String? = nil, delegate: SurveySubQuestionNumberPickerCellDelegate?) {
         self.subQuestion = subQuestion
         self.delegate = delegate
         
@@ -90,6 +90,9 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
         descriptionLabel.text = option.unit
         numbers = Array(range.min...range.max)
         numberPickerView.reloadAllComponents()
+        if let answer {
+            textField.text = answer
+        }
         
     }
 }

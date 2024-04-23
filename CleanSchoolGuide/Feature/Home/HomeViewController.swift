@@ -279,6 +279,17 @@ final class HomeViewController: BaseViewController {
         fetchFineDustPublisher.send()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        DispatchQueue.main.asyncAfter(deadline:.now() + 1) { [weak self] in
+            guard let self else { return }
+            if self.viewModel.checkSurvey() {
+                self.showResumPopup()
+            }
+        }
+    }
+    
     override func setUserInterface() {
         hideKeyboardWhenTappedAround()
         searchStackView.addArrangedSubViews([searchBar, settingButtonView])
@@ -588,6 +599,17 @@ final class HomeViewController: BaseViewController {
                 }
             }
             .store(in: &cancellable)
+    }
+    
+    private func showResumPopup() {
+        let vc = PopupViewController(type: .dual, description: "이전에 작성중이던\n설문조사를 이어서 할까요?", defualtTitle: "이어하기", cancelTitle: "아니요") {
+            AppRouter.shared.route(to: .surveyDetail(currentIndex: 0, isResumed: true))
+            
+        }
+        
+        vc.modalTransitionStyle = .crossDissolve
+        vc.modalPresentationStyle = .overFullScreen
+        present(vc: vc, animated: true)
     }
 }
 

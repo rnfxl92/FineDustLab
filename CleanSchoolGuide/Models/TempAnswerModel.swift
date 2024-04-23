@@ -20,6 +20,7 @@ class TempAnswerModel: Codable {
 }
 
 struct AnswerModel: Codable {
+    let categoryId: Int
     let questionId: Int
     let subQuestionId: Int
     let answer: String

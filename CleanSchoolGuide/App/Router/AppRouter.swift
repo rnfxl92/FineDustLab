@@ -22,7 +22,7 @@ public final class AppRouter: Router {
         case manualList
         case manualDetail(title: String, fileName: String, searchWords: String?)
         case surveyStart
-        case surveyDetail(currentIndex: Int)
+        case surveyDetail(currentIndex: Int, isResumed: Bool = false)
     }
     
     private var presenter: UIWindow?
@@ -59,8 +59,8 @@ public final class AppRouter: Router {
             let vc = SurveyStartViewController()
             
             presenter?.push(vc, animated: true)
-        case .surveyDetail(let currentIndex):
-            let vc = SurveyDetailViewController(viewModel: .init(currentIndex: currentIndex))
+        case .surveyDetail(let currentIndex, let isResumed):
+            let vc = SurveyDetailViewController(viewModel: .init(currentIndex: currentIndex), isResumed: isResumed)
             
             presenter?.push(vc, animated: true)
         case .login:

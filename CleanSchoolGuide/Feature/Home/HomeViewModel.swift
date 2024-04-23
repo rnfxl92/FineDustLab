@@ -124,6 +124,13 @@ final class HomeViewModel: NSObject {
             .store(in: &cancellable)
     }
     
+    func checkSurvey() -> Bool {
+        if Preferences.surveyData != nil, let tempSurvey = Preferences.surveyTemp, tempSurvey.date.isToday {
+           return true
+        }
+        return false
+    }
+    
     private func getWeather(
         lat: Double = 37.582425,
         lng: Double = 127.582425

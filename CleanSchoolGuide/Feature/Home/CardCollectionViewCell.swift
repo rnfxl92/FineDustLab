@@ -156,7 +156,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 mainView.backgroundColor = .gray200
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
-                startButton.setTitle("설문 작성을 못했어요", for: .disabled)
+                startButton.setTitle("설문 실패", for: .disabled)
                 startButton.setBackgroundColor(color: .gray300, forState: .disabled)
             }
         } else {

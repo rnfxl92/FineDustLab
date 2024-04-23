@@ -130,8 +130,10 @@ final class PopupViewController: BaseViewController {
         }
 
         contentView.snp.makeConstraints { make in
-            make.directionalHorizontalEdges.equalToSuperview().inset(24)
-            make.centerY.equalToSuperview()
+            make.leading.greaterThanOrEqualToSuperview().inset(24)
+            make.trailing.lessThanOrEqualToSuperview().inset(24)
+            make.width.greaterThanOrEqualTo(280)
+            make.center.equalToSuperview()
         }
     }
 
