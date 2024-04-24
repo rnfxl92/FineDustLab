@@ -50,7 +50,8 @@ final class CardCollectionViewCell: UICollectionViewCell {
     }()
     
     private let startButton = SmallFilledButton(title: "설문 시작하기", font: .systemFont(ofSize: 14, weight: .medium))
-    
+  
+    private let images: [UIImage] = [.character01, .character02, .character03, .character04, .character05, .character06, .character07, .character08]
     weak var delegate: CardCollectionViewCellDelegate?
     private var cancellable = Set<AnyCancellable>()
     
@@ -116,7 +117,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
             if model.isSuveyed {
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
-                imageView.image = UIImage.character02
+                imageView.image = images.randomElement() ?? UIImage.character01
                 startButton.setTitle("설문 완료!", for: .disabled)
                 startButton.setBackgroundColor(color: .blue400.withAlphaComponent(0.2), forState: .disabled)
                 startButton.isEnabled = false
@@ -143,7 +144,8 @@ final class CardCollectionViewCell: UICollectionViewCell {
                     startButton.isHidden = true
                     descriptionLabel.isHidden = false
                 } else { // 설문하고 오늘이 아닌경우
-                    imageView.image = UIImage.character01
+                    
+                    imageView.image = images.randomElement() ?? UIImage.character01
                     startButton.isHidden = false
                     descriptionLabel.isHidden = true
                     startButton.setTitle("설문 완료!", for: .disabled)
@@ -152,7 +154,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 mainView.backgroundColor = .green300
             } else {
                 dateLabel.textColor = .gray500
-                imageView.image = UIImage.character05
+                imageView.image = UIImage.characterFail
                 mainView.backgroundColor = .gray200
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true

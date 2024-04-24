@@ -14,7 +14,6 @@ final class HomeViewController: BaseViewController {
     private let searchStackView = UIStackView(axis: .horizontal)
     private let searchBar = TopSearchTextFieldView()
     private let settingButtonView: UIView = {
-        
         let view = UIView()
         
         let imageView = UIImageView(image: .settings.withTintColor(.gray0, renderingMode: .alwaysTemplate))
@@ -137,49 +136,16 @@ final class HomeViewController: BaseViewController {
         
         return label
     }()
-    let humidityView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .gray100
-        view.cornerRadius = 14
-        return view
-    }()
-    private let humidityLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.textColor = .gray800
-        label.text = "32" // TODO
-        return label
-    }()
-    private let humidityImageView = UIImageView(image: .waterDrop)
-    private let humidityTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "습도"
-        label.font = .systemFont(ofSize: 13, weight: .medium)
-        label.textColor = .gray700
-        return label
-    }()
     
-    private let temperatureView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .gray100
-        view.cornerRadius = 14
-        return view
+    private let weatherStackView: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal)
+        stackView.spacing = 8
+        
+        return stackView
     }()
-    private let temperatureImageView = UIImageView(image: .thermometer)
-    private let temperatureTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "온도"
-        label.font = .systemFont(ofSize: 13, weight: .medium)
-        label.textColor = .gray700
-        return label
-    }()
-    private let temperatureLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.textColor = .gray800
-        label.text = "11" // TODO
-        return label
-    }()
+    private let humidityView = HumidityView()
+    private let temperatureView = TemperatureView()
+    private let geoSettingButtonView = GeoSettingButtonView()
     
     private let dustStackView = UIStackView(axis: .horizontal)
     private let externalView: UIView = {
@@ -407,60 +373,22 @@ final class HomeViewController: BaseViewController {
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
             }
         }
-        
-        
-        humidityView.addSubViews([humidityImageView, humidityTitleLabel, humidityLabel])
-        
-        humidityImageView.snp.makeConstraints {
-            $0.size.equalTo(16)
-            $0.leading.equalToSuperview().inset(8)
-            $0.directionalVerticalEdges.equalToSuperview().inset(6)
-        }
-        
-        humidityTitleLabel.snp.makeConstraints {
-            $0.leading.equalTo(humidityImageView.snp.trailing).offset(2)
-            $0.centerY.equalTo(humidityImageView.snp.centerY)
-        }
-        
-        humidityLabel.snp.makeConstraints {
-            $0.leading.equalTo(humidityTitleLabel.snp.trailing).offset(2)
-            $0.centerY.equalTo(humidityImageView.snp.centerY)
-            $0.trailing.equalToSuperview().inset(8)
-        }
-        
-        temperatureView.addSubViews([temperatureImageView, temperatureTitleLabel, temperatureLabel])
-        
-        temperatureImageView.snp.makeConstraints {
-            $0.size.equalTo(16)
-            $0.leading.equalToSuperview().inset(8)
-            $0.directionalVerticalEdges.equalToSuperview().inset(6)
-        }
-        
-        temperatureTitleLabel.snp.makeConstraints {
-            $0.leading.equalTo(temperatureImageView.snp.trailing).offset(2)
-            $0.centerY.equalTo(temperatureImageView.snp.centerY)
-        }
-        
-        temperatureLabel.snp.makeConstraints {
-            $0.leading.equalTo(temperatureTitleLabel.snp.trailing).offset(2)
-            $0.centerY.equalTo(temperatureImageView.snp.centerY)
-            $0.trailing.equalToSuperview().inset(8)
-        }
-        
-        todayTitleView.addSubViews([todayTitleLabel, humidityView, temperatureView])
+        let geoSettingTapGesture = UITapGestureRecognizer(target: self, action: #selector(geoSettingButtonViewTapped))
+        geoSettingButtonView.addGestureRecognizer(geoSettingTapGesture)
+        geoSettingButtonView.isUserInteractionEnabled = true
+        weatherStackView.addArrangedSubViews([humidityView, temperatureView, geoSettingButtonView])
+        todayTitleView.addSubViews([todayTitleLabel, weatherStackView])
         todayTitleLabel.snp.makeConstraints {
             $0.leading.top.bottom.equalToSuperview().inset(4)
             $0.trailing.lessThanOrEqualTo(humidityView.snp.leading).inset(8)
         }
-        
-        humidityView.snp.makeConstraints {
-            $0.centerY.equalTo(todayTitleView.snp.centerY)
-            $0.trailing.equalTo(temperatureView.snp.leading).inset(-8)
-        }
-        temperatureView.snp.makeConstraints {
+        weatherStackView.snp.makeConstraints {
             $0.centerY.equalTo(todayTitleView.snp.centerY)
             $0.trailing.equalToSuperview()
         }
+        humidityView.isHidden = true
+        temperatureView.isHidden = true
+        
         externalStackView.spacing = 12
         externalStackView.addArrangedSubViews([externalImageView, externalDustLabel])
         externalImageView.snp.makeConstraints {
@@ -557,8 +485,12 @@ final class HomeViewController: BaseViewController {
         AppRouter.shared.route(to: .setting)
     }
     
+    @objc private func geoSettingButtonViewTapped(_ sender: UITapGestureRecognizer) {
+        showRequestLocationServiceAlert()
+    }
+    
     func showRequestLocationServiceAlert() {
-        let requestLocationServiceAlert = UIAlertController(title: "위치 정보 이용", message: "위치 서비스를 사용할 수 없습니다.\n디바이스의 '설정 > 개인정보 보호'에서 위치 서비스를 켜주세요.", preferredStyle: .alert)
+        let requestLocationServiceAlert = UIAlertController(title: "위치 정보 이용", message: "위치 서비스를 사용할 수 없습니다.\n디바이스의 '설정'에서 '위치'를 허용해주세요.", preferredStyle: .alert)
         let goSetting = UIAlertAction(title: "설정으로 이동", style: .destructive) { _ in
             if let appSetting = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(appSetting)
@@ -583,6 +515,10 @@ final class HomeViewController: BaseViewController {
             showRequestLocationServiceAlert()
             fetchWeatherPublisher.send((lat: nil, lng: nil))
         case .authorizedWhenInUse:
+            geoSettingButtonView.isHidden = true
+            humidityView.isHidden = false
+            temperatureView.isHidden = false
+            
             locationManager.startUpdatingLocation()
         default:
             print("Default")
@@ -606,8 +542,12 @@ final class HomeViewController: BaseViewController {
             .sink { [weak self] state in
                 switch state {
                 case .wetherUpdated(let humidity, let temperature, let date):
-                    self?.humidityLabel.text = humidity
-                    self?.temperatureLabel.text = temperature
+                    self?.geoSettingButtonView.isHidden = true
+                    self?.humidityView.isHidden = false
+                    self?.temperatureView.isHidden = false
+                    
+                    self?.humidityView.text = humidity
+                    self?.temperatureView.text = temperature
                     if let school = Preferences.userInfo?.school.schulNm {
                         self?.regionDateLabel.text = school + date
                     }
