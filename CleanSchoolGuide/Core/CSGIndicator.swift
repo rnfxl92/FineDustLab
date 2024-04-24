@@ -24,10 +24,10 @@ final class CSGIndicator {
         stackView.distribution = .fill
         stackView.spacing = 20
 
-        indicator.color = .gray0
+        indicator.color = .gray700
 
         messageLabel.font = .body.regular
-        messageLabel.textColor = .gray0
+        messageLabel.textColor = .gray700
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
 

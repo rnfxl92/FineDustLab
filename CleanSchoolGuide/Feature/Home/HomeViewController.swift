@@ -540,6 +540,8 @@ final class HomeViewController: BaseViewController {
             .$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
+                state.isLoading ? CSGIndicator.shared.show() : CSGIndicator.shared.hide()
+                
                 switch state {
                 case .wetherUpdated(let humidity, let temperature, let date):
                     self?.geoSettingButtonView.isHidden = true

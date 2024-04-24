@@ -72,6 +72,7 @@ final class SettingsViewController: BaseViewController {
         viewModel.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
+                state.isLoading ? CSGIndicator.shared.show() : CSGIndicator.shared.hide()
                 switch state {
                 case .saveFailed:
                     let vc = PopupViewController(type: .single, description: "정보 저장에 실패하였습니다.\n정보를 모두 입력해주세요", defualtTitle: "확인")

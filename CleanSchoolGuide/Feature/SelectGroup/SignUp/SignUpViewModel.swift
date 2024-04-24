@@ -20,6 +20,8 @@ final class SignUpViewModel {
         case loading
         case error(String)
         case signUpSuccessed
+        case saveSuccess
+        case saveFailed
         case none
         
         var isLoading: Bool {
@@ -44,6 +46,7 @@ final class SignUpViewModel {
     private(set) var passwordCheck: String = ""
     private(set) var email: String = ""
     private(set) var termsAgree: Bool = false
+    private var cancellable = Set<AnyCancellable>()
     
     //    private let emailRegex = "^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\\.)?ac\\.kr$"
         private let emailRegex: String = "[A-Z0-9a-z._-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}"
@@ -98,15 +101,35 @@ final class SignUpViewModel {
                 self.state = .error(error.localizedDescription)
                 return
             }
-            if let user = authresult?.user {
-                // user 데이터 등록
+            if let user = authresult?.user, let school = self.school {
+                Preferences.userToken = user.uid
+                
+                let endPoint = APIEndpoints
+                    .postUserData(with: .init(
+                        userProfile: .init(
+                            schoolCode: school.sdSchulCode,
+                            grade: 1,
+                            classNum: 2,
+                            name: name,
+                            userType: .teacher,
+                            schoolName: school.schulNm,
+                            schoolAddress: school.orgRdnma),
+                        uid: user.uid)
+                    )
+                self.postUserData(endPoint: endPoint)
+                Preferences.userInfo = .init(name: self.name, school: school, grade: 1, classNum: 2, studentNum: nil) // TODO: -
             }
-            if let school = self.school {
-                // TODO: - 학년 반 데이터도 넣기
-                Preferences.userInfo = .init(name: self.name, school: school, grade: 1, classNum: 2, studentNum: nil)
-            }
-            self.state = .signUpSuccessed
         }
+    }
+    
+    private func postUserData(endPoint: Endpoint<EmptyData?>) {
+        state = .loading
+        NetworkService.shared.request(endPoint)
+            .replaceError(with: nil)
+            .sink { [weak self] _ in
+                self?.state = .signUpSuccessed
+            }
+            .store(in: &cancellable)
     }
     
 }

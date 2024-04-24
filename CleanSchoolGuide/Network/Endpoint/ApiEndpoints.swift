@@ -119,6 +119,25 @@ struct APIEndpoints {
         )
     }
     
+    static func postUserData(with data: SaveUserProfileDto) -> Endpoint<EmptyData?> {
+        
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/user/set",
+            method: .post,
+            bodyParameters: data
+        )
+    }
+    
+    static func getUserData(with data: getUserProfileDto) -> Endpoint<SaveUserProfileDto.UserProfile> {
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/user/get",
+            method: .get,
+            queryParameters: data
+        )
+    }
+    
 }
 
 extension Encodable {

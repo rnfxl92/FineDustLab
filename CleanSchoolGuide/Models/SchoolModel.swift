@@ -39,22 +39,13 @@ struct ResultModel: Codable {
 }
 
 struct SchoolModel: Codable, Hashable {
-    let atptOfcdcScCode, atptOfcdcScNm, sdSchulCode, schulNm: String
-    let schulKndScNm, lctnScNm, juOrgNm: String
-    let orgRdnzc, orgRdnma, orgRdnda: String
-    let orgTelno: String
-
+    let sdSchulCode, schulNm: String
+    let orgRdnma: String
+    
     enum CodingKeys: String, CodingKey {
-        case atptOfcdcScCode = "ATPT_OFCDC_SC_CODE"
-        case atptOfcdcScNm = "ATPT_OFCDC_SC_NM"
         case sdSchulCode = "SD_SCHUL_CODE"
         case schulNm = "SCHUL_NM"
-        case schulKndScNm = "SCHUL_KND_SC_NM"
-        case lctnScNm = "LCTN_SC_NM"
-        case juOrgNm = "JU_ORG_NM"
-        case orgRdnzc = "ORG_RDNZC"
         case orgRdnma = "ORG_RDNMA"
-        case orgRdnda = "ORG_RDNDA"
-        case orgTelno = "ORG_TELNO"
+
     }
 }

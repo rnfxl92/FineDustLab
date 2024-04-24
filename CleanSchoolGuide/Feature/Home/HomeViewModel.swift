@@ -22,7 +22,15 @@ final class HomeViewModel: NSObject {
         case externalFineUpdate(state: FineStatusModel.Status)
         case internalFineUpdate(state: InternalFineStatusModel.Status)
         case fineDustPosted
+        case loading
         case none
+        
+        var isLoading: Bool {
+            switch self {
+            case .loading: return true
+            default: return false
+            }
+        }
     }
     
     @Published var state: State = .none
@@ -132,6 +140,7 @@ final class HomeViewModel: NSObject {
         lat: Double = 37.582425,
         lng: Double = 127.582425
     ) -> AnyPublisher<WeatherModel?, Never> {
+        state = .loading
         let endPoint = APIEndpoints.getWeaher(with: .init(lat: lat, lng: lng))
         
         return NetworkService
@@ -144,7 +153,7 @@ final class HomeViewModel: NSObject {
     private func getExternalFineStatus(
         schoolCode: Int
     ) -> AnyPublisher<FineStatusModel?, Never> {
-        
+        state = .loading
         let endPoint = APIEndpoints.getExternalFineStatus(with: .init(location: schoolCode))
         
         return NetworkService
@@ -157,7 +166,7 @@ final class HomeViewModel: NSObject {
     private func getInternalFineStatus(
         schoolCode: Int, grade: Int, classNum: Int
     ) -> AnyPublisher<InternalFineStatusModel?, Never> {
-        
+        state = .loading
         let endPoint = APIEndpoints.getIntertalFineStatus(with: .init(schoolCode: schoolCode, grade: grade, classNum: classNum))
         
         return NetworkService
@@ -176,7 +185,7 @@ final class HomeViewModel: NSObject {
         }
         
         guard let fineData = Preferences.fineData, let ultraFineData = Preferences.ultraFineData, let userData = Preferences.userInfo else { return }
-    
+        state = .loading
         let endPoint = APIEndpoints
             .postClassroomFineData(
                 with: .init(

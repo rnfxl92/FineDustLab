@@ -19,11 +19,20 @@ final class SettingsViewModel {
     
     enum State {
         case none
+        case loading
         case saveSuccess
         case saveFailed
+        
+        var isLoading: Bool {
+            switch self {
+            case .loading: return true
+            default: return false
+            }
+        }
     }
     
     @Published var state: State = .none
+    private var cancellable = Set<AnyCancellable>()
     
     private(set) var school: SchoolModel? = Preferences.userInfo?.school
     private(set) var name: String? = Preferences.userInfo?.name
@@ -43,7 +52,36 @@ final class SettingsViewModel {
         
         guard let name, name.isNotEmpty, let school, let grade, let classNum else { return state = .saveFailed }
         Preferences.userInfo = UserInfo(name: name, school: school, grade: grade, classNum: classNum, studentNum: studentNum)
-        state = .saveSuccess
+        
+        guard let uid = Preferences.userToken,
+              Preferences.selectedUserType == .teacher else {
+            state = .saveSuccess
+            return
+        }
+        
+        state = .loading
+        
+        cancellable.removeAll()
+        let endPoint = APIEndpoints
+            .postUserData(with: .init(
+                userProfile: .init(
+                    schoolCode: school.sdSchulCode,
+                    grade: grade,
+                    classNum: classNum,
+                    name: name,
+                    userType: .teacher,
+                    schoolName: school.schulNm,
+                    schoolAddress: school.orgRdnma),
+                uid: uid)
+            )
+        NetworkService.shared.request(endPoint)
+            .handleError { [weak self] _ in
+                self?.state = .saveFailed
+            }
+            .sink { [weak self] _ in
+                self?.state = .saveSuccess
+            }
+            .store(in: &cancellable)
     }
     
     func setSchool(_ school: SchoolModel) {
