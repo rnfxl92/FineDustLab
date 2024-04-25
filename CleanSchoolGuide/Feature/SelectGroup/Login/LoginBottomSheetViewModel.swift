@@ -26,18 +26,35 @@ final class LoginBottomSheetViewModel {
     }
     @Published var state: State = .none
     
+    private var cancellable = Set<AnyCancellable>()
     private var ref = Database.database().reference()
 
     func requestLogin(email: String, password: String) {
         state = .loading
         Auth.auth().signIn(withEmail: email, password: password) {[weak self] user, error in
             if let user = user?.user {
-                Preferences.userToken = user.uid
-                self?.state = .loginSuccessed
+                self?.getUserInfo(user.uid)
             } else {
                 self?.state = .loginFailed
             }
         }
+    }
+    
+    private func getUserInfo(_ uid: String) {
+        let endPoint = APIEndpoints.getUserData(with: .init(uid: uid))
+        NetworkService
+            .shared
+            .request(endPoint)
+            .handleError { [weak self] _ in
+                self?.state = .loginFailed
+            }
+            .sink { [weak self] model in
+                Preferences.userToken = uid
+                Preferences.selectedUserType = .teacher
+                Preferences.userInfo = model.toUserInfo()
+                self?.state = .loginSuccessed
+            }
+            .store(in: &cancellable)
     }
     
 }

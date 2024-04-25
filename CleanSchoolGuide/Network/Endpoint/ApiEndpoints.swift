@@ -129,7 +129,7 @@ struct APIEndpoints {
         )
     }
     
-    static func getUserData(with data: getUserProfileDto) -> Endpoint<SaveUserProfileDto.UserProfile> {
+    static func getUserData(with data: getUserProfileDto) -> Endpoint<ServerUserModel> {
         return Endpoint(
             baseURL: "https://finedustlab-api-ko.net",
             path: "/user/get",
