@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import SnapKit
 
 final class SignUpViewController: BaseViewController {
     private let navigationBar = CustomNavigationBar()
@@ -25,12 +26,24 @@ final class SignUpViewController: BaseViewController {
         tableView.clipsToBounds = true
         tableView.backgroundColor = .clear
         tableView.tableHeaderView = nil
-        tableView.contentInset = .init(top: 0, left: 0, bottom: 100, right: 0)
+        tableView.contentInset = .init(top: 0, left: 0, bottom: 20, right: 0)
         return tableView
     }()
     
     private let viewModel = SignUpViewModel()
+    private var contentBottomConstraint: Constraint?
     private var cancellable = Set<AnyCancellable>()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+    }
     
     override func setUserInterface() {
         hideKeyboardWhenTappedAround()
@@ -49,7 +62,7 @@ final class SignUpViewController: BaseViewController {
         tableView.snp.makeConstraints {
             $0.top.equalTo(navigationBar.snp.bottom)
             $0.directionalHorizontalEdges.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            contentBottomConstraint =  $0.bottom.equalTo(view.safeAreaLayoutGuide).constraint
         }
     }
     
@@ -140,12 +153,21 @@ extension SignUpViewController: UITableViewDataSource {
 }
 
 extension SignUpViewController: SignUpSchoolCellDelegate {
+    func gradeChanged(_ grade: Int) {
+        viewModel.setGrade(grade)
+    }
+    
+    func classNumChanged(_ classNum: Int) {
+        viewModel.setClassNum(classNum)
+    }
+    
     func schoolTextFieldTapped() {
         let vc = SchoolSearchBottomSheetController { [weak self] school in
             self?.viewModel.setSchool(school)
         }
         presentBottomSheet(vc)
     }
+    
 }
 
 extension SignUpViewController: SignUpNameCellDelegate {
@@ -188,7 +210,6 @@ extension SignUpViewController: SignUpPasswordCellDelegate {
             self?.tableView.endUpdates()
         }
     }
-    
 }
 
 extension SignUpViewController: SignUpButtonCellDelegate {
@@ -198,5 +219,23 @@ extension SignUpViewController: SignUpButtonCellDelegate {
     
     func signUpButtonTapped() {
         viewModel.requestSignUp()
+    }
+}
+
+extension SignUpViewController {
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            contentBottomConstraint?.update(inset: (keyboardSize.height - view.safeAreaInsets.bottom))
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        contentBottomConstraint?.update(inset: 0)
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 }

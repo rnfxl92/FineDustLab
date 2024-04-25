@@ -11,6 +11,7 @@ import CombineCocoa
 
 protocol SignUpEmailCellDelegate: AnyObject {
     func emailChanged(_ email: String)
+    func emailBeginFirstResponder()
 }
 
 final class SignUpEmailCell: UITableViewCell {
@@ -84,6 +85,7 @@ final class SignUpEmailCell: UITableViewCell {
     }
     
     private func setup() {
+        emailTextField.delegate = self
         emailStackView.addArrangedSubViews([titleLabel, emailBackground, warningLabel, descriptonLabel])
         emailBackground.snp.makeConstraints {
             $0.height.equalTo(56)
@@ -116,4 +118,10 @@ final class SignUpEmailCell: UITableViewCell {
             .store(in: &cancellable)
     }
     
+}
+
+extension SignUpEmailCell: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        delegate?.emailBeginFirstResponder()
+    }
 }

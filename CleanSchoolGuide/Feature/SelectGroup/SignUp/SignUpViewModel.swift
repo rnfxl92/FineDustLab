@@ -14,6 +14,8 @@ final class SignUpViewModel {
     enum State {
         case nameUpdated
         case schoolUpated(SchoolModel)
+        case gradeUpdated
+        case classNumUpdated
         case emailUpdated
         case passwordUpdated
         case termUpdated(Bool)
@@ -41,6 +43,8 @@ final class SignUpViewModel {
     }
     
     private(set) var school: SchoolModel?
+    private(set) var grade: Int?
+    private(set) var classNum: Int?
     private(set) var name: String = ""
     private(set) var password: String = ""
     private(set) var passwordCheck: String = ""
@@ -55,6 +59,8 @@ final class SignUpViewModel {
     var isSignable: Bool {
         name.isNotEmpty
         && email.isNotEmpty
+        && !grade.isNil
+        && !classNum.isNil
         && email.validateRegex(with: emailRegex)
         && password.isNotEmpty
         && password.validateRegex(with: passwordRegex)
@@ -73,6 +79,17 @@ final class SignUpViewModel {
         self.school = school
         state = .schoolUpated(school)
     }
+    
+    func setGrade(_ grade: Int){
+        self.grade = grade
+        state = .gradeUpdated
+    }
+    
+    func setClassNum(_ classNum: Int){
+        self.classNum = classNum
+        state = .classNumUpdated
+    }
+    
     func setEmail(_ email: String) {
         self.email = email
         state = .emailUpdated
@@ -108,8 +125,8 @@ final class SignUpViewModel {
                     .postUserData(with: .init(
                         userProfile: .init(
                             schoolCode: school.sdSchulCode,
-                            grade: 1,
-                            classNum: 2,
+                            grade: grade ?? 0,
+                            classNum: classNum ?? 0,
                             name: name,
                             userType: .teacher,
                             schoolName: school.schulNm,
@@ -117,7 +134,7 @@ final class SignUpViewModel {
                         uid: user.uid)
                     )
                 self.postUserData(endPoint: endPoint)
-                Preferences.userInfo = .init(name: self.name, school: school, grade: 1, classNum: 2, studentNum: nil) // TODO: -
+                Preferences.userInfo = .init(name: self.name, school: school, grade: grade ?? 0, classNum: classNum ?? 0, studentNum: nil)
             }
         }
     }

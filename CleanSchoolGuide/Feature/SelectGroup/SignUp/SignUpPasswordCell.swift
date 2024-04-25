@@ -131,7 +131,7 @@ final class SignUpPasswordCell: UITableViewCell {
         stackView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-            $0.bottom.equalToSuperview().inset(60)
+            $0.bottom.equalToSuperview().inset(80)
         }
         
         passwordTextField.textPublisher
