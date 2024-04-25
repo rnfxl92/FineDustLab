@@ -186,6 +186,10 @@ extension SignUpViewController: SignUpEmailCellDelegate {
             self?.tableView.endUpdates()
         }
     }
+    
+    func emailBeginFirstResponder() {
+        tableView.scrollToRow(at: IndexPath(item: SignUpViewModel.Items.email.rawValue, section: 0), at: .top, animated: true)
+    }
 }
 
 extension SignUpViewController: SignUpPasswordCellDelegate {
