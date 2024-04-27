@@ -78,7 +78,7 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SurveySubQuestionNumberPickerCell.self)
         tableView.register(SurveySubQuestionCheckboxCell.self)
         
-        nextButton.isEnable = false
+        nextButton.isEnable = viewModel.isAllAnswered
         var str = NSAttributedString("")
         if viewModel.totalCount > 0 {
             str = NSAttributedString(string: "\(viewModel.currentIndex + 1)/\(viewModel.totalCount)", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .medium)])
