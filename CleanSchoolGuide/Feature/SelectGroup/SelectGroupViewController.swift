@@ -87,25 +87,28 @@ final class SelectGroupViewController: BaseViewController {
             $0.directionalEdges.equalToSuperview()
         }
         
-        mainImageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview().dividedBy(1.3)
-            $0.directionalHorizontalEdges.equalToSuperview()
-        }
-        
         titleStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(52)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
         
-        teacherButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(24)
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+        mainImageView.snp.makeConstraints {
+            $0.top.equalTo(titleStackView.snp.bottom).offset(20)
+            $0.height.lessThanOrEqualTo(275)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(20)
         }
         
         buttonStackView.snp.makeConstraints {
-            $0.bottom.equalTo(teacherButton.snp.top).inset(-72)
+            $0.top.equalTo(mainImageView.snp.bottom).offset(20)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
+        
+        teacherButton.snp.makeConstraints {
+            $0.top.equalTo(buttonStackView.snp.bottom).offset(26)
+            $0.bottom.greaterThanOrEqualTo(view.safeAreaLayoutGuide).inset(24)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+        }
+
     }
     
     override func bind() {
