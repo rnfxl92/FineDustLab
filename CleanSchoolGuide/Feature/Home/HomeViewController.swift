@@ -62,6 +62,7 @@ final class HomeViewController: BaseViewController {
         collectionView.register(CardCollectionViewCell.self)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.decelerationRate = .fast
         
         return collectionView
     }()
@@ -247,6 +248,7 @@ final class HomeViewController: BaseViewController {
     private let fetchFineDustPublisher = PassthroughSubject<Void, Never>()
     private let postFineDustPublisher = PassthroughSubject<(Int, Int), Never>() // 개선 필요
     private let postUltraFineDustPublisher = PassthroughSubject<(Int, Int), Never>() // 개선 필요
+    private var isFirstAppear: Bool = true
     private var cancellable = Set<AnyCancellable>()
     
     override func viewDidLoad() {
@@ -363,7 +365,7 @@ final class HomeViewController: BaseViewController {
             cardCollectionView.snp.makeConstraints {
                 $0.top.equalTo(titleStackView.snp.bottom).offset(24)
                 $0.directionalHorizontalEdges.equalToSuperview()
-                $0.height.equalTo(floor(floor((UIScreen.main.bounds.width * 0.51)) * 1.22))
+                $0.height.equalTo(floor(floor((UIScreen.main.bounds.width * 0.55)) * 1.22))
             }
             
             manualButtonView.snp.makeConstraints {
@@ -603,7 +605,10 @@ extension HomeViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
+        if isFirstAppear {
+            isFirstAppear = false
+            collectionView.contentOffset = CGPoint(x: 32 + floor((UIScreen.main.bounds.width * 0.325)), y: 0)
+        }
         guard let uiModel = viewModel.dataSource[safe: indexPath.item]  else {
             return .init()
         }
@@ -617,12 +622,15 @@ extension HomeViewController: UICollectionViewDataSource {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
-    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        targetContentOffset.pointee = CGPoint(x: 32 + floor((UIScreen.main.bounds.width * 0.325)), y: 0)
+    }
 }
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = floor((UIScreen.main.bounds.width * 0.51))
+        let width = floor((UIScreen.main.bounds.width * 0.55))
         
         return .init(width: width, height: floor(width * 1.22))
     }
