@@ -52,6 +52,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
     private let startButton = SmallFilledButton(title: "설문 시작하기", font: .systemFont(ofSize: 14, weight: .medium))
   
     private let images: [UIImage] = [.character01, .character02, .character03, .character04, .character05, .character06, .character07, .character08]
+    private let failImages: [UIImage] = [.characterFail01, .characterFail02, .characterFail03]
     weak var delegate: CardCollectionViewCellDelegate?
     private var cancellable = Set<AnyCancellable>()
     
@@ -127,7 +128,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 imageView.image = UIImage.characterHoliday
             } else {
                 dayLabel.isHidden = false
-                imageView.image = UIImage.cloud
+                imageView.image = UIImage.imgEmptyBluecard
                 mainView.bringSubviewToFront(dayLabel)
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
@@ -153,13 +154,13 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 }
                 mainView.backgroundColor = .green300
             } else {
-                dateLabel.textColor = .gray500
-                imageView.image = UIImage.characterFail
-                mainView.backgroundColor = .gray200
+                dateLabel.textColor = .gray0
+                imageView.image = failImages.randomElement() ?? UIImage.characterFail01
+                mainView.backgroundColor = .gray600
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
-                startButton.setTitle("설문 실패", for: .disabled)
-                startButton.setBackgroundColor(color: .gray300, forState: .disabled)
+                startButton.setTitle("설문 실패!", for: .disabled)
+                startButton.setBackgroundColor(color: .gray800, forState: .disabled)
             }
         } else {
             dateLabel.textColor = .gray500
@@ -175,11 +176,11 @@ final class CardCollectionViewCell: UICollectionViewCell {
                     descriptionLabel.isHidden = false
                 }
             } else {
-                imageView.image = UIImage.cloud
+                imageView.image = UIImage.imgEmptyGreycard
                 mainView.backgroundColor = .gray200
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
-                startButton.setTitle("설문시작하기", for: .disabled)
+                startButton.setTitle("설문 준비중", for: .disabled)
                 startButton.setBackgroundColor(color: .gray300, forState: .disabled)
             }
         }
