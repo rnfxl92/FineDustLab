@@ -615,6 +615,9 @@ extension HomeViewController: UICollectionViewDataSource {
         let cell: CardCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
         cell.delegate = self
         cell.setUIModel(uiModel)
+        DispatchQueue.main.async {
+            cell.alpha = indexPath.item == 1 ? 1 : 0.7
+        }
         
         return cell
     }
@@ -622,9 +625,26 @@ extension HomeViewController: UICollectionViewDataSource {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        cardCollectionView.visibleCells.forEach { cell in
+            cell.alpha = 1
+        }
+    }
+    
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         
         targetContentOffset.pointee = CGPoint(x: 32 + floor((UIScreen.main.bounds.width * 0.325)), y: 0)
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        cardCollectionView.visibleCells.forEach { cell in
+            cell.alpha = 0.7
+        }
+        
+        if let cell = cardCollectionView.cellForItem(at: IndexPath(item: 1, section: 0)) {
+            cell.alpha = 1.0
+        }
     }
 }
 
