@@ -11,16 +11,11 @@ import PDFKit
 
 final class HomeViewModel: NSObject {
     struct Input {
-        let fetchWeather: AnyPublisher<(lat: Double?, lng: Double?), Never>
-        let fetchFineDust: AnyPublisher<Void, Never>
         let postFineDust: AnyPublisher<(Int, Int), Never>
         let postUltraFineDust: AnyPublisher<(Int, Int), Never>
     }
     
     enum State {
-        case wetherUpdated(humidity: String, temperature: String, date: String)
-        case externalFineUpdate(state: FineStatusModel.Status)
-        case internalFineUpdate(state: InternalFineStatusModel.Status)
         case fineDustPosted
         case loading
         case none
@@ -58,62 +53,7 @@ final class HomeViewModel: NSObject {
     private var cancellable = Set<AnyCancellable>()
     
     func bind(_ input: Input) {
-        input
-            .fetchWeather
-            .debounce(for: 1, scheduler: RunLoop.main)
-            .flatMap { [weak self] (lat, lng) -> AnyPublisher<WeatherModel?, Never> in
-                guard let self else { return Empty().eraseToAnyPublisher() }
-                if let lat, let lng {
-                    return self.getWeather(lat: lat, lng: lng)
-                } else {
-                    return self.getWeather()
-                }
-            }
-            .sink { [weak self] weather in
-                guard
-                    let self,
-                    let weather,
-                    let humidity = weather.humidity,
-                    let temperature = weather.temperature,
-                    let date = weather.date
-                else { return }
-                self.state = .wetherUpdated(humidity: humidity, temperature:temperature, date: date)
-            }
-            .store(in: &cancellable)
-        
-        input
-            .fetchFineDust
-            .flatMap { [weak self] _ -> AnyPublisher<FineStatusModel?, Never> in
-                guard let self, let sdSchulCode = Preferences.userInfo?.school.sdSchulCode, let schoolCode = Int(sdSchulCode) else { return Empty().eraseToAnyPublisher() }
-
-                return self.getExternalFineStatus(schoolCode: schoolCode)
-            }
-            .sink { [weak self] fineStatusModel in
-                
-                if let fineState = fineStatusModel?.status {
-                    self?.state = .externalFineUpdate(state: fineState)
-                }
-            }
-            .store(in: &cancellable)
-        
-        input
-            .fetchFineDust
-            .flatMap { [weak self] _ -> AnyPublisher<InternalFineStatusModel?, Never> in
-                guard
-                    let self,
-                    let userInfo = Preferences.userInfo,
-                    let schoolCode = Int(userInfo.school.sdSchulCode)
-                else { return Empty().eraseToAnyPublisher() }
-                
-                return self.getInternalFineStatus(schoolCode: schoolCode, grade: userInfo.grade, classNum: userInfo.classNum)
-            }
-            .sink { [weak self] fineStatusModel in
-                guard let fineStatusModel else { return }
-                
-                self?.state = .internalFineUpdate(state: fineStatusModel.finedustFactor > 60 ? .bad : .good)
-            }
-            .store(in: &cancellable)
-        
+       
         input.postFineDust
             .sink { [weak self] value, selectedIndex in
                 Preferences.fineData = .init(value: value, selectedIndex: selectedIndex, time: Date())
