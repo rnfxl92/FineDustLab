@@ -45,7 +45,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 14, weight: .regular)
         label.textAlignment = .center
         label.textColor = .gray0
-        label.text = "오늘은 쉬어 갈께요"
+        label.text = "쉬어 갈께요"
         return label
     }()
     
@@ -124,6 +124,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 startButton.isEnabled = false
             } else if model.isDayOff {
                 descriptionLabel.isHidden = false
+                descriptionLabel.textColor = .gray0
                 startButton.isHidden = true
                 imageView.image = UIImage.characterHoliday
             } else {
@@ -144,6 +145,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                     imageView.image = UIImage.characterHoliday
                     startButton.isHidden = true
                     descriptionLabel.isHidden = false
+                    descriptionLabel.textColor = .gray0
                 } else { // 설문하고 오늘이 아닌경우
                     
                     imageView.image = images.randomElement() ?? UIImage.character01
@@ -174,6 +176,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                     imageView.image = UIImage.characterHoliday
                     startButton.isHidden = true
                     descriptionLabel.isHidden = false
+                    descriptionLabel.textColor = .gray600
                 }
             } else {
                 imageView.image = UIImage.imgEmptyGreycard
