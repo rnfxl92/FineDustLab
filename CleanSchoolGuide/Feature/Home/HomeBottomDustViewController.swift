@@ -44,27 +44,26 @@ final class HomeBottomDustViewController: BaseViewController {
         return label
     }()
     
-    private let dustStackView = UIStackView(axis: .horizontal)
-    private let externalView: UIView = {
+    private let dustMainHStackView: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal)
+        stackView.distribution = .fillEqually
+        
+        return stackView
+    }()
+    private let dustView: UIView = {
         let view = UIView()
         view.backgroundColor = .blue0
         return view
     }()
-    private let externalVstack: UIStackView = {
+    private let dustVstack: UIStackView = {
         let stackView = UIStackView(axis: .vertical)
         stackView.distribution = .fill
         stackView.alignment = .center
         stackView.spacing = 12
         return stackView
     }()
-    private let externalTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 13, weight: .medium)
-        label.textColor = .gray600
-        label.text = "학교 외부"
-        return label
-    }()
-    private let externalDescriptionLabel: UILabel = {
+
+    private let dustPermissionDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .gray500
@@ -72,40 +71,45 @@ final class HomeBottomDustViewController: BaseViewController {
         label.text = "설정에서 학교 정보를\n입력 후 확인 가능해요."
         return label
     }()
-    private let externalStackView = UIStackView(axis: .horizontal)
-    private let externalImageView: UIImageView = {
+    private let dustInfoStackView: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal)
+        stackView.spacing = 12
+        return stackView
+    }()
+    private let dustInfoImageView: UIImageView = {
         let imageView = UIImageView(image: .imgGood)
         imageView.contentMode = .scaleAspectFill
         
         return imageView
     }()
-    private let externalDustLabel: UILabel = {
+    private let dustInfoLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = .gray800
         label.text = "좋아요!"
         return label
     }()
+    private let dustTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .bold)
+        label.textColor = .gray600
+        label.text = "미세먼지"
+        return label
+    }()
     
-    private let internalView: UIView = {
+    private let fineDustView: UIView = {
         let view = UIView()
         view.backgroundColor = .orange0
         return view
     }()
-    private let internalVstack: UIStackView = {
+    private let fineDustVstack: UIStackView = {
         let stackView = UIStackView(axis: .vertical)
         stackView.distribution = .fill
         stackView.alignment = .center
         stackView.spacing = 12
         return stackView
     }()
-    private let internalTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 13, weight: .medium)
-        label.textColor = .gray600
-        label.text = "학교 내부"
-        return label
-    }()
+    
     private let internalDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
@@ -115,18 +119,29 @@ final class HomeBottomDustViewController: BaseViewController {
         label.textAlignment = .center
         return label
     }()
-    private let internalStackView = UIStackView(axis: .horizontal)
-    private let internalImageView: UIImageView = {
+    private let fineDustInfoStackView: UIStackView = {
+        let stackView = UIStackView(axis: .horizontal)
+        stackView.spacing = 12
+        return stackView
+    }()
+    private let fineDustInfoImageView: UIImageView = {
         let imageView = UIImageView(image: .imgBad)
         imageView.contentMode = .scaleAspectFill
         
         return imageView
     }()
-    private let internalDustLabel: UILabel = {
+    private let fineDustInfoLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = .gray800
         label.text = "안좋아요"
+        return label
+    }()
+    private let fineDustTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 13, weight: .bold)
+        label.textColor = .gray600
+        label.text = "초미세먼지"
         return label
     }()
     
@@ -145,9 +160,13 @@ final class HomeBottomDustViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        checkUserCurrentLocationAuthorization()
         fetchFineDustPublisher.send()
         locationManager.startUpdatingLocation()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        checkUserCurrentLocationAuthorization()
     }
     
     override func setUserInterface() {
@@ -155,6 +174,7 @@ final class HomeBottomDustViewController: BaseViewController {
         geoSettingButtonView.addGestureRecognizer(geoSettingTapGesture)
         geoSettingButtonView.isUserInteractionEnabled = true
         
+        view.addSubViews([todayTitleView, segmentedControl, dustMainHStackView])
         weatherStackView.addArrangedSubViews([humidityView, temperatureView, geoSettingButtonView])
         todayTitleView.addSubViews([todayTitleLabel, weatherStackView])
         
@@ -169,8 +189,6 @@ final class HomeBottomDustViewController: BaseViewController {
         humidityView.isHidden = true
         temperatureView.isHidden = true
         
-        view.addSubViews([todayTitleView, segmentedControl])
-        
         todayTitleView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(24)
         }
@@ -182,6 +200,38 @@ final class HomeBottomDustViewController: BaseViewController {
             $0.height.greaterThanOrEqualTo(34)
             $0.height.lessThanOrEqualTo(44)
         }
+        
+        dustInfoStackView.addArrangedSubViews([dustInfoImageView, dustInfoLabel])
+        dustVstack.addArrangedSubViews([dustInfoStackView, dustTitleLabel])
+        dustView.addSubview(dustVstack)
+        dustVstack.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24)
+            $0.leading.greaterThanOrEqualToSuperview().inset(16)
+            $0.trailing.lessThanOrEqualToSuperview().inset(16)
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(16)
+        }
+        
+        fineDustInfoStackView.addArrangedSubViews([fineDustInfoImageView, fineDustInfoLabel])
+        fineDustVstack.addArrangedSubViews([fineDustInfoStackView, fineDustTitleLabel])
+        fineDustView.addSubview(fineDustVstack)
+        fineDustVstack.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(24)
+            $0.leading.greaterThanOrEqualToSuperview().inset(16)
+            $0.trailing.lessThanOrEqualToSuperview().inset(16)
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(16)
+        }
+        
+        dustMainHStackView.addArrangedSubViews([dustView, fineDustView])
+        
+        dustMainHStackView.snp.makeConstraints {
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            $0.top.equalTo(segmentedControl.snp.bottom).offset(10)
+        }
+        dustMainHStackView.cornerRadius = 18
+        
+        
     }
     
     override func bind() {
@@ -203,15 +253,15 @@ final class HomeBottomDustViewController: BaseViewController {
                         self?.regionDateLabel.text = school + date
                     }
                 case .externalFineUpdate(let state):
-                    self?.externalStackView.isHidden = false
-                    self?.externalDescriptionLabel.isHidden = true
-                    self?.externalDustLabel.text = state.description
-                    self?.externalImageView.image = state == .bad ? .imgBad : .imgGood
+                    self?.dustInfoStackView.isHidden = false
+                    self?.dustPermissionDescriptionLabel.isHidden = true
+                    self?.dustInfoLabel.text = state.description
+                    self?.dustInfoImageView.image = state == .bad ? .imgBad : .imgGood
                 case .internalFineUpdate(let state):
-                    self?.internalStackView.isHidden = false
+                    self?.fineDustInfoStackView.isHidden = false
                     self?.internalDescriptionLabel.isHidden = true
-                    self?.internalDustLabel.text = state.description
-                    self?.internalImageView.image = state == .bad ? .imgBad : .imgGood
+                    self?.fineDustInfoLabel.text = state.description
+                    self?.fineDustInfoImageView.image = state == .bad ? .imgBad : .imgGood
                 default:
                     break
                 }

@@ -35,7 +35,7 @@ final class HomeViewController: BaseViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = .gray1000
-        label.text = Preferences.selectedUserType == .teacher ? "오늘의 미세먼지 정보": "오늘도 청소했다면?"
+        label.text = Preferences.selectedUserType == .teacher ? "오늘의 미세먼지 정보": "오늘도 등교했다면?"
         label.textAlignment = .left
         return label
     }()
@@ -45,7 +45,7 @@ final class HomeViewController: BaseViewController {
         label.font = .systemFont(ofSize: 22)
         label.textColor = .gray1000
         label.numberOfLines = 2
-        label.text = Preferences.selectedUserType == .teacher ? "등록된 정보는 학생들에게 공유됩니다." : "설문조사를 완료해 주세요!"
+        label.text = Preferences.selectedUserType == .teacher ? "등록된 정보는 학생들에게 공유됩니다." : "미세먼지 상태를 체크해 보세요!"
         label.textAlignment = .left
         return label
     }()
@@ -241,7 +241,7 @@ final class HomeViewController: BaseViewController {
             
             manualButtonView.snp.makeConstraints {
                 $0.height.equalTo(56)
-                $0.top.equalTo(cardCollectionView.snp.bottom).inset(-24)
+                $0.top.equalTo(cardCollectionView.snp.bottom).offset(20)
                 $0.bottom.equalToSuperview().inset(24)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
             }
@@ -265,7 +265,7 @@ final class HomeViewController: BaseViewController {
         }
         
         todayWeatherView.snp.makeConstraints {
-            $0.top.equalTo(mainSurveyView.snp.bottom).offset(16)
+            $0.top.equalTo(mainSurveyView.snp.bottom).offset(5)
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
