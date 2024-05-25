@@ -83,5 +83,4 @@ enum SubQuestionType: String, Codable {
     case numberPicker = "number_picker"
     case checkbox
     case text
-    case string
 }

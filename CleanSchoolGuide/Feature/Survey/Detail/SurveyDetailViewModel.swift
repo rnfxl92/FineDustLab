@@ -44,6 +44,10 @@ final class SurveyDetailViewModel {
     
     init(currentIndex: Int) {
         self.currentIndex = currentIndex
+        
+        anweredQustion?.forEach { [weak self] answer in
+            self?.answerDic[answer.subQuestionId] = answer.answer
+        }
     }
     
     func answered(subQuestionId: Int, answer: String) {

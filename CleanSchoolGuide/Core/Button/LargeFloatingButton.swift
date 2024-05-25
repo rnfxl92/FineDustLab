@@ -54,13 +54,16 @@ final class LargeFloatingButtonView: UIView {
 
         let buttonStackView = UIStackView()
         buttonStackView.distribution = .fillEqually
+        buttonStackView.spacing = 10
 
         if type == .dual {
             buttonStackView.addArrangedSubview(cancelButton)
-            cancelButton.titleLabel?.font = .body.regular
+            cancelButton.titleLabel?.font = .body.bold
             cancelButton.titleLabel?.lineBreakMode = .byTruncatingTail
             cancelButton.setTitle(cancelTitle, for: .normal)
-            cancelButton.setTitleColor(.gray0, for: .normal)
+            cancelButton.setTitleColor(.gray700, for: .normal)
+            cancelButton.setBackgroundColor(color: .gray200, forState: .normal)
+            cancelButton.cornerRadius = 14
         }
         
         buttonStackView.addArrangedSubview(defaultButton)
@@ -71,9 +74,10 @@ final class LargeFloatingButtonView: UIView {
         defaultButton.setBackgroundColor(color: defaultColor, forState: .normal)
         defaultButton.setTitleColor(disabledTitleColor, for: .disabled)
         defaultButton.setBackgroundColor(color: disabledColor, forState: .disabled)
+        defaultButton.cornerRadius = 14
         
         buttonStackView.layer.borderColor = UIColor.line.withAlphaComponent(0.16).cgColor
-        buttonStackView.layer.cornerRadius = 14
+        
         buttonStackView.layer.borderWidth = 1
         buttonStackView.layer.masksToBounds = true
 

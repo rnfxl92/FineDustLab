@@ -9,7 +9,7 @@ import UIKit
 
 class CustomNavigationButton: UIButton {
     enum ButtonType {
-//        case close
+        case close
         case back
         case search
         case custom(UIImage?)
@@ -18,8 +18,8 @@ class CustomNavigationButton: UIButton {
         
         var image: UIImage? {
             switch self {
-//            case .close:
-//                return .ic24Close
+            case .close:
+                return .icClose
             case .back:
                 return .icLeft
             case .search:

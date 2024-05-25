@@ -13,8 +13,8 @@ protocol SurveySubQuestionOXCellDelegate: AnyObject {
 
 final class SurveySubQuestionOXCell: UITableViewCell {
     enum OX: Int {
-        case O = 0
-        case X = 1
+        case O = 1
+        case X = 2
     }
     
     private let oxStackView: UIStackView = {

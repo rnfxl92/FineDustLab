@@ -11,7 +11,7 @@ import CombineCocoa
 
 final class SurveyDetailViewController: BaseViewController {
     private let navigationBar = CustomNavigationBar()
-    private let backButton = CustomNavigationButton(.back)
+    private let closeButton = CustomNavigationButton(.close)
     private let titleStackView: UIStackView = {
         let stackView = UIStackView(axis: .vertical)
         stackView.spacing = 12
@@ -44,7 +44,7 @@ final class SurveyDetailViewController: BaseViewController {
         return tableView
     }()
     
-    private lazy var nextButton = LargeFloatingButtonView(.single, defaultTitle: viewModel.isEnd ? "완료!" : "다음")
+    private lazy var nextButton = LargeFloatingButtonView(.dual, defaultTitle: viewModel.isEnd ? "완료!" : "다음", cancelTitle: "이전")
         
     private let viewModel: SurveyDetailViewModel
     private let isResumed: Bool
@@ -67,6 +67,7 @@ final class SurveyDetailViewController: BaseViewController {
         if isResumed, viewModel.currentIndex < Preferences.surveyTemp?.lastIndex ?? 0 {
             AppRouter.shared.route(to: .surveyDetail(currentIndex: viewModel.currentIndex + 1, isResumed: true))
         }
+        nextButton.isEnable = viewModel.isAllAnswered
     }
     
     override func setUserInterface() {
@@ -79,7 +80,6 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SurveySubQuestionCheckboxCell.self)
         tableView.register(SurveyHelpCell.self)
         
-        nextButton.isEnable = viewModel.isAllAnswered
         var str = NSAttributedString("")
         if viewModel.totalCount > 0 {
             str = NSAttributedString(string: "\(viewModel.currentIndex + 1)/\(viewModel.totalCount)", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .medium)])
@@ -89,7 +89,7 @@ final class SurveyDetailViewController: BaseViewController {
         }
         let totalButton = CustomNavigationButton(.attributedText(str))
         
-        navigationBar.setNavigation(title: "설문조사", titleAlwaysVisible: true, leftItems: [backButton], rightItems: [totalButton])
+        navigationBar.setNavigation(title: "설문조사", titleAlwaysVisible: true, leftItems: [closeButton], rightItems: [totalButton])
         
         categoryLabel.text = viewModel.survey?.categoryName
         categoryLabel.textColor = UIColor(hex: viewModel.survey?.categoryColor ?? "")
@@ -121,13 +121,18 @@ final class SurveyDetailViewController: BaseViewController {
     }
     
     override func bind() {
-        backButton.tapPublisher.sink { [weak self] in
-            self?.pop(animated: true)
+        closeButton.tapPublisher.sink {
+            AppRouter.shared.route(to: .home)
         }
         .store(in: &cancellable)
         
         nextButton.defaultTapPublisher.sink { [weak self] in
             self?.viewModel.postAnswer()
+        }
+        .store(in: &cancellable)
+        
+        nextButton.cancelTapPublisher.sink { [weak self] in
+            self?.pop(animated: true)
         }
         .store(in: &cancellable)
         
