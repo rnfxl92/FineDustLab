@@ -22,14 +22,14 @@ struct InternalFineStatusModel: Codable {
     
     enum Status: String, Codable {
         case good
-        case okay
+        case fine
         case bad
         
         var description: String {
             switch self {
             case .good:
                 return "좋아요!"
-            case .okay:
+            case .fine:
                 return "괜찮아요"
             case .bad:
                 return "안좋아요"
@@ -40,7 +40,7 @@ struct InternalFineStatusModel: Codable {
             switch self {
             case .good:
                 return .orange300
-            case .okay:
+            case .fine:
                 return .orange300
             case .bad:
                 return .gray600
@@ -51,7 +51,7 @@ struct InternalFineStatusModel: Codable {
             switch self {
             case .good:
                 return .imgGood
-            case .okay:
+            case .fine:
                 return .imgOkay
             case .bad:
                 return .imgBad

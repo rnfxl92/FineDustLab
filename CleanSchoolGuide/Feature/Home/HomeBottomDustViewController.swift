@@ -145,7 +145,6 @@ final class HomeBottomDustViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        fetchExternalPublisher.send()
         locationManager.startUpdatingLocation()
     }
     

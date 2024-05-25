@@ -44,7 +44,7 @@ final class HomeBottomDustViewModel {
                 if let lat, let lng {
                     return self.getWeather(lat: lat, lng: lng)
                 } else {
-                    return self.getWeather()
+                    return Empty().eraseToAnyPublisher()
                 }
             }
             .sink { [weak self] weather in
@@ -54,7 +54,10 @@ final class HomeBottomDustViewModel {
                     let humidity = weather.humidity,
                     let temperature = weather.temperature,
                     let date = weather.date
-                else { return }
+                else {
+                    self?.state = .none
+                    return
+                }
                 self.state = .wetherUpdated(humidity: humidity, temperature:temperature, date: date)
             }
             .store(in: &cancellable)
