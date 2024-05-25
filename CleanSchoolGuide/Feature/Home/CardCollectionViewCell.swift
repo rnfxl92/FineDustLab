@@ -77,6 +77,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         
         imageView.snp.makeConstraints {
             $0.top.equalTo(dateLabel.snp.bottom).offset(6)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(32).priority(750)
             $0.centerX.equalToSuperview()
         }
         

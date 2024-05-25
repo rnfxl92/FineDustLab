@@ -12,12 +12,13 @@ final class HomeBottomDustViewModel {
     
     struct Input {
         let fetchWeather: AnyPublisher<(lat: Double?, lng: Double?), Never>
-        let fetchFineDust: AnyPublisher<Void, Never>
+        let fetchInternal: AnyPublisher<Void, Never>
+        let fetchExternal: AnyPublisher<Void, Never>
     }
     
     enum State {
         case wetherUpdated(humidity: String, temperature: String, date: String)
-        case externalFineUpdate(state: FineStatusModel.Status)
+        case externalFineUpdate(dustState: FineStatusModel.Status, fineDustState: FineStatusModel.Status)
         case internalFineUpdate(state: InternalFineStatusModel.Status)
         case loading
         case none
@@ -59,22 +60,22 @@ final class HomeBottomDustViewModel {
             .store(in: &cancellable)
         
         input
-            .fetchFineDust
+            .fetchExternal
             .flatMap { [weak self] _ -> AnyPublisher<FineStatusModel?, Never> in
                 guard let self, let sdSchulCode = Preferences.userInfo?.school.sdSchulCode, let schoolCode = Int(sdSchulCode) else { return Empty().eraseToAnyPublisher() }
 
                 return self.getExternalFineStatus(schoolCode: schoolCode)
             }
             .sink { [weak self] fineStatusModel in
-                
-                if let fineState = fineStatusModel?.status {
-                    self?.state = .externalFineUpdate(state: fineState)
-                }
+//                
+//                if let fineState = fineStatusModel?.status {
+//                    self?.state = .externalFineUpdate(state: fineState)
+//                }
             }
             .store(in: &cancellable)
         
         input
-            .fetchFineDust
+            .fetchInternal
             .flatMap { [weak self] _ -> AnyPublisher<InternalFineStatusModel?, Never> in
                 guard
                     let self,
