@@ -40,7 +40,7 @@ struct SurveyModel: Codable {
 
 struct helpModel: Codable {
     let imageUrl: String?
-    let text: String?
+    let text: [String]?
     
     enum CodingKeys: String, CodingKey {
         case text
@@ -83,4 +83,5 @@ enum SubQuestionType: String, Codable {
     case numberPicker = "number_picker"
     case checkbox
     case text
+    case string
 }

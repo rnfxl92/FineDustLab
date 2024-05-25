@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol SurveyHelpCellDelegate: AnyObject {
+    func updateLayout()
+}
+
 final class SurveyHelpCell: UITableViewCell {
     
     private let helpView: UIView = {
@@ -25,9 +29,11 @@ final class SurveyHelpCell: UITableViewCell {
     
     private let helpImageView: UIImageView = {
        let imageView = UIImageView()
-        
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
+    
+    weak var delegate: SurveyHelpCellDelegate?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -56,12 +62,25 @@ final class SurveyHelpCell: UITableViewCell {
         
         helpImageView.snp.makeConstraints {
             $0.top.equalTo(helpView.snp.bottom).offset(8)
+            $0.height.equalTo(1)
             $0.bottom.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
     }
     
     func setUIModel(imageUrl: String) {
-        helpImageView.loadImage(url: URL(string: imageUrl))
+        helpImageView.loadImage(url: URL(string: imageUrl)) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let image):
+                
+                helpImageView.snp.updateConstraints {
+                    $0.height.equalTo(floor(self.helpImageView.width * image.size.height / image.size.width))
+                }
+                delegate?.updateLayout()
+            case .failure(let error):
+                Logger.debug(error)
+            }
+        }
     }
 }
 

@@ -77,6 +77,7 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SurveySubQuestionChoiceCell.self)
         tableView.register(SurveySubQuestionNumberPickerCell.self)
         tableView.register(SurveySubQuestionCheckboxCell.self)
+        tableView.register(SurveyHelpCell.self)
         
         nextButton.isEnable = viewModel.isAllAnswered
         var str = NSAttributedString("")
@@ -159,12 +160,27 @@ extension SurveyDetailViewController: UITableViewDelegate {
 
 extension SurveyDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return  viewModel.survey?.subQuestions.count ?? .zero
+        guard let survey = viewModel.survey else { return .zero }
+        var count = survey.subQuestions.count
+        if let url = survey.help?.imageUrl, url.isNotEmpty {
+            count += 1
+        }
+
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let subQuestion = viewModel.survey?.subQuestions[safe: indexPath.item] else { return .init() }
+        guard let subQuestion = viewModel.survey?.subQuestions[safe: indexPath.item] else {
+            let cell: SurveyHelpCell = tableView.dequeueReusableCell(for: indexPath)
+            
+            cell.delegate = self
+            if let imageUrl = viewModel.survey?.help?.imageUrl {
+                cell.setUIModel(imageUrl: imageUrl)
+            }
+            
+            return cell
+        }
         switch subQuestion.type {
         case .ox:
             let cell: SurveySubQuestionOXCell = tableView.dequeueReusableCell(for: indexPath)
@@ -213,3 +229,9 @@ extension SurveyDetailViewController: SurveySubQuestionCheckboxCellDelegate {
     }
 }
                                             
+extension SurveyDetailViewController: SurveyHelpCellDelegate {
+    func updateLayout() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
+    }
+}
