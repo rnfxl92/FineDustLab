@@ -11,13 +11,15 @@ struct FineStatusModel: Codable {
     let result: String
     let finedustFactor: String?
     let ultrafineFactor: String?
-    let status: Status?
+    let ultraStatus: Status?
+    let fineStatus: Status?
     
     enum CodingKeys: String, CodingKey {
         case result
         case finedustFactor = "finedust_factor"
         case ultrafineFactor = "ultrafine_factor"
-        case status
+        case ultraStatus = "ultra_status"
+        case fineStatus = "fine_status"
     }
     
     enum Status: String, Codable {

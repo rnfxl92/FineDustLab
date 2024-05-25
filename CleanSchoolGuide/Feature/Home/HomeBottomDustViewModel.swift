@@ -19,7 +19,7 @@ final class HomeBottomDustViewModel {
     enum State {
         case wetherUpdated(humidity: String, temperature: String, date: String)
         case externalFineUpdate(dustState: FineStatusModel.Status, fineDustState: FineStatusModel.Status)
-        case internalFineUpdate(state: InternalFineStatusModel.Status)
+        case internalFineUpdate(dustState: InternalFineStatusModel.Status, fineDustState: InternalFineStatusModel.Status)
         case loading
         case none
         
@@ -67,10 +67,12 @@ final class HomeBottomDustViewModel {
                 return self.getExternalFineStatus(schoolCode: schoolCode)
             }
             .sink { [weak self] fineStatusModel in
-//                
-//                if let fineState = fineStatusModel?.status {
-//                    self?.state = .externalFineUpdate(state: fineState)
-//                }
+                if let dust = fineStatusModel?.fineStatus, let ultraFine = fineStatusModel?.ultraStatus {
+                    self?.state = .externalFineUpdate(dustState: dust, fineDustState: ultraFine)
+                } else {
+                    self?.state = .none
+                }
+                
             }
             .store(in: &cancellable)
         
@@ -86,9 +88,12 @@ final class HomeBottomDustViewModel {
                 return self.getInternalFineStatus(schoolCode: schoolCode, grade: userInfo.grade, classNum: userInfo.classNum)
             }
             .sink { [weak self] fineStatusModel in
-                guard let fineStatusModel else { return }
                 
-                self?.state = .internalFineUpdate(state: fineStatusModel.finedustFactor > 60 ? .bad : .good)
+                if let dust = fineStatusModel?.fineStatus, let ultraFine = fineStatusModel?.ultraStatus {
+                    self?.state = .internalFineUpdate(dustState: dust, fineDustState: ultraFine)
+                } else {
+                    self?.state = .none
+                }
             }
             .store(in: &cancellable)
     }
@@ -112,7 +117,7 @@ final class HomeBottomDustViewModel {
     ) -> AnyPublisher<FineStatusModel?, Never> {
         state = .loading
         let endPoint = APIEndpoints.getExternalFineStatus(with: .init(location: schoolCode))
-        
+        print(schoolCode)
         return NetworkService
             .shared
             .request(endPoint)

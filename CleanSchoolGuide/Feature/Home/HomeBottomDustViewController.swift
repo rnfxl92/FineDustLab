@@ -240,21 +240,37 @@ final class HomeBottomDustViewController: BaseViewController {
             .$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
+                guard let self else { return }
                 state.isLoading ? CSGIndicator.shared.show() : CSGIndicator.shared.hide()
-                
                 switch state {
                 case .wetherUpdated(let humidity, let temperature, let date):
-                    self?.geoSettingButtonView.isHidden = true
-                    self?.humidityView.isHidden = false
-                    self?.temperatureView.isHidden = false
+                    self.geoSettingButtonView.isHidden = true
+                    self.humidityView.isHidden = false
+                    self.temperatureView.isHidden = false
                     
-                    self?.humidityView.text = humidity
-                    self?.temperatureView.text = temperature
-                case .externalFineUpdate(let state):
-                break
-//                    "설정에서 학교 정보를\n입력 후 확인 가능해요."
-                case .internalFineUpdate(let state):
-                break
+                    self.humidityView.text = humidity
+                    self.temperatureView.text = temperature
+                case .externalFineUpdate(let dustStatus, let fineDustStatus):
+                    self.warningDescriptionLabel.isHidden = true
+                    self.dustMainHStackView.isHidden = false
+                    self.dustInfoImageView.image = dustStatus.image
+                    self.dustInfoLabel.text = dustStatus.description
+                    self.dustInfoLabel.textColor = dustStatus.fontColor
+                    
+                    self.fineDustInfoImageView.image = fineDustStatus.image
+                    self.fineDustInfoLabel.text = fineDustStatus.description
+                    self.fineDustInfoLabel.textColor = fineDustStatus.fontColor
+                    
+                case .internalFineUpdate(let dustStatus, let fineDustStatus):
+                    self.warningDescriptionLabel.isHidden = true
+                    self.dustMainHStackView.isHidden = false
+                    self.dustInfoImageView.image = dustStatus.image
+                    self.dustInfoLabel.text = dustStatus.description
+                    self.dustInfoLabel.textColor = dustStatus.fontColor
+                    
+                    self.fineDustInfoImageView.image = fineDustStatus.image
+                    self.fineDustInfoLabel.text = fineDustStatus.description
+                    self.fineDustInfoLabel.textColor = fineDustStatus.fontColor
                 default:
                     break
                 }
@@ -305,8 +321,15 @@ final class HomeBottomDustViewController: BaseViewController {
     
     @objc private func didChangeValue(segment: UISegmentedControl) {
         if segment.selectedSegmentIndex == 0 {
+            warningDescriptionLabel.isHidden = false
+            dustMainHStackView.isHidden = true
+            warningDescriptionLabel.text = "아직 등록된 미세먼지 정보가 없어요."
             fetchInternalPublisher.send()
         } else {
+            warningDescriptionLabel.text = "설정에서 학교 정보를\n입력 후 확인 가능해요."
+            warningDescriptionLabel.isHidden = false
+            dustMainHStackView.isHidden = true
+            
             fetchExternalPublisher.send()
         }
      }
