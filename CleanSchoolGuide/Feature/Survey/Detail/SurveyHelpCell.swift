@@ -9,6 +9,7 @@ import UIKit
 
 protocol SurveyHelpCellDelegate: AnyObject {
     func updateLayout()
+    func imageTapped(image: UIImage)
 }
 
 final class SurveyHelpCell: UITableViewCell {
@@ -65,6 +66,16 @@ final class SurveyHelpCell: UITableViewCell {
             $0.height.equalTo(1)
             $0.bottom.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+        helpImageView.isUserInteractionEnabled = true
+        helpImageView.addGestureRecognizer(tapGestureRecognizer)
+
+    }
+    @objc private func imageTapped() {
+        if let image = helpImageView.image {
+            delegate?.imageTapped(image: image)
+        }
     }
     
     func setUIModel(imageUrl: String) {
@@ -72,13 +83,13 @@ final class SurveyHelpCell: UITableViewCell {
             guard let self else { return }
             switch result {
             case .success(let image):
-                
                 helpImageView.snp.updateConstraints {
                     $0.height.equalTo(floor(self.helpImageView.width * image.size.height / image.size.width))
                 }
                 delegate?.updateLayout()
             case .failure(let error):
-                Logger.debug(error)
+                Logger.info(error)
+                
             }
         }
     }

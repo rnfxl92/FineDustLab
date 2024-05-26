@@ -44,6 +44,26 @@ final class SurveyDetailViewController: BaseViewController {
         return tableView
     }()
     
+    private let expandImageView: UIImageView = {
+        let imageView = UIImageView()
+         imageView.contentMode = .scaleAspectFit
+         return imageView
+     }()
+    
+    private lazy var imageScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.delegate = self
+        scrollView.maximumZoomScale = 3.0
+        scrollView.minimumZoomScale = 0.8
+        scrollView.bouncesZoom = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.backgroundColor = .black.withAlphaComponent(0.3)
+        scrollView.addSubview(expandImageView)
+        
+        return scrollView
+    }()
+    
     private lazy var nextButton = LargeFloatingButtonView(.dual, defaultTitle: viewModel.isEnd ? "완료!" : "다음", cancelTitle: "이전")
         
     private let viewModel: SurveyDetailViewModel
@@ -98,7 +118,7 @@ final class SurveyDetailViewController: BaseViewController {
         titleStackView.addArrangedSubViews([categoryLabel, questionLabel])
         
         view.backgroundColor = .gray0
-        view.addSubViews([tableView, navigationBar, titleStackView, nextButton])
+        view.addSubViews([imageScrollView, tableView, navigationBar, titleStackView, nextButton])
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.directionalHorizontalEdges.equalToSuperview()
@@ -118,6 +138,18 @@ final class SurveyDetailViewController: BaseViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.directionalHorizontalEdges.equalToSuperview()
         }
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage(_:)))
+        imageScrollView.addGestureRecognizer(tapGestureRecognizer)
+        imageScrollView.snp.makeConstraints {
+            $0.directionalEdges.equalToSuperview()
+        }
+        expandImageView.snp.makeConstraints {
+            $0.directionalEdges.equalTo(imageScrollView.contentLayoutGuide)
+            $0.center.equalToSuperview()
+        }
+        
+        imageScrollView.isHidden = true
     }
     
     override func bind() {
@@ -167,7 +199,7 @@ extension SurveyDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let survey = viewModel.survey else { return .zero }
         var count = survey.subQuestions.count
-        if let url = survey.help?.imageUrl, url.isNotEmpty {
+        if let url = survey.help, url.isNotEmpty {
             count += 1
         }
 
@@ -180,7 +212,7 @@ extension SurveyDetailViewController: UITableViewDataSource {
             let cell: SurveyHelpCell = tableView.dequeueReusableCell(for: indexPath)
             
             cell.delegate = self
-            if let imageUrl = viewModel.survey?.help?.imageUrl {
+            if let imageUrl = viewModel.survey?.help {
                 cell.setUIModel(imageUrl: imageUrl)
             }
             
@@ -238,5 +270,23 @@ extension SurveyDetailViewController: SurveyHelpCellDelegate {
     func updateLayout() {
         tableView.beginUpdates()
         tableView.endUpdates()
+    }
+    
+    func imageTapped(image: UIImage) {
+        
+        expandImageView.image = image
+        imageScrollView.isHidden = false
+        view.bringSubviewToFront(imageScrollView)
+    }
+    
+    
+    @objc private func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+        imageScrollView.isHidden = true
+    }
+}
+
+extension SurveyDetailViewController: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return expandImageView
     }
 }

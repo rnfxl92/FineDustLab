@@ -25,7 +25,7 @@ struct SurveyModel: Codable {
     let categoryID: Int
     let question, categoryColor: String
     let id: Int
-    let help: helpModel?
+    let help: String?
 
     enum CodingKeys: String, CodingKey {
         case subQuestions = "sub_questions"
@@ -35,16 +35,6 @@ struct SurveyModel: Codable {
         case categoryColor = "category_color"
         case id
         case help
-    }
-}
-
-struct helpModel: Codable {
-    let imageUrl: String?
-    let text: [String]?
-    
-    enum CodingKeys: String, CodingKey {
-        case text
-        case imageUrl = "image_url"
     }
 }
 
