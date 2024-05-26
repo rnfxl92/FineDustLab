@@ -139,15 +139,19 @@ final class SurveySubQuestionOXCell: UITableViewCell {
         case .O:
             oLabel.font = .systemFont(ofSize: 16, weight: .bold)
             oView.borderWidth = 2
+            oView.backgroundColor = .green0
             
             xLabel.font = .systemFont(ofSize: 16, weight: .regular)
             xView.borderWidth = 0
+            xView.backgroundColor = .gray100
         case .X:
             oLabel.font = .systemFont(ofSize: 16, weight: .regular)
             oView.borderWidth = 0
+            oView.backgroundColor = .gray100
             
             xLabel.font = .systemFont(ofSize: 16, weight: .bold)
             xView.borderWidth = 2
+            xView.backgroundColor = .red0
         }
     }
     

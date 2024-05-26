@@ -98,6 +98,7 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SurveySubQuestionChoiceCell.self)
         tableView.register(SurveySubQuestionNumberPickerCell.self)
         tableView.register(SurveySubQuestionCheckboxCell.self)
+        tableView.register(SurveySubQuestionSliderCell.self)
         tableView.register(SurveyHelpCell.self)
         
         var str = NSAttributedString("")
@@ -235,6 +236,11 @@ extension SurveyDetailViewController: UITableViewDataSource {
             let cell: SurveySubQuestionCheckboxCell = tableView.dequeueReusableCell(for: indexPath)
             cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
             return cell
+        case .slider:
+            let cell: SurveySubQuestionSliderCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
+            
+            return cell
         default:
             return .init()
         }
@@ -263,6 +269,12 @@ extension SurveyDetailViewController: SurveySubQuestionNumberPickerCellDelegate 
 extension SurveyDetailViewController: SurveySubQuestionCheckboxCellDelegate {
     func checkboxTapped(subQuestionId: Int, answer: String) {
         viewModel.answered(subQuestionId: subQuestionId, answer: answer)
+    }
+}
+
+extension SurveyDetailViewController: SurveySubQuestionSliderCellDelegate {
+    func radioButtonTapped(subQuestionId: Int, optionId: Int) {
+        viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)")
     }
 }
                                             

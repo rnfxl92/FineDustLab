@@ -115,6 +115,7 @@ final class SurveyChoiceButton: UIButton {
         setTitleColor(.gray900, for: .normal)
         setTitleColor(.green300, for: .selected)
         setBackgroundColor(color: .gray100, forState: .normal)
+        setBackgroundColor(color: .green0, forState: .selected)
         borderColor = .green300
         
         layer.cornerRadius = 14
