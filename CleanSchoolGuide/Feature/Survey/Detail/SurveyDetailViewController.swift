@@ -280,8 +280,10 @@ extension SurveyDetailViewController: SurveySubQuestionSliderCellDelegate {
                                             
 extension SurveyDetailViewController: SurveyHelpCellDelegate {
     func updateLayout() {
-        tableView.beginUpdates()
-        tableView.endUpdates()
+        UIView.performWithoutAnimation { [weak self] in
+            self?.tableView.beginUpdates()
+            self?.tableView.endUpdates()
+        }
     }
     
     func imageTapped(image: UIImage) {

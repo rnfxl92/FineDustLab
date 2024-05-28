@@ -25,7 +25,7 @@ final class SurveySubQuestionSliderCell: UITableViewCell {
     private let stackView: UIStackView = {
         let stackView = UIStackView(axis: .horizontal)
         stackView.spacing = 0
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fillEqually
         return stackView
     }()
     private let connectView: UIView = {

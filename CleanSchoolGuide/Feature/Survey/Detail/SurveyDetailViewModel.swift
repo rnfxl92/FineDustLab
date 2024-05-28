@@ -70,6 +70,9 @@ final class SurveyDetailViewModel {
         var answers: [SetSurveyReqeustDto.SurveyData.Answer] = []
         
         for key in answerDic.keys {
+            temp.answers.removeAll {
+                $0.categoryId == survey.categoryID && $0.questionId == survey.id && $0.subQuestionId == key
+            }
             temp.answers.append(.init(categoryId: survey.categoryID, questionId: survey.id, subQuestionId: key, answer: answerDic[key] ?? ""))
             answers.append(
                 .init(
