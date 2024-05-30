@@ -135,6 +135,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
                 startButton.isEnabled = true
+                startButton.setAttributedTitle(getStartButtonTitle(), for: .normal)
             }
         } else if Date.now > model.date { // 이전일
             dayLabel.isHidden = true
@@ -198,6 +199,17 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 self?.delegate?.surveyStartButtonTapped()
             }
             .store(in: &cancellable)
+    }
+    
+    private func getStartButtonTitle() -> NSAttributedString {
+        if let count = Preferences.surveyData?.data.count, let tempSurvey = Preferences.surveyTemp, tempSurvey.date.isToday {
+            var countStr = "(\(tempSurvey.lastIndex + 1)/\(count))"
+            var str = NSAttributedString(string: "설문 진행중 \(countStr)")
+                .addAttributes(countStr, attributes: [.foregroundColor: UIColor.gray500])
+            
+            return str
+        }
+        return NSAttributedString(string: "설문 시작하기")
     }
     
 }

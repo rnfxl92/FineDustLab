@@ -66,7 +66,8 @@ final class PopupViewController: BaseViewController {
 
     private var titleText: String?
     private var descriptionText: String?
-    private var completion: (()->Void)?
+    private var completion: (() -> Void)?
+    private var cancelCompletion: (() -> Void)?
     private var buttonType: ButtonType
 
     init(type: ButtonType,
@@ -74,11 +75,14 @@ final class PopupViewController: BaseViewController {
          description: String? = nil,
          defualtTitle: String,
          cancelTitle: String? = nil,
-         completion: (() -> Void)? = nil) {
+         completion: (() -> Void)? = nil,
+         cancelCompletion: (() -> Void)? = nil
+    ) {
         self.titleText = title
         self.descriptionText = description
-        self.completion = completion
         self.buttonType = type
+        self.completion = completion
+        self.cancelCompletion = cancelCompletion
         super.init(nibName: nil, bundle: nil)
 
         defaultButton = LargeFilledButton(title: defualtTitle)
@@ -150,7 +154,9 @@ final class PopupViewController: BaseViewController {
         cancelButton?.tapPublisher
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.dismiss(animated: true)
+                self.dismiss(animated: true) {
+                    self.cancelCompletion?()
+                }
             }
             .store(in: &cancellables)
     }

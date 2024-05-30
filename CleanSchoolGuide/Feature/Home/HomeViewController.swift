@@ -338,10 +338,25 @@ final class HomeViewController: BaseViewController {
             .store(in: &cancellable)
     }
     
-    private func showResumPopup() {
-        let vc = PopupViewController(type: .dual, description: "이전에 작성중이던\n설문조사를 이어서 할까요?", defualtTitle: "이어하기", cancelTitle: "아니요") {
-            AppRouter.shared.route(to: .surveyDetail(currentIndex: 0, isResumed: true))
-            
+    private func showResumPopup(needCancelAction: Bool = false) {
+        var vc: PopupViewController
+        if needCancelAction {
+            vc = PopupViewController(
+                type: .dual,
+                description: "이전에 작성중이던\n설문조사를 이어서 할까요?",
+                defualtTitle: "이어하기",
+                cancelTitle: "아니요",
+                completion: {
+                    AppRouter.shared.route(to: .surveyDetail(currentIndex: 0, isResumed: true))
+                },
+                cancelCompletion:  {
+                    AppRouter.shared.route(to: .surveyStart)
+                }
+            )
+        } else {
+            vc = PopupViewController(type: .dual, description: "이전에 작성중이던\n설문조사를 이어서 할까요?", defualtTitle: "이어하기", cancelTitle: "아니요", completion: {
+                AppRouter.shared.route(to: .surveyDetail(currentIndex: 0, isResumed: true))
+            })
         }
         
         vc.modalTransitionStyle = .crossDissolve
@@ -413,7 +428,11 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 
 extension HomeViewController: CardCollectionViewCellDelegate {
     func surveyStartButtonTapped() {
-        AppRouter.shared.route(to: .surveyStart)
+        if viewModel.checkSurvey() {
+            showResumPopup(needCancelAction: true)
+        } else {
+            AppRouter.shared.route(to: .surveyStart)
+        }
     }
 }
 
