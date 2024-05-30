@@ -15,6 +15,30 @@ final class ManualDetailViewController: BaseViewController {
     private let backButton = CustomNavigationButton(.back)
     private let searchButton = CustomNavigationButton(.search)
     
+    private lazy var coachMarkDimView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray900.withAlphaComponent(0.8)
+        let stackView = UIStackView(axis: .vertical)
+        stackView.spacing = 12
+        let imageView = UIImageView(image: .imgGesturePinch)
+        imageView.contentMode = .scaleAspectFit
+        
+        let label = UILabel()
+        label.text = "내용과 이미지를 확대 할 수 있어요"
+        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.textColor = .gray0
+        
+        stackView.addArrangedSubViews([imageView, label])
+        
+        view.addSubview(stackView)
+
+        stackView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-30)
+        }
+        return view
+    }()
+    
     private let searchContainerView: UIView = {
         let view = UIView()
         view.backgroundColor = .gray0
@@ -215,6 +239,18 @@ final class ManualDetailViewController: BaseViewController {
             searchTextField.text = searchWords
             searchForText(searchWords ?? "")
         }
+        
+        if Preferences.firstManualOpen {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(coarchMarkTapped(_:)))
+            view.addSubview(coachMarkDimView)
+            view.bringSubviewToFront(coachMarkDimView)
+            coachMarkDimView.snp.makeConstraints {
+                $0.directionalEdges.equalToSuperview()
+            }
+            coachMarkDimView.addGestureRecognizer(tapGesture)
+            Preferences.firstManualOpen = false
+        }
+        
     }
     
     override func bind() {
@@ -333,7 +369,7 @@ final class ManualDetailViewController: BaseViewController {
     
     private func updateButton() {
         var currentIdx: String = "0"
-        var totalIdx: String = "/\(searchResults.count)"
+        let totalIdx: String = "/\(searchResults.count)"
         if searchResults.isNotEmpty {
             currentIdx = "\(currentIndex + 1)"
         }
@@ -347,6 +383,10 @@ final class ManualDetailViewController: BaseViewController {
         nextButton.isEnabled = searchResults.count > 0 && currentIndex < searchResults.count - 1
         nextButton.tintColor = nextButton.isEnabled ? .gray600 : .gray800
         
+    }
+    
+    @objc private func coarchMarkTapped(_ sender: UITapGestureRecognizer) {
+        coachMarkDimView.isHidden = true
     }
 }
 

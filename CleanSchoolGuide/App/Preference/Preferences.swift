@@ -16,6 +16,7 @@ enum PreferencesKey: String, UserDefaultsKeyType {
     case surveyTemp
     case ultraFineData
     case fineData
+    case firstManualOpen
     
     var value: String { rawValue }
 }
@@ -46,6 +47,9 @@ public struct Preferences {
     @UserDefaultsWrapper(key: PreferencesKey.fineData, defaultValue: nil)
     static var fineData: SelectedFineData?
     
+    @UserDefaultsWrapper(key: PreferencesKey.firstManualOpen, defaultValue: true)
+    static var firstManualOpen: Bool
+    
     static func clearUserDefault() {
         Preferences.selectedUserType = nil
         Preferences.userInfo = nil
@@ -55,5 +59,6 @@ public struct Preferences {
         Preferences.surveyTemp = nil
         Preferences.ultraFineData = nil
         Preferences.fineData = nil
+        Preferences.firstManualOpen = true
     }
 }
