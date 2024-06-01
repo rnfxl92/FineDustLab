@@ -8,8 +8,8 @@
 import UIKit
 
 struct InternalFineStatusModel: Codable {
-    let finedustFactor: Int
-    let ultrafineFactor: Int
+    let finedustFactor: String?
+    let ultrafineFactor: String?
     let ultraStatus: Status?
     let fineStatus: Status?
     

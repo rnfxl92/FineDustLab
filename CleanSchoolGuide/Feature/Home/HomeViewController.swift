@@ -135,6 +135,12 @@ final class HomeViewController: BaseViewController {
     private var isFirstAppear: Bool = true
     private var cancellable = Set<AnyCancellable>()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        bottomDustViewController.updateBottomDust()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -316,7 +322,7 @@ final class HomeViewController: BaseViewController {
                 
                 switch state {
                 case .fineDustPosted:
-                   // TODO: - fetch dust
+                    self?.bottomDustViewController.updateBottomDust()
                     break
                 default:
                     break

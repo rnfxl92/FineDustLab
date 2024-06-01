@@ -313,6 +313,11 @@ final class HomeBottomDustViewController: BaseViewController {
     }
     
     @objc private func refreshButtonViewTapped(_ sender: UITapGestureRecognizer) {
+        
+        updateBottomDust()
+    }
+    
+    func updateBottomDust() {
         locationManager.startUpdatingLocation()
         if segmentedControl.selectedSegmentIndex == 0 {
             fetchInternalPublisher.send()
