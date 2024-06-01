@@ -73,6 +73,8 @@ final class HomeViewModel: NSObject {
         if Preferences.surveyData != nil, let tempSurvey = Preferences.surveyTemp, tempSurvey.date.isToday {
            return true
         }
+        
+        Preferences.surveyTemp = nil
         return false
     }
     

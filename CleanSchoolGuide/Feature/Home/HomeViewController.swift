@@ -350,6 +350,7 @@ final class HomeViewController: BaseViewController {
                     AppRouter.shared.route(to: .surveyDetail(currentIndex: 0, isResumed: true))
                 },
                 cancelCompletion:  {
+                    Preferences.surveyTemp = nil
                     AppRouter.shared.route(to: .surveyStart)
                 }
             )

@@ -116,19 +116,19 @@ final class CardCollectionViewCell: UICollectionViewCell {
             dayLabel.textColor = .gray0
             startButton.setBackgroundColor(color: .blue400, forState: .normal)
             mainView.backgroundColor = .blue300
-            if model.isSuveyed {
-                startButton.isHidden = false
-                descriptionLabel.isHidden = true
-                imageView.image = images.randomElement() ?? UIImage.character01
-                startButton.setTitle("설문 완료!", for: .disabled)
-                startButton.setBackgroundColor(color: .blue400.withAlphaComponent(0.2), forState: .disabled)
-                startButton.isEnabled = false
-            } else if model.isDayOff {
-                descriptionLabel.isHidden = false
-                descriptionLabel.textColor = .gray0
-                startButton.isHidden = true
-                imageView.image = UIImage.characterHoliday
-            } else {
+//            if model.isSuveyed {
+//                startButton.isHidden = false
+//                descriptionLabel.isHidden = true
+//                imageView.image = images.randomElement() ?? UIImage.character01
+//                startButton.setTitle("설문 완료!", for: .disabled)
+//                startButton.setBackgroundColor(color: .blue400.withAlphaComponent(0.2), forState: .disabled)
+//                startButton.isEnabled = false
+//            } else if model.isDayOff {
+//                descriptionLabel.isHidden = false
+//                descriptionLabel.textColor = .gray0
+//                startButton.isHidden = true
+//                imageView.image = UIImage.characterHoliday
+//            } else {
                 dayLabel.isHidden = false
                 imageView.image = UIImage.imgEmptyBluecard
                 mainView.bringSubviewToFront(dayLabel)
@@ -136,7 +136,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 descriptionLabel.isHidden = true
                 startButton.isEnabled = true
                 startButton.setAttributedTitle(getStartButtonTitle(), for: .normal)
-            }
+//            }
         } else if Date.now > model.date { // 이전일
             dayLabel.isHidden = true
             startButton.isEnabled = false

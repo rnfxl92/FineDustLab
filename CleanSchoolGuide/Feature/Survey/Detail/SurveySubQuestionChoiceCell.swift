@@ -9,6 +9,7 @@ import UIKit
 
 protocol SurveySubQuestionChoiceCellDelegate: AnyObject {
     func choiceButtonTapped(subQuestionId: Int, optionId: Int)
+    func updateLayout()
 }
 
 final class SurveySubQuestionChoiceCell: UITableViewCell {
@@ -29,6 +30,9 @@ final class SurveySubQuestionChoiceCell: UITableViewCell {
         stackView.distribution = .fill
         return stackView
     }()
+    
+    private let textField = SubQeustionInputView ()
+    
     private var buttons: [SurveyChoiceButton] = []
     private var subQuestion: SubQuestion?
     private weak var delegate: SurveySubQuestionChoiceCellDelegate?
@@ -72,6 +76,13 @@ final class SurveySubQuestionChoiceCell: UITableViewCell {
                 button.isSelected = true
                 if let option = subQuestion?.options[safe: index] {
                     delegate?.choiceButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: option.id ?? 0)
+                    
+                    if option.input ?? false {
+                        stackView.insertArrangedSubview(textField, at: index + 1)
+                    } else {
+                        textField.removeFromSuperview()
+                    }
+                    delegate?.updateLayout()
                 }
             } else {
                 button.isSelected = false
@@ -93,6 +104,9 @@ final class SurveySubQuestionChoiceCell: UITableViewCell {
             buttons.append(button)
             if let answer, let answerInt = Int(answer), let id = option.id, answerInt == id {
                 button.isSelected = true
+            }
+            if button.isSelected, option.input == true {
+                stackView.addArrangedSubview(textField)
             }
         }
     }

@@ -29,14 +29,18 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
         let textField = UITextField()
         textField.font = .systemFont(ofSize: 16)
         textField.textColor = .gray900
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
+        textField.keyboardType = .numberPad
+        textField.addHideKeyboardButton(title: "완료")
         return textField
     }()
-    private lazy var numberPickerView: UIPickerView = {
-        let pickerView = UIPickerView()
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        return pickerView
-    }()
+//    private lazy var numberPickerView: UIPickerView = {
+//        let pickerView = UIPickerView()
+//        pickerView.delegate = self
+//        pickerView.dataSource = self
+//        return pickerView
+//    }()
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.textColor = .gray700
@@ -61,7 +65,7 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
     }
     
     private func setup() {
-        textField.inputView = numberPickerView
+//        textField.inputView = numberPickerView
         textFieldBackgroud.addSubview(textField)
         textField.snp.makeConstraints {
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
@@ -71,12 +75,11 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
         stackView.addArrangedSubViews([textFieldBackgroud, descriptionLabel])
         textFieldBackgroud.snp.makeConstraints {
             $0.height.equalTo(62)
-            $0.width.equalTo(120)
         }
         contentView.addSubview(stackView)
         stackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
             $0.directionalVerticalEdges.equalToSuperview().inset(12)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
     }
     
@@ -88,8 +91,8 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
               let range = option.range
         else { return }
         descriptionLabel.text = option.unit
-        numbers = Array(range.min...range.max)
-        numberPickerView.reloadAllComponents()
+//        numbers = Array(range.min...range.max)
+//        numberPickerView.reloadAllComponents()
         if let answer {
             textField.text = answer
         }

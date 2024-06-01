@@ -99,6 +99,7 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SurveySubQuestionNumberPickerCell.self)
         tableView.register(SurveySubQuestionCheckboxCell.self)
         tableView.register(SurveySubQuestionSliderCell.self)
+        tableView.register(SurveySubQuestionTextCell.self)
         tableView.register(SurveyHelpCell.self)
         
         var str = NSAttributedString("")
@@ -241,6 +242,11 @@ extension SurveyDetailViewController: UITableViewDataSource {
             cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
             
             return cell
+        case .text:
+            let cell: SurveySubQuestionTextCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
+            
+            return cell
         default:
             return .init()
         }
@@ -275,6 +281,12 @@ extension SurveyDetailViewController: SurveySubQuestionCheckboxCellDelegate {
 extension SurveyDetailViewController: SurveySubQuestionSliderCellDelegate {
     func radioButtonTapped(subQuestionId: Int, optionId: Int) {
         viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)")
+    }
+}
+
+extension SurveyDetailViewController: SurveySubQuestionTextCellDelegate {
+    func textChanged(subQuestionId: Int, answer: String) {
+        viewModel.answered(subQuestionId: subQuestionId, answer: answer)
     }
 }
                                             

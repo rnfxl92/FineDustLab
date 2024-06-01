@@ -57,6 +57,7 @@ struct Option: Codable {
     let id: Int?
     let text: String?
     let input: Bool?
+    let placeHolder: String?
     let unit: String?
     let range: RangeModel?
     let selected: Bool?
