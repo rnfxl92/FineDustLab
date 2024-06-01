@@ -175,12 +175,13 @@ final class HomeBottomDustViewController: BaseViewController {
         
         todayTitleView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(24)
+            $0.height.equalTo(30)
         }
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(didChangeValue(segment:)), for: .valueChanged)
         
         segmentedControl.snp.makeConstraints {
-            $0.top.equalTo(todayTitleView.snp.bottom).offset(20)
+            $0.top.equalTo(todayTitleView.snp.bottom).offset(14)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
             $0.height.greaterThanOrEqualTo(34)
             $0.height.lessThanOrEqualTo(44)
