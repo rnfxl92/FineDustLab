@@ -25,7 +25,7 @@ final class PopupViewController: BaseViewController {
     }()
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 2, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .bold)
         label.textColor = .gray900
         label.numberOfLines = 2
         label.textAlignment = .center

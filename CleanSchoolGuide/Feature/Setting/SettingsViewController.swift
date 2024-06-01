@@ -134,10 +134,10 @@ extension SettingsViewController: UITableViewDelegate {
 extension SettingsViewController: SettingsGroupCellDelegate {
     func changeButtonTapped() {
     
-        let vc = PopupViewController(type: .dual, description: "학습자를 다시 선택하면\n저장된 정보가 사라집니다.", defualtTitle: "다시 선택", cancelTitle: "취소") {
+        let vc = PopupViewController(type: .dual, description: "학습자를 다시 선택하면\n저장된 정보가 사라집니다.", defualtTitle: "다시 선택", cancelTitle: "취소", completion: {
             Preferences.clearUserDefault()
             AppRouter.shared.route(to: .selectGroup)
-        }
+        })
         
         vc.modalTransitionStyle = .crossDissolve
         vc.modalPresentationStyle = .overFullScreen

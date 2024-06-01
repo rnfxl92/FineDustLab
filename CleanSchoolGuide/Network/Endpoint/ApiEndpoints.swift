@@ -138,6 +138,14 @@ struct APIEndpoints {
         )
     }
     
+    static func findEmail(with data: FindEmailReqeustDto) -> Endpoint<FindEmailModel> {
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/user/findEmail",
+            method: .get,
+            queryParameters: data
+        )
+    }
 }
 
 extension Encodable {

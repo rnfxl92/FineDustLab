@@ -266,6 +266,14 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
                 }
             }
             .store(in: &cancellable)
+        
+        findEmailButton.tapPublisher
+            .sink { [weak self] in
+                self?.dismiss(animated: true) {
+                    AppRouter.shared.route(to: .findEmail)
+                }
+            }
+            .store(in: &cancellable)
     }
     
     private func checkLogin() {
