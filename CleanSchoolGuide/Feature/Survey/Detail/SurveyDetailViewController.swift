@@ -245,24 +245,41 @@ extension SurveyDetailViewController: UITableViewDataSource {
         case .text:
             let cell: SurveySubQuestionTextCell = tableView.dequeueReusableCell(for: indexPath)
             cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
-            
+            if let optional = subQuestion.isOptional,
+               optional,
+               !viewModel.showOptionalDic.values.contains(subQuestion.subQuestionID) {
+                cell.isHidden = true
+            } else {
+                cell.isHidden = false
+            }
             return cell
         default:
             return .init()
         }
     }
-    
+    func updateCellHidden() {
+        guard let subQuestions = viewModel.survey?.subQuestions else { return }
+        
+        for (index, subQuestion) in subQuestions.enumerated() {
+            if subQuestion.isOptional ?? false,
+               let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) {
+                cell.isHidden = !viewModel.showOptionalDic.values.contains(subQuestion.subQuestionID)
+            }
+        }
+    }
 }
 
 extension SurveyDetailViewController: SurveySubQuestionOXCellDelegate {
-    func oxButtonTapped(subQuestionId: Int, optionId: Int) {
-        viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)")
+    func oxButtonTapped(subQuestionId: Int, optionId: Int, showOptional: Int?) {
+        viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)", showOptional: showOptional)
+        updateCellHidden()
     }
 }
 
 extension SurveyDetailViewController: SurveySubQuestionChoiceCellDelegate {
-    func choiceButtonTapped(subQuestionId: Int, optionId: Int) {
-        viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)")
+    func choiceButtonTapped(subQuestionId: Int, optionId: Int, showOptional: Int?) {
+        viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)", showOptional: showOptional)
+        updateCellHidden()
     }
 }
 

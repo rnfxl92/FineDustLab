@@ -22,7 +22,11 @@ final class SurveyDetailViewModel {
     }
     var isAllAnswered: Bool {
         guard let survey else { return false }
-        return answerDic.keys.count == survey.subQuestions.count
+        var count = survey.subQuestions.count
+        count -= survey.subQuestions.filter { $0.isOptional ?? false }.count
+        count += showOptionalDic.values.filter { $0 > 0 }.count
+        
+        return answerDic.keys.count >= count
     }
     var isEnd: Bool {
         currentIndex + 1 >= totalCount
@@ -38,6 +42,7 @@ final class SurveyDetailViewModel {
     }
     
     private var answerDic: [Int: String] = [:]
+    private(set) var showOptionalDic: [Int: Int] = [:]
     private var cancellable = Set<AnyCancellable>()
     
     @Published var state: State = .none
@@ -46,12 +51,24 @@ final class SurveyDetailViewModel {
         self.currentIndex = currentIndex
         
         anweredQustion?.forEach { [weak self] answer in
-            self?.answerDic[answer.subQuestionId] = answer.answer
+            guard let self else { return }
+            self.answerDic[answer.subQuestionId] = answer.answer
+            if let nextSub = survey?
+                .subQuestions
+                .first(where: { $0.subQuestionID == answer.subQuestionId })?
+                .options.first(where: { $0.id == Int(answer.answer) })?
+                .next_sub_question_id {
+                showOptionalDic[answer.subQuestionId] = nextSub
+            }
         }
     }
     
-    func answered(subQuestionId: Int, answer: String) {
+    func answered(subQuestionId: Int, answer: String, showOptional: Int? = nil) {
         answerDic[subQuestionId] = answer
+        
+        if let showOptional {
+            showOptionalDic[subQuestionId] = showOptional
+        }
         state = .answerUpdated
     }
     

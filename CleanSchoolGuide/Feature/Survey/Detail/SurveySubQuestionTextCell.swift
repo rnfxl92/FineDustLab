@@ -74,10 +74,10 @@ final class SurveySubQuestionTextCell: UITableViewCell {
         
         textViewBackground.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(12)
-            $0.height.equalTo(62)
+            $0.height.equalTo(56)
             $0.bottom.directionalHorizontalEdges.equalToSuperview()
         }
-        addSubview(containerView)
+        contentView.addSubview(containerView)
         containerView.snp.makeConstraints {
             $0.top.directionalHorizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(20)
@@ -97,7 +97,7 @@ final class SurveySubQuestionTextCell: UITableViewCell {
         self.delegate = delegate
         
         titleLabel.text = subQuestion.text
-        if let option = subQuestion.options.first, let placeHolder = option.placeHolder {
+        if let option = subQuestion.options.first, let placeHolder = option.placeholder {
             textField.attributedPlaceholder =  NSAttributedString(string: placeHolder, attributes: [.foregroundColor: UIColor.gray500])
         }
         textField.text = answer

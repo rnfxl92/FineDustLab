@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 protocol SurveySubQuestionNumberPickerCellDelegate: AnyObject {
     func numberPicked(subQuestionId: Int, answer: String)
@@ -53,6 +54,7 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
     private var numbers: [Int] = []
     private var subQuestion: SubQuestion?
     private weak var delegate: SurveySubQuestionNumberPickerCellDelegate?
+    private var cancellable = Set<AnyCancellable>()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -81,6 +83,12 @@ final class SurveySubQuestionNumberPickerCell: UITableViewCell {
             $0.directionalVerticalEdges.equalToSuperview().inset(12)
             $0.directionalHorizontalEdges.equalToSuperview().inset(24)
         }
+        
+        textField.textPublisher.sink { [weak self] text in
+            guard let self, let text, let intText = Int(text) else { return }
+            self.delegate?.numberPicked(subQuestionId: subQuestion?.subQuestionID ?? 0, answer: text)
+        }
+        .store(in: &cancellable)
     }
     
     func setUIModel(_ subQuestion: SubQuestion, answer: String? = nil, delegate: SurveySubQuestionNumberPickerCellDelegate?) {

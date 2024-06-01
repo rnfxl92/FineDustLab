@@ -146,11 +146,12 @@ final class FindEmailViewController: BaseViewController {
         viewModel.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
+                guard let self else { return }
                 state.isLoading ? CSGIndicator.shared.show() : CSGIndicator.shared.hide()
                 switch state {
                 case .schoolSelected(let school):
-                    self?.schoolLabel.textColor = .gray900
-                    self?.schoolLabel.text = school?.schulNm
+                    self.schoolLabel.textColor = .gray900
+                    self.schoolLabel.text = school?.schulNm
                 case .findSuccessed(let email):
                     let vc = PopupViewController(
                         type: .single,
@@ -162,22 +163,14 @@ final class FindEmailViewController: BaseViewController {
                     })
                     vc.modalTransitionStyle = .crossDissolve
                     vc.modalPresentationStyle = .overFullScreen
-                    self?.present(vc: vc, animated: true)
+                    self.present(vc: vc, animated: true)
                     
                 case .findFailed:
-                    let vc = PopupViewController(
-                        type: .single,
-                        title: "등록된 이메일",
-                        description: "등록된 이메일 없습니다.",
-                        defualtTitle: "확인",
-                        completion: nil)
-                    vc.modalTransitionStyle = .crossDissolve
-                    vc.modalPresentationStyle = .overFullScreen
-                    self?.present(vc: vc, animated: true)
+                    CSGToast.show("아래 정보로 등록된 계정이 없습니다.", view: UIApplication.shared.keyWindows?.last ?? self.view)
                 default:
                     break
                 }
-                self?.updateStartButton()
+                self.updateStartButton()
             }
             .store(in: &cancellable)
         

@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SurveySubQuestionChoiceCellDelegate: AnyObject {
-    func choiceButtonTapped(subQuestionId: Int, optionId: Int)
+    func choiceButtonTapped(subQuestionId: Int, optionId: Int, showOptional: Int?)
     func updateLayout()
 }
 
@@ -75,7 +75,7 @@ final class SurveySubQuestionChoiceCell: UITableViewCell {
             if button == sender {
                 button.isSelected = true
                 if let option = subQuestion?.options[safe: index] {
-                    delegate?.choiceButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: option.id ?? 0)
+                    delegate?.choiceButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: option.id ?? 0, showOptional: option.next_sub_question_id)
                     
                     if option.input ?? false {
                         stackView.insertArrangedSubview(textField, at: index + 1)

@@ -44,11 +44,13 @@ struct SubQuestion: Codable {
     let type: SubQuestionType
     let subQuestionID: Int
     let text: String?
+    let isOptional: Bool?
 
     enum CodingKeys: String, CodingKey {
         case options, type
         case subQuestionID = "sub_question_id"
         case text
+        case isOptional = "is_optional"
     }
 }
 
@@ -57,10 +59,11 @@ struct Option: Codable {
     let id: Int?
     let text: String?
     let input: Bool?
-    let placeHolder: String?
+    let placeholder: String?
     let unit: String?
     let range: RangeModel?
     let selected: Bool?
+    let next_sub_question_id: Int?
 }
 
 // MARK: - Range
