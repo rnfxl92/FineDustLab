@@ -95,22 +95,29 @@ final class SurveySubQuestionOXCell: UITableViewCell {
         
         oStackView.addArrangedSubViews([oImageView, oLabel])
         oView.addSubview(oStackView)
+        oImageView.snp.makeConstraints {
+            $0.height.equalTo(oView).multipliedBy(0.3)
+        }
         let oTapGesture = UITapGestureRecognizer(target: self, action: #selector(oButtonTapped))
         oView.addGestureRecognizer(oTapGesture)
         oView.isUserInteractionEnabled = true
         oStackView.snp.makeConstraints {
-            $0.directionalVerticalEdges.equalToSuperview().inset(30)
-            $0.centerX.equalToSuperview()
+            $0.directionalHorizontalEdges.equalToSuperview().inset(10)
+            $0.center.equalToSuperview()
         }
         oView.borderColor = .green300
+        
         xStackView.addArrangedSubViews([xImageView, xLabel])
         xView.addSubview(xStackView)
+        xImageView.snp.makeConstraints {
+            $0.height.equalTo(xView).multipliedBy(0.3)
+        }
         let xTapGesture = UITapGestureRecognizer(target: self, action: #selector(xButtonTapped))
         xView.addGestureRecognizer(xTapGesture)
         xView.isUserInteractionEnabled = true
         xStackView.snp.makeConstraints {
-            $0.directionalVerticalEdges.equalToSuperview().inset(30)
-            $0.centerX.equalToSuperview()
+            $0.directionalHorizontalEdges.equalToSuperview().inset(10)
+            $0.center.equalToSuperview()
         }
         xView.borderColor = .red300
         oxStackView.addArrangedSubViews([oView, xView])

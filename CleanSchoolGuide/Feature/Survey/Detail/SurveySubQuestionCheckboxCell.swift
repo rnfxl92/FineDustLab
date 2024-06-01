@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import Combine
 
 protocol SurveySubQuestionCheckboxCellDelegate: AnyObject {
     func checkboxTapped(subQuestionId: Int, answer: String)
+    func textUpdated(subQuestionId: Int, optionId: Int, text: String)
+    func updateLayout()
 }
 
 final class SurveySubQuestionCheckboxCell: UITableViewCell {
@@ -20,9 +23,12 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
         return stackView
     }()
     
+    private let textField = SubQeustionInputView ()
     private var buttons: [SurveyCheckboxButton] = []
     private var subQuestion: SubQuestion?
     private weak var delegate: SurveySubQuestionCheckboxCellDelegate?
+    private var selectedOptionId: Int?
+    private var cancellable = Set<AnyCancellable>()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -39,6 +45,12 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
         stackView.snp.makeConstraints {
             $0.directionalEdges.equalToSuperview().inset(24)
         }
+        
+        textField.textField.textPublisher.sink { [weak self] text in
+            guard let self, let text, let selectedOptionId else { return }
+            self.delegate?.textUpdated(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: selectedOptionId, text: text)
+        }
+        .store(in: &cancellable)
     }
     
     @objc private func toggleCheckBox(_ sender: UIButton) {
@@ -48,8 +60,19 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
         for idx in 0..<buttons.count {
             if buttons[safe: idx]?.isSelected ?? false {
                 answer += "\(subQuestion.options[safe: idx]?.id ?? 0),"
+                if let option = subQuestion.options[safe: idx], option.input ?? false {
+                    selectedOptionId = option.id
+                    if let placeHolder = option.placeholder {
+                        textField.textField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [.foregroundColor: UIColor.gray500])
+                    }
+                    stackView.insertArrangedSubview(textField, at: idx + 1)
+                }
+            } else if let option = subQuestion.options[safe: idx], option.input ?? false {
+                textField.textField.text = ""
+                textField.removeFromSuperview()
             }
         }
+        delegate?.updateLayout()
         delegate?.checkboxTapped(subQuestionId: subQuestion.subQuestionID, answer: answer)
     }
     
@@ -73,7 +96,6 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
                 button.isSelected = true
             }
         }
-        
     }
 }
 
@@ -87,12 +109,16 @@ final class SurveyCheckboxButton: UIButton {
         setImage(.checkN, for: .normal)
         setImage(.checkS, for: .selected)
         
+        setBackgroundColor(color: .gray100, forState: .normal)
         contentHorizontalAlignment = .leading
-        titleEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 0)
+        imageEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        titleEdgeInsets = UIEdgeInsets(top: 8, left: 28, bottom: 8, right: 0)
         
         snp.makeConstraints { make in
+            make.height.equalTo(56)
             make.width.greaterThanOrEqualTo(intrinsicContentSize.width + 14)
         }
+        cornerRadius = 12
     }
     
     required init?(coder: NSCoder) {

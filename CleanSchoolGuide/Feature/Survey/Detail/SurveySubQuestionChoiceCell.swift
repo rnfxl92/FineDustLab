@@ -89,6 +89,9 @@ final class SurveySubQuestionChoiceCell: UITableViewCell {
                     
                     if option.input ?? false {
                         selectedOptionId = option.id
+                        if let placeHolder = option.placeholder {
+                            textField.textField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [.foregroundColor: UIColor.gray500])
+                        }
                         stackView.insertArrangedSubview(textField, at: index + 1)
                     } else {
                         textField.textField.text = ""
