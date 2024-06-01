@@ -42,6 +42,7 @@ final class SurveyDetailViewModel {
     }
     
     private var answerDic: [Int: String] = [:]
+    private var answerInput: [Int: [Int: String]] = [:]
     private(set) var showOptionalDic: [Int: Int] = [:]
     private var cancellable = Set<AnyCancellable>()
     
@@ -72,6 +73,10 @@ final class SurveyDetailViewModel {
         state = .answerUpdated
     }
     
+    func textUpdate(subQuestionId: Int, optionId: Int, text: String) {
+        answerInput[subQuestionId] = [optionId: text]
+    }
+    
     func postAnswer() {
         guard
             let user = Preferences.userInfo,
@@ -95,7 +100,9 @@ final class SurveyDetailViewModel {
                 .init(
                     subQuestionId: key,
                     subQuestionAnswer: answerDic[key] ?? "",
-                    type: survey.subQuestions.first(where: { $0.subQuestionID == key })?.type ?? .choice)
+                    type: survey.subQuestions.first(where: { $0.subQuestionID == key })?.type ?? .choice,
+                    subQuestionInput: answerInput[key]?[Int(answerDic[key] ?? "") ?? 0] ?? ""
+                )
             )
         }
         

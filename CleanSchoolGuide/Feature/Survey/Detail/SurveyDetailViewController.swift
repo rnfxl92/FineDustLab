@@ -277,6 +277,10 @@ extension SurveyDetailViewController: SurveySubQuestionOXCellDelegate {
 }
 
 extension SurveyDetailViewController: SurveySubQuestionChoiceCellDelegate {
+    func textUpdated(subQuestionId: Int, optionId: Int, text: String) {
+        viewModel.textUpdate(subQuestionId: subQuestionId, optionId: optionId, text: text)
+    }
+    
     func choiceButtonTapped(subQuestionId: Int, optionId: Int, showOptional: Int?) {
         viewModel.answered(subQuestionId: subQuestionId, answer: "\(optionId)", showOptional: showOptional)
         updateCellHidden()

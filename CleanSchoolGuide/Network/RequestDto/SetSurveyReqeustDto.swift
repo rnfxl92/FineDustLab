@@ -50,11 +50,13 @@ struct SetSurveyReqeustDto: Encodable {
             let subQuestionId: Int
             let subQuestionAnswer: String
             let type: SubQuestionType
+            let subQuestionInput: String
             
             enum CodingKeys: String, CodingKey {
                 case type
                 case subQuestionId = "sub_question_id"
                 case subQuestionAnswer = "sub_question_answer"
+                case subQuestionInput = "sub_question_input"
             }
         }
     }
