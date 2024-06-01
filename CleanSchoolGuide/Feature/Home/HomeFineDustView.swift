@@ -100,6 +100,7 @@ final class HomeFineDustView: UIView {
             $0.top.equalToSuperview().inset(12)
             $0.directionalHorizontalEdges.equalToSuperview()
         }
+        titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
         collectionView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(12)
             $0.directionalHorizontalEdges.equalToSuperview()

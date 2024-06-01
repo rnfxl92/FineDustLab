@@ -129,6 +129,13 @@ final class HomeBottomDustViewController: BaseViewController {
         return label
     }()
     
+    private let refreshLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14, weight: .bold)
+        label.textColor = .gray600
+        return label
+    }()
+    
     private var locationManager =  CLLocationManager()
     private var viewModel = HomeBottomDustViewModel()
     private let fetchWeatherPublisher = PassthroughSubject<(lat: Double?, lng: Double?), Never>()
@@ -158,7 +165,14 @@ final class HomeBottomDustViewController: BaseViewController {
         geoSettingButtonView.addGestureRecognizer(geoSettingTapGesture)
         geoSettingButtonView.isUserInteractionEnabled = true
         
-        view.addSubViews([todayTitleView, segmentedControl, dustMainHStackView, warningDescriptionLabel])
+        if Preferences.selectedUserType == .teacher {
+            view.addSubViews([todayTitleView, segmentedControl, dustMainHStackView, warningDescriptionLabel, refreshLabel])
+            let refreshTap = UITapGestureRecognizer(target: self, action: #selector(refreshButtonViewTapped))
+            refreshLabel.addGestureRecognizer(refreshTap)
+            refreshLabel.isUserInteractionEnabled = true
+        } else {
+            view.addSubViews([todayTitleView, segmentedControl, dustMainHStackView, warningDescriptionLabel])
+        }
         weatherStackView.addArrangedSubViews([humidityView, temperatureView, geoSettingButtonView])
         todayTitleView.addSubViews([todayTitleLabel, weatherStackView])
         
@@ -186,35 +200,47 @@ final class HomeBottomDustViewController: BaseViewController {
             $0.height.greaterThanOrEqualTo(34)
             $0.height.lessThanOrEqualTo(44)
         }
+        segmentedControl.setContentHuggingPriority(.defaultLow, for: .vertical)
         
         dustInfoStackView.addArrangedSubViews([dustInfoImageView, dustInfoLabel])
         dustVstack.addArrangedSubViews([dustInfoStackView, dustTitleLabel])
         dustView.addSubview(dustVstack)
         dustVstack.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(24)
+            $0.top.greaterThanOrEqualToSuperview().inset(24)
             $0.leading.greaterThanOrEqualToSuperview().inset(16)
             $0.trailing.lessThanOrEqualToSuperview().inset(16)
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(16)
+            $0.center.equalToSuperview()
+            $0.bottom.lessThanOrEqualToSuperview().inset(16)
         }
         
         fineDustInfoStackView.addArrangedSubViews([fineDustInfoImageView, fineDustInfoLabel])
         fineDustVstack.addArrangedSubViews([fineDustInfoStackView, fineDustTitleLabel])
         fineDustView.addSubview(fineDustVstack)
         fineDustVstack.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(24)
+            $0.top.greaterThanOrEqualToSuperview().inset(24)
             $0.leading.greaterThanOrEqualToSuperview().inset(16)
             $0.trailing.lessThanOrEqualToSuperview().inset(16)
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(16)
+            $0.center.equalToSuperview()
+            $0.bottom.lessThanOrEqualToSuperview().inset(16)
         }
         
         dustMainHStackView.addArrangedSubViews([dustView, fineDustView])
-        
-        dustMainHStackView.snp.makeConstraints {
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-            $0.top.equalTo(segmentedControl.snp.bottom).offset(10)
-            $0.bottom.equalToSuperview().priority(750)
+        if Preferences.selectedUserType == .teacher {
+            refreshLabel.snp.makeConstraints {
+                $0.bottom.centerX.equalToSuperview().inset(10)
+            }
+            dustMainHStackView.snp.makeConstraints {
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+                $0.top.equalTo(segmentedControl.snp.bottom).offset(10)
+                $0.bottom.lessThanOrEqualTo(refreshLabel.snp.top).offset(-10)
+            }
+            
+        } else {
+            dustMainHStackView.snp.makeConstraints {
+                $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+                $0.top.equalTo(segmentedControl.snp.bottom).offset(10)
+                $0.bottom.lessThanOrEqualToSuperview()
+            }
         }
         dustMainHStackView.cornerRadius = 18
         warningDescriptionLabel.snp.makeConstraints {
@@ -250,6 +276,10 @@ final class HomeBottomDustViewController: BaseViewController {
                     
                     self.humidityView.text = humidity
                     self.temperatureView.text = temperature
+                    let attr = NSMutableAttributedString(string: date, attributes: [.foregroundColor: UIColor.gray600])
+                    attr.append(.paddingAttributed(4))
+                    attr.append(.imageAttributed(.rotateCcw, topInset: -3))
+                    self.refreshLabel.attributedText = attr
                 case .externalFineUpdate(let dustStatus, let fineDustStatus):
                     self.warningDescriptionLabel.isHidden = true
                     self.dustMainHStackView.isHidden = false
@@ -280,6 +310,15 @@ final class HomeBottomDustViewController: BaseViewController {
     
     @objc private func geoSettingButtonViewTapped(_ sender: UITapGestureRecognizer) {
         showRequestLocationServiceAlert()
+    }
+    
+    @objc private func refreshButtonViewTapped(_ sender: UITapGestureRecognizer) {
+        locationManager.startUpdatingLocation()
+        if segmentedControl.selectedSegmentIndex == 0 {
+            fetchInternalPublisher.send()
+        } else {
+            fetchExternalPublisher.send()
+        }
     }
     
     func showRequestLocationServiceAlert() {

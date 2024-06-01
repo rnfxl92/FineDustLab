@@ -35,7 +35,7 @@ final class HomeViewController: BaseViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = .gray1000
-        label.text = Preferences.selectedUserType == .teacher ? "오늘의 미세먼지 정보": "오늘도 등교했다면?"
+        label.text = Preferences.selectedUserType == .teacher ? "오늘의 미세먼지 정보를": "오늘도 등교했다면?"
         label.textAlignment = .left
         return label
     }()
@@ -45,7 +45,7 @@ final class HomeViewController: BaseViewController {
         label.font = .systemFont(ofSize: 22)
         label.textColor = .gray1000
         label.numberOfLines = 2
-        label.text = Preferences.selectedUserType == .teacher ? "등록된 정보는 학생들에게 공유됩니다." : "미세먼지 상태를 체크해 보세요!"
+        label.text = Preferences.selectedUserType == .teacher ? "입력하고 학생들과 공유해요." : "미세먼지 상태를 체크해 보세요!"
         label.textAlignment = .left
         return label
     }()
