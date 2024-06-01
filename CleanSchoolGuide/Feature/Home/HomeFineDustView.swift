@@ -25,21 +25,27 @@ final class HomeFineDustView: UIView {
             }
         }
         
-        var selectedColor: UIColor {
-            switch self {
-            case .fineDust:
-                return .red300
-            case .ultraFineDust:
+        func selectedColor(index: Int) -> UIColor {
+            switch index {
+            case 0:
                 return .blue300
+            case 1:
+                return .green300
+            case 2:
+                return .orange300
+            case 3:
+                return .red300
+            default:
+                return .gray0
             }
         }
         
         var values: [Int] {
             switch self {
             case .fineDust:
-                return [5, 20, 50, 80]
+                return [15, 60, 110, 190]
             case .ultraFineDust:
-                return [15, 40, 90, 150]
+                return [5, 30, 70, 100]
             }
         }
         

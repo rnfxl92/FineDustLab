@@ -51,12 +51,12 @@ final class FineDustCell: UICollectionViewCell {
     
     func setUIModel(_ indexPath: Int, isSelected: Bool, viewType: HomeFineDustView.ViewType) {
         containerView.backgroundColor = isSelected
-        ? viewType.selectedColor.withAlphaComponent(0.2)
+        ? viewType.selectedColor(index: indexPath).withAlphaComponent(0.2)
         : .gray0
         
-        containerView.borderColor = isSelected ? viewType.selectedColor : .gray200
+        containerView.borderColor = isSelected ? viewType.selectedColor(index: indexPath) : .gray200
         titleLabel.font = isSelected ? .systemFont(ofSize: 13, weight: .bold) : .systemFont(ofSize: 13, weight: .regular)
-        titleLabel.textColor = isSelected ? viewType.selectedColor : .gray700
+        titleLabel.textColor = isSelected ? viewType.selectedColor(index: indexPath) : .gray700
         titleLabel.text = viewType.valueTitle[safe: indexPath]
     }
 }
