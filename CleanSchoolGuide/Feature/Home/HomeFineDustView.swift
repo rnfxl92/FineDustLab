@@ -111,7 +111,7 @@ final class HomeFineDustView: UIView {
             $0.top.equalTo(titleLabel.snp.bottom).offset(12)
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.height.equalTo(40)
-            $0.bottom.equalToSuperview().inset(12)
+            $0.bottom.lessThanOrEqualToSuperview().inset(6)
         }
     }
 }

@@ -22,6 +22,8 @@ final class SettingsViewController: BaseViewController {
         tableView.register(SettingsNameCell.self)
         tableView.register(SettingsInquiryCell.self)
         tableView.register(SettingsUpdateInfoCell.self)
+        tableView.register(DividerCell.self)
+        tableView.register(SettingsExcelDownloadCell.self)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = true
@@ -117,6 +119,14 @@ extension SettingsViewController: UITableViewDataSource {
             cell.delegate = self
             cell.setName(viewModel.name)
             return cell
+        case .divider:
+            let cell: DividerCell = tableView.dequeueReusableCell(for: indexPath)
+            
+            return cell
+        case .excelDownload:
+            let cell: SettingsExcelDownloadCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.isHidden = !(Preferences.selectedUserType == .teacher)
+            return cell
         case .inquiry:
             let cell: SettingsInquiryCell = tableView.dequeueReusableCell(for: indexPath)
             return cell
@@ -128,7 +138,9 @@ extension SettingsViewController: UITableViewDataSource {
 }
 
 extension SettingsViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+    }
 }
 
 extension SettingsViewController: SettingsGroupCellDelegate {

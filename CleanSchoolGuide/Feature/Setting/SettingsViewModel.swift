@@ -13,6 +13,8 @@ final class SettingsViewModel {
         case group
         case schoolInfo
         case name
+        case divider
+        case excelDownload
         case inquiry
         case updateInfo
     }
