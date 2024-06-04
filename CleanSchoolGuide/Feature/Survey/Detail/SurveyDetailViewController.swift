@@ -243,6 +243,14 @@ extension SurveyDetailViewController: UITableViewDataSource {
         case .choice:
             let cell: SurveySubQuestionChoiceCell = tableView.dequeueReusableCell(for: indexPath)
             cell.setUIModel(subQuestion, answer: viewModel.anweredQustion?.first(where: { $0.subQuestionId == subQuestion.subQuestionID })?.answer, delegate: self)
+            
+            if let optional = subQuestion.isOptional,
+               optional,
+               !viewModel.showOptionalDic.values.contains(subQuestion.subQuestionID) {
+                cell.isHidden = true
+            } else {
+                cell.isHidden = false
+            }
             return cell
         case .numberPicker:
             let cell: SurveySubQuestionNumberPickerCell = tableView.dequeueReusableCell(for: indexPath)
