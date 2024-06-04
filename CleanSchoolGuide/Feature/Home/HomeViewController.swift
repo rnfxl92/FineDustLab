@@ -216,25 +216,28 @@ final class HomeViewController: BaseViewController {
         
         if Preferences.selectedUserType == .teacher {
             ultraFineDustView.snp.makeConstraints {
-                $0.top.greaterThanOrEqualTo(titleStackView.snp.bottom)
+                $0.top.greaterThanOrEqualTo(titleStackView.snp.bottom).offset(12)
+                $0.top.lessThanOrEqualTo(titleStackView.snp.bottom).offset(24)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
                 
             }
             fineDustView.snp.makeConstraints {
-                $0.top.equalTo(ultraFineDustView.snp.bottom)
+                $0.top.greaterThanOrEqualTo(ultraFineDustView.snp.bottom)
+                $0.top.lessThanOrEqualTo(ultraFineDustView.snp.bottom).offset(24)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
                 
             }
-            
             surveyButtonView.snp.makeConstraints {
-                $0.top.equalTo(fineDustView.snp.bottom).offset(20)
+                $0.top.greaterThanOrEqualTo(fineDustView.snp.bottom)
+                $0.top.lessThanOrEqualTo(fineDustView.snp.bottom).offset(28)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
                 $0.height.equalTo(56)
             }
             
             manualButtonView.snp.makeConstraints {
                 $0.height.equalTo(56)
-                $0.top.equalTo(surveyButtonView.snp.bottom).offset(8)
+                $0.top.greaterThanOrEqualTo(surveyButtonView.snp.bottom).offset(8)
+                $0.top.lessThanOrEqualTo(surveyButtonView.snp.bottom).offset(12)
                 $0.bottom.equalToSuperview().inset(24)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
             }

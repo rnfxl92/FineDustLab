@@ -101,6 +101,7 @@ final class SurveyDetailViewController: BaseViewController {
         tableView.register(SurveySubQuestionSliderCell.self)
         tableView.register(SurveySubQuestionTextCell.self)
         tableView.register(SurveyHelpCell.self)
+        tableView.register(SurveySubTextCell.self)
         
         var str = NSAttributedString("")
         if viewModel.totalCount > 0 {
@@ -201,6 +202,10 @@ extension SurveyDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let survey = viewModel.survey else { return .zero }
         var count = survey.subQuestions.count
+        if let subText = survey.subText, subText.isNotEmpty {
+            count += 1
+        }
+        
         if let url = survey.help, url.isNotEmpty {
             count += 1
         }
@@ -210,7 +215,17 @@ extension SurveyDetailViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let subQuestion = viewModel.survey?.subQuestions[safe: indexPath.item] else {
+        let subText = viewModel.survey?.subText
+        
+        if indexPath.item == 0, let subText, subText.isNotEmpty {
+            let cell: SurveySubTextCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.setUIModel(subText)
+            return cell
+        }
+        
+        guard let subQuestion = viewModel
+            .survey?
+            .subQuestions[safe: subText.isNotNilOrEmpty ? indexPath.item - 1: indexPath.item] else {
             let cell: SurveyHelpCell = tableView.dequeueReusableCell(for: indexPath)
             
             cell.delegate = self

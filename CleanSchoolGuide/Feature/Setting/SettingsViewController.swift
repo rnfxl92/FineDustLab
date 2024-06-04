@@ -121,7 +121,6 @@ extension SettingsViewController: UITableViewDataSource {
             return cell
         case .divider:
             let cell: DividerCell = tableView.dequeueReusableCell(for: indexPath)
-            
             return cell
         case .excelDownload:
             let cell: SettingsExcelDownloadCell = tableView.dequeueReusableCell(for: indexPath)
@@ -139,7 +138,12 @@ extension SettingsViewController: UITableViewDataSource {
 
 extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        switch SettingsViewModel.Items(rawValue: indexPath.row) {
+        case .excelDownload:
+            viewModel.downloadExcel()
+        default:
+            break
+        }
     }
 }
 

@@ -146,6 +146,15 @@ struct APIEndpoints {
             queryParameters: data
         )
     }
+    
+    static func getSurveyAnswerByXls(with data: SurveyAnswerByXlsRequestDto?) -> Endpoint<EmptyData?> {
+        return Endpoint(
+            baseURL: "https://finedustlab-api-ko.net",
+            path: "/survey/download",
+            method: .get,
+            queryParameters: data
+        )
+    }
 }
 
 extension Encodable {

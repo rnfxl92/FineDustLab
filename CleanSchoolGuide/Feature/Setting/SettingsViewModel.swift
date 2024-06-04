@@ -105,4 +105,18 @@ final class SettingsViewModel {
     func setStudentNum(_ studentNum: Int) {
         self.studentNum = studentNum
     }
+    
+    func downloadExcel() {
+        let endPoint = APIEndpoints.getSurveyAnswerByXls(with: nil)
+        NetworkService.shared.download(endPoint) { success in
+            print(success)
+        }
+        
+//        _ = NetworkService.shared
+//            .request(endPoint)
+//            .replaceError(with: nil)
+//            .sink { _ in
+//                
+//            }
+    }
 }

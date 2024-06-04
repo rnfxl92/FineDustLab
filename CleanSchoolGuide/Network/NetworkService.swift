@@ -39,5 +39,38 @@ final class NetworkService {
         .eraseToAnyPublisher()
     }
     
+    func download<R: Decodable>(_ endPoint: Endpoint<R>, completion: ((Bool) -> Void)?){
+        let url = endPoint.baseURL + endPoint.path
+        // 파일매니저
+        let fileManager = FileManager.default
+        // 앱 경로
+        let appURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        // 파일 경로 생성
+        let fileURL = appURL.appendingPathComponent("survey.xlsx")
+        // 파일 경로 지정 및 다운로드 옵션 설정 ( 이전 파일 삭제 , 디렉토리 생성 )
+        let destination: DownloadRequest.Destination = { _, _ in
+            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+        }
+        // 다운로드 시작
+        AF.download(
+            url,
+            method: .get,
+            parameters: endPoint.queryParameters?.toDictionary(),
+            encoding: JSONEncoding.default,
+            to: destination
+        ).downloadProgress { (progress) in
+//            // 이 부분에서 프로그레스 수정
+//            self.progressView.progress = Float(progress.fractionCompleted)
+//            self.progressLabel.text = "\(Int(progress.fractionCompleted * 100))%"
+        }.response{ response in
+            if response.error != nil {
+                completion?(false)
+            } else {
+                completion?(true)
+            }
+        }
+        
+    }
+    
 }
 
