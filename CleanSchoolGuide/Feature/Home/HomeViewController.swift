@@ -70,28 +70,9 @@ final class HomeViewController: BaseViewController {
     private lazy var ultraFineDustView = HomeFineDustView(type: .ultraFineDust, selectedIndex: Preferences.ultraFineData?.selectedIndex)
     private lazy var fineDustView = HomeFineDustView(type: .fineDust, selectedIndex: Preferences.fineData?.selectedIndex)
     
-    private let surveyButtonView: UIView = {
-        let view = UIView()
-        
-        view.layer.cornerRadius = 14
-        view.backgroundColor = .blue300
-        view.isUserInteractionEnabled = true
-        
-        return view
-    }()
-    private let surveyTitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .gray0
-        label.textAlignment = .left
-        let str1 = "🪠 청소 후 점검 설문조사"
-        let highlighted = "설문조사"
-        
-        label.attributedText = str1.emphasized(.systemFont(ofSize: 16, weight: .bold), string: highlighted)
-        
-        return label
-    }()
-    private let surveyImageView: UIImageView = UIImageView(image: .chevronRight)
+    private lazy var surveyButtonView = HomeSurveyButtonView { [weak self] in
+        self?.surveyStartButtonTapped()
+    }
     
     private let manualButtonView: UIView = {
         let view = UIView()
@@ -139,6 +120,7 @@ final class HomeViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         bottomDustViewController.updateBottomDust()
+        surveyButtonView.updateState(isHoliday: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -186,20 +168,6 @@ final class HomeViewController: BaseViewController {
             $0.trailing.equalToSuperview().inset(16)
         }
         
-        surveyButtonView.addSubViews([surveyTitleLabel, surveyImageView])
-        let surveyTapGesture = UITapGestureRecognizer(target: self, action: #selector(surveyButtonTapped))
-        surveyButtonView.addGestureRecognizer(surveyTapGesture)
-        surveyTitleLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(24)
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalTo(surveyImageView.snp.leading).offset(6).priority(.high)
-        }
-        surveyImageView.snp.makeConstraints {
-            $0.size.equalTo(18)
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(16)
-        }
-        
         if Preferences.selectedUserType == .teacher {
             mainSurveyView.addSubViews([titleStackView, ultraFineDustView, fineDustView, surveyButtonView, manualButtonView])
             ultraFineDustView.delegate = self
@@ -236,7 +204,7 @@ final class HomeViewController: BaseViewController {
             
             manualButtonView.snp.makeConstraints {
                 $0.height.equalTo(56)
-                $0.top.greaterThanOrEqualTo(surveyButtonView.snp.bottom).offset(8)
+                $0.top.greaterThanOrEqualTo(surveyButtonView.snp.bottom).offset(6)
                 $0.top.lessThanOrEqualTo(surveyButtonView.snp.bottom).offset(12)
                 $0.bottom.equalToSuperview().inset(24)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
@@ -285,10 +253,6 @@ final class HomeViewController: BaseViewController {
     
     @objc private func manualButtonTapped(_ sender: UITapGestureRecognizer) {
         AppRouter.shared.route(to: .manualList)
-    }
-    
-    @objc private func surveyButtonTapped(_ sender: UITapGestureRecognizer) {
-        AppRouter.shared.route(to: .surveyStart)
     }
     
     @objc private func settingButtonTapped(_ sender: UITapGestureRecognizer) {
