@@ -46,7 +46,8 @@ final class NetworkService {
         // 앱 경로
         let appURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         // 파일 경로 생성
-        let fileURL = appURL.appendingPathComponent("survey.xlsx")
+        
+        let fileURL = appURL.appendingPathComponent("\(Date.now.toString(dateFormat: .MMddahmm)).xlsx")
         // 파일 경로 지정 및 다운로드 옵션 설정 ( 이전 파일 삭제 , 디렉토리 생성 )
         let destination: DownloadRequest.Destination = { _, _ in
             return (fileURL, [.removePreviousFile, .createIntermediateDirectories])

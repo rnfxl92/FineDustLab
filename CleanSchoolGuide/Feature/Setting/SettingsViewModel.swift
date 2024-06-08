@@ -24,6 +24,7 @@ final class SettingsViewModel {
         case loading
         case saveSuccess
         case saveFailed
+        case downloaded(Bool)
         
         var isLoading: Bool {
             switch self {
@@ -108,15 +109,8 @@ final class SettingsViewModel {
     
     func downloadExcel() {
         let endPoint = APIEndpoints.getSurveyAnswerByXls(with: nil)
-        NetworkService.shared.download(endPoint) { success in
-            print(success)
+        NetworkService.shared.download(endPoint) { [weak self] success in
+            self?.state = .downloaded(success)
         }
-        
-//        _ = NetworkService.shared
-//            .request(endPoint)
-//            .replaceError(with: nil)
-//            .sink { _ in
-//                
-//            }
     }
 }

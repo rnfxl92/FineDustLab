@@ -86,6 +86,13 @@ final class SettingsViewController: BaseViewController {
                     vc.modalTransitionStyle = .crossDissolve
                     vc.modalPresentationStyle = .overFullScreen
                     self?.present(vc: vc, animated: true)
+                case .downloaded(let success):
+                    guard let self else { return }
+                    if success {
+                        CSGToast.show("설문조사 결과가 다운로드 되었습니다.", view: UIApplication.shared.keyWindows?.last ?? self.view)
+                    } else {
+                        CSGToast.show("설문조사 결과가 다운로드에 실패하였습니다.", view: UIApplication.shared.keyWindows?.last ?? self.view)
+                    }
                 default:
                     break
                 }
