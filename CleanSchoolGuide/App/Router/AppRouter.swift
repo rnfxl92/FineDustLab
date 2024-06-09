@@ -18,6 +18,7 @@ public final class AppRouter: Router {
         case login
         case signUp
         case findEmail
+        case resetPassword
         case selectGroup
         case setting
         case manualList
@@ -71,6 +72,9 @@ public final class AppRouter: Router {
             presenter?.push(vc, animated: true)
         case .findEmail:
             let vc = FindEmailViewController()
+            presenter?.push(vc, animated: true)
+        case .resetPassword:
+            let vc = ResetViewController()
             presenter?.push(vc, animated: true)
         case .manualList:
             let vc = ManualListViewController()

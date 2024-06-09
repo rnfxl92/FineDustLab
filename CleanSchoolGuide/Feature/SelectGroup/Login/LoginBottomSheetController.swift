@@ -274,6 +274,14 @@ final class LoginBottomSheetController: BaseViewController, BottomSheetPresentab
                 }
             }
             .store(in: &cancellable)
+        
+        resetPasswordButton.tapPublisher
+            .sink { [weak self] in
+                self?.dismiss(animated: true) {
+                    AppRouter.shared.route(to: .resetPassword)
+                }
+            }
+            .store(in: &cancellable)
     }
     
     private func checkLogin() {
