@@ -203,6 +203,9 @@ final class HomeBottomDustViewController: BaseViewController {
         segmentedControl.setContentHuggingPriority(.defaultLow, for: .vertical)
         
         dustInfoStackView.addArrangedSubViews([dustInfoImageView, dustInfoLabel])
+        dustInfoImageView.snp.makeConstraints {
+            $0.size.equalTo(32)
+        }
         dustVstack.addArrangedSubViews([dustInfoStackView, dustTitleLabel])
         dustView.addSubview(dustVstack)
         dustVstack.snp.makeConstraints {
@@ -214,6 +217,9 @@ final class HomeBottomDustViewController: BaseViewController {
         }
         
         fineDustInfoStackView.addArrangedSubViews([fineDustInfoImageView, fineDustInfoLabel])
+        fineDustInfoImageView.snp.makeConstraints {
+            $0.size.equalTo(32)
+        }
         fineDustVstack.addArrangedSubViews([fineDustInfoStackView, fineDustTitleLabel])
         fineDustView.addSubview(fineDustVstack)
         fineDustVstack.snp.makeConstraints {

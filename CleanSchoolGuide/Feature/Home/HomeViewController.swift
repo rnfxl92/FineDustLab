@@ -169,7 +169,7 @@ final class HomeViewController: BaseViewController {
         }
         
         if Preferences.selectedUserType == .teacher {
-            mainSurveyView.addSubViews([titleStackView, ultraFineDustView, fineDustView, surveyButtonView, manualButtonView])
+            mainSurveyView.addSubViews([titleStackView, fineDustView, ultraFineDustView, surveyButtonView, manualButtonView])
             ultraFineDustView.delegate = self
             fineDustView.delegate = self
         } else {
@@ -183,21 +183,19 @@ final class HomeViewController: BaseViewController {
         }
         
         if Preferences.selectedUserType == .teacher {
-            ultraFineDustView.snp.makeConstraints {
+            fineDustView.snp.makeConstraints {
                 $0.top.greaterThanOrEqualTo(titleStackView.snp.bottom).offset(12)
                 $0.top.lessThanOrEqualTo(titleStackView.snp.bottom).offset(24)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-                
             }
-            fineDustView.snp.makeConstraints {
-                $0.top.greaterThanOrEqualTo(ultraFineDustView.snp.bottom)
-                $0.top.lessThanOrEqualTo(ultraFineDustView.snp.bottom).offset(24)
+            ultraFineDustView.snp.makeConstraints {
+                $0.top.greaterThanOrEqualTo(fineDustView.snp.bottom)
+                $0.top.lessThanOrEqualTo(fineDustView.snp.bottom).offset(24)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
-                
             }
             surveyButtonView.snp.makeConstraints {
-                $0.top.greaterThanOrEqualTo(fineDustView.snp.bottom)
-                $0.top.lessThanOrEqualTo(fineDustView.snp.bottom).offset(28)
+                $0.top.greaterThanOrEqualTo(ultraFineDustView.snp.bottom)
+                $0.top.lessThanOrEqualTo(ultraFineDustView.snp.bottom).offset(28)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
                 $0.height.equalTo(56)
             }
