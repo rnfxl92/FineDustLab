@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 protocol SurveySubQuestionChoiceCellDelegate: AnyObject {
-    func choiceButtonTapped(subQuestionId: Int, optionId: Int, showOptional: Int?)
+    func choiceButtonTapped(subQuestionId: Int, optionId: Int, showOptional: Int?, needInput: Bool)
     func textUpdated(subQuestionId: Int, optionId: Int, text: String)
     func updateLayout()
 }
@@ -85,16 +85,20 @@ final class SurveySubQuestionChoiceCell: UITableViewCell {
             if button == sender {
                 button.isSelected = true
                 if let option = subQuestion?.options[safe: index] {
-                    delegate?.choiceButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: option.id ?? 0, showOptional: option.next_sub_question_id)
+                    delegate?.choiceButtonTapped(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: option.id ?? 0, showOptional: option.next_sub_question_id, needInput: option.input ?? false)
                     
                     if option.input ?? false {
                         selectedOptionId = option.id
                         if let placeHolder = option.placeholder {
                             textField.textField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [.foregroundColor: UIColor.gray500])
                         }
+                       
                         stackView.insertArrangedSubview(textField, at: index + 1)
                     } else {
                         textField.textField.text = ""
+                        if let selectedOptionId = option.id {
+                            self.delegate?.textUpdated(subQuestionId: subQuestion?.subQuestionID ?? 0, optionId: selectedOptionId, text: textField.textField.text ?? "")
+                        }
                         textField.removeFromSuperview()
                     }
                     delegate?.updateLayout()

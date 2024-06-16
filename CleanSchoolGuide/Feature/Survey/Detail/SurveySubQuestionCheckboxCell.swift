@@ -71,6 +71,10 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
                 }
             } else if let option = subQuestion.options[safe: idx], option.input ?? false {
                 textField.textField.text = ""
+                if let selectedOptionId = option.id {
+                    self.delegate?.textUpdated(subQuestionId: subQuestion.subQuestionID, optionId: selectedOptionId, text: textField.textField.text ?? "")
+                }
+                
                 textField.removeFromSuperview()
             }
         }
