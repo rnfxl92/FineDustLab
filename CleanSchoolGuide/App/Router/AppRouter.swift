@@ -64,7 +64,7 @@ public final class AppRouter: Router {
         case .surveyDetail(let currentIndex, let isResumed):
             let vc = SurveyDetailViewController(viewModel: .init(currentIndex: currentIndex), isResumed: isResumed)
             
-            presenter?.push(vc, animated: true)
+            presenter?.push(vc, animated: !isResumed)
         case .login:
             break
         case .signUp:

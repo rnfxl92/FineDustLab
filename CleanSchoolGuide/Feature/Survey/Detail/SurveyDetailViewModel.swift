@@ -96,8 +96,7 @@ final class SurveyDetailViewModel {
         guard
             let user = Preferences.userInfo,
             let userType = Preferences.selectedUserType,
-            let survey,
-            survey.subQuestions.count == answerDic.keys.count
+            let survey
         else { return }
         cancellable.removeAll()
         
