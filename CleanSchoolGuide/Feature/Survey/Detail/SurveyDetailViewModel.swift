@@ -26,11 +26,26 @@ final class SurveyDetailViewModel {
         count -= survey.subQuestions.filter { $0.isOptional ?? false }.count
         count += showOptionalDic.values.filter { $0 > 0 }.count
         
-        return answerDic.keys.count >= count
+        var isOkay = false
+        if needInput {
+            for value in answerInput.values {
+                for v in value.values {
+                    if v.isNotEmpty {
+                        isOkay = true
+                        break
+                    }
+                }
+            }
+        } else {
+            isOkay = true
+        }
+
+        return isOkay && answerDic.keys.count >= count
     }
     var isEnd: Bool {
         currentIndex + 1 >= totalCount
     }
+    
     var anweredQustion: [AnswerModel]? {
         guard let survey, let surveyTemp = Preferences.surveyTemp, surveyTemp.date.isToday  else {
             Preferences.surveyTemp = nil
@@ -44,6 +59,7 @@ final class SurveyDetailViewModel {
     private var answerDic: [Int: String] = [:]
     private var answerInput: [Int: [Int: String]] = [:]
     private(set) var showOptionalDic: [Int: Int] = [:]
+    private var needInput: Bool = false
     private var cancellable = Set<AnyCancellable>()
     
     @Published var state: State = .none
@@ -64,8 +80,13 @@ final class SurveyDetailViewModel {
         }
     }
     
-    func answered(subQuestionId: Int, answer: String, showOptional: Int? = nil) {
-        answerDic[subQuestionId] = answer
+    func answered(subQuestionId: Int, answer: String, showOptional: Int? = nil, needInput: Bool = false) {
+        self.needInput = needInput
+        if answer.isEmpty {
+            answerDic[subQuestionId] = nil
+        } else {
+            answerDic[subQuestionId] = answer
+        }
         
         if let showOptional {
             showOptionalDic[subQuestionId] = showOptional
@@ -74,7 +95,12 @@ final class SurveyDetailViewModel {
     }
     
     func textUpdate(subQuestionId: Int, optionId: Int, text: String) {
-        answerInput[subQuestionId] = [optionId: text]
+        if text.isEmpty {
+            answerInput[subQuestionId]?[optionId] = nil
+        } else {
+            answerInput[subQuestionId] = [optionId: text]
+        }
+        state = .answerUpdated
     }
     
     func postAnswer() {

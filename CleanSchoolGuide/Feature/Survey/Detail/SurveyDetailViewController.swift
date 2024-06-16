@@ -317,8 +317,8 @@ extension SurveyDetailViewController: SurveySubQuestionNumberPickerCellDelegate 
 }
 
 extension SurveyDetailViewController: SurveySubQuestionCheckboxCellDelegate {
-    func checkboxTapped(subQuestionId: Int, answer: String) {
-        viewModel.answered(subQuestionId: subQuestionId, answer: answer)
+    func checkboxTapped(subQuestionId: Int, answer: String, needInput: Bool) {
+        viewModel.answered(subQuestionId: subQuestionId, answer: answer, needInput: needInput)
     }
 }
 

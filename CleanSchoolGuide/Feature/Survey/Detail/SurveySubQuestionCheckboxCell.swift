@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 protocol SurveySubQuestionCheckboxCellDelegate: AnyObject {
-    func checkboxTapped(subQuestionId: Int, answer: String)
+    func checkboxTapped(subQuestionId: Int, answer: String, needInput: Bool)
     func textUpdated(subQuestionId: Int, optionId: Int, text: String)
     func updateLayout()
 }
@@ -57,6 +57,7 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
         sender.isSelected = !sender.isSelected
         guard let subQuestion else { return }
         var answer = ""
+        var needInput = false
         for idx in 0..<buttons.count {
             if buttons[safe: idx]?.isSelected ?? false {
                 answer += "\(subQuestion.options[safe: idx]?.id ?? 0),"
@@ -66,6 +67,7 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
                         textField.textField.attributedPlaceholder = NSAttributedString(string: placeHolder, attributes: [.foregroundColor: UIColor.gray500])
                     }
                     stackView.insertArrangedSubview(textField, at: idx + 1)
+                    needInput = true
                 }
             } else if let option = subQuestion.options[safe: idx], option.input ?? false {
                 textField.textField.text = ""
@@ -73,7 +75,8 @@ final class SurveySubQuestionCheckboxCell: UITableViewCell {
             }
         }
         delegate?.updateLayout()
-        delegate?.checkboxTapped(subQuestionId: subQuestion.subQuestionID, answer: answer)
+        
+        delegate?.checkboxTapped(subQuestionId: subQuestion.subQuestionID, answer: answer, needInput: needInput)
     }
     
     func setUIModel(_ subQuestion: SubQuestion, answer: String? = nil, delegate: SurveySubQuestionCheckboxCellDelegate?) {
