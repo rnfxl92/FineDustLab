@@ -162,7 +162,12 @@ final class SurveyDetailViewController: BaseViewController {
         .store(in: &cancellable)
         
         nextButton.defaultTapPublisher.sink { [weak self] in
-            self?.viewModel.postAnswer()
+            guard let self else { return }
+            if self.viewModel.isEnd {
+                showEndAlert()
+            } else {
+                self.viewModel.postAnswer()
+            }
         }
         .store(in: &cancellable)
         
@@ -190,6 +195,15 @@ final class SurveyDetailViewController: BaseViewController {
                 self.nextButton.isEnable = self.viewModel.isAllAnswered
             }
             .store(in: &cancellable)
+    }
+    
+    private func showEndAlert() {
+        let vc = PopupViewController(type: .dual, description: "설문조사를 완료하면 수정이 어렵습니다.\n설문조사를 완료할까요?", defualtTitle: "완료!", cancelTitle: "다시 확인", completion: { [weak self] in
+            self?.viewModel.postAnswer()
+        })
+        vc.modalTransitionStyle = .crossDissolve
+        vc.modalPresentationStyle = .overFullScreen
+        present(vc: vc, animated: true)
     }
     
 }
