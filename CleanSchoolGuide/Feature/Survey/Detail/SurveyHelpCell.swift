@@ -48,6 +48,7 @@ final class SurveyHelpCell: UITableViewCell {
                 helpView.backgroundColor = .orange0
                 helpLabel.textColor = .orange300
                 helpImageView.isHidden = false
+                reloadImageView()
             } else {
                 helpView.backgroundColor = .gray100
                 helpLabel.textColor = .gray700
@@ -55,7 +56,7 @@ final class SurveyHelpCell: UITableViewCell {
             }
         }
     }
-    
+    private var imageUrl: URL?
     weak var delegate: SurveyHelpCellDelegate?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -112,17 +113,23 @@ final class SurveyHelpCell: UITableViewCell {
     }
     
     func setUIModel(imageUrl: String) {
-        helpImageView.loadImage(url: URL(string: imageUrl)) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let image):
-                helpImageView.snp.updateConstraints {
-                    $0.height.equalTo(floor(self.helpImageView.width * image.size.height / image.size.width))
+        self.imageUrl = URL(string: imageUrl)
+        reloadImageView()
+    }
+    
+    private func reloadImageView() {
+        helpImageView.loadImage(url: imageUrl) { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                switch result {
+                case .success(let image):
+                    helpImageView.snp.updateConstraints {
+                        $0.height.equalTo(floor(self.helpImageView.width * image.size.height / image.size.width))
+                    }
+                    delegate?.updateLayout()
+                case .failure(let error):
+                    Logger.info(error)
                 }
-                delegate?.updateLayout()
-            case .failure(let error):
-                Logger.info(error)
-                
             }
         }
     }

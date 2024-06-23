@@ -206,7 +206,7 @@ final class ManualDetailViewController: BaseViewController {
             $0.trailing.equalTo(divider.snp.leading).offset(-14)
         }
         
-        view.addSubViews([navigationBar, searchContainerView, pdfView, searchedWordsView])
+        view.addSubViews([navigationBar, searchContainerView, searchedWordsView, pdfView])
         
         navigationBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -220,15 +220,15 @@ final class ManualDetailViewController: BaseViewController {
         }
         
         pdfView.snp.makeConstraints {
-            $0.top.equalTo(navigationBar.snp.bottom)
+            $0.top.equalTo(searchedWordsView.snp.bottom)
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         searchedWordsView.snp.makeConstraints {
-            $0.height.equalTo(48 + view.safeAreaInsets.bottom)
+            $0.height.equalTo(50)
+            $0.top.equalTo(navigationBar.snp.bottom)
             $0.directionalHorizontalEdges.equalToSuperview()
-            $0.bottom.equalToSuperview()
         }
         searchedWordsView.isHidden = true
         searchContainerView.isHidden = true
