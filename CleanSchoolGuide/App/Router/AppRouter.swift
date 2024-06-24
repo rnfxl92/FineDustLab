@@ -25,6 +25,7 @@ public final class AppRouter: Router {
         case manualDetail(title: String, fileName: String, searchWords: String?)
         case surveyStart
         case surveyDetail(currentIndex: Int, isResumed: Bool = false)
+        case terms
     }
     
     private var presenter: UIWindow?
@@ -86,6 +87,10 @@ public final class AppRouter: Router {
             presenter?.push(vc, animated: true)
         case .setting:
             let vc = SettingsViewController()
+            
+            presenter?.push(vc, animated: true)
+        case .terms:
+            let vc = TermsViewController()
             
             presenter?.push(vc, animated: true)
         default:

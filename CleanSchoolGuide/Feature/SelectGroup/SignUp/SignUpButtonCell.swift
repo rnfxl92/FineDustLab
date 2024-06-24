@@ -96,6 +96,14 @@ final class SignUpButtonCell: UITableViewCell {
                 self?.delegate?.signUpButtonTapped()
             }
             .store(in: &cancellable)
+        
+        viewTermsButton
+            .tapPublisher
+            .debounce(for: 0.2, scheduler: DispatchQueue.main)
+            .sink {
+                AppRouter.shared.route(to: .terms)
+        }
+        .store(in: &cancellable)
     }
     
     @objc private func agreeTerms() {

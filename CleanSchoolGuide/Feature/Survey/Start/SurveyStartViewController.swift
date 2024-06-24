@@ -352,6 +352,14 @@ final class SurveyStartViewController: BaseViewController {
         }
         .store(in: &cancellable)
         
+        viewTermsButton
+            .tapPublisher
+            .debounce(for: 0.2, scheduler: DispatchQueue.main)
+            .sink {
+                AppRouter.shared.route(to: .terms)
+        }
+        .store(in: &cancellable)
+        
         startButton.tapPublisher
             .debounce(for: 0.2, scheduler: DispatchQueue.main)
             .sink { [weak self] in
