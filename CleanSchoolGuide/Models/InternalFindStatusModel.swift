@@ -24,7 +24,7 @@ struct InternalFineStatusModel: Codable {
         case good
         case fine
         case bad
-        case very_bad
+        case very_bad = "very bad"
         
         var description: String {
             switch self {
