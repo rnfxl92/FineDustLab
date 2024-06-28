@@ -29,7 +29,7 @@ final class TermsViewController: BaseViewController {
             $0.directionalHorizontalEdges.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        termsImageView.contentMode = .scaleAspectFill
+        termsImageView.contentMode = .scaleAspectFit
         backButton.tapPublisher.sink { [weak self] in
             self?.pop(animated: true)
         }

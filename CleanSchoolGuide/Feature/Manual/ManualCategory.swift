@@ -279,13 +279,13 @@ enum ManualCategory {
             case .chapter1_1:
                 return [.one1, .one2, .one3, .one4, .one5, .one6, .one7]
             case .chapter1_2:
-                return [.two1, .two2, .two3, .two3, .two4, .two5]
+                return [.two1, .two2, .two3, .two4, .two5]
             case .chapter2_1:
                 return [.three1, .three2, .three3]
             case .chapter2_2:
                 return [.four1, .four2, .four3, .four4, .four5, .four6]
             case .chapter2_3:
-                return [.five1]
+                return [.five1, .five2, .five3, .five4, .five5]
             case .chapter2_4:
                 return [.six1]
             case .chapter2_5:
@@ -316,6 +316,10 @@ enum ManualCategory {
             case four5
             case four6
             case five1
+            case five2
+            case five3
+            case five4
+            case five5
             case six1
             case seven1
             
@@ -365,6 +369,14 @@ enum ManualCategory {
                     return "학교 미세먼지 관리 시 고려사항"
                 case .five1:
                     return "연락망 안내"
+                case .five2:
+                    return "중앙행정기관"
+                case .five3:
+                    return "시∙도교육청"
+                case .five4:
+                    return "지방자치단체"
+                case .five5:
+                    return "지역보건소"
                 case .six1:
                     return "참고문헌"
                 case .seven1:
@@ -418,6 +430,14 @@ enum ManualCategory {
                     return "teacher_4_6"
                 case .five1:
                     return "teacher_5_1"
+                case .five2:
+                    return "teacher_5_2"
+                case .five3:
+                    return "teacher_5_3"
+                case .five4:
+                    return "teacher_5_4"
+                case .five5:
+                    return "teacher_5_5"
                 case .six1:
                     return "teacher_6_1"
                 case .seven1:
