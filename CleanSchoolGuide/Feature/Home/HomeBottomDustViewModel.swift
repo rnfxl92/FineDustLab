@@ -120,7 +120,7 @@ final class HomeBottomDustViewModel {
     ) -> AnyPublisher<FineStatusModel?, Never> {
         state = .loading
         let endPoint = APIEndpoints.getExternalFineStatus(with: .init(location: schoolCode))
-        print(schoolCode)
+        
         return NetworkService
             .shared
             .request(endPoint)

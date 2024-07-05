@@ -16,7 +16,7 @@ final class NetworkService {
     func request<R: Decodable>(_ endpoint: Endpoint<R>) -> AnyPublisher<R, Error> {
    
         let urlString = endpoint.baseURL + endpoint.path
-        print(urlString)
+        
         let encoding: ParameterEncoding
         // 리퀘스트 메소드를 지정. GET인 경우 URL 파라미터/ 기타의 경우 JSON 파라미터 바디
         switch endpoint.method {

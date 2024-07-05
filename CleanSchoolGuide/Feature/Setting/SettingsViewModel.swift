@@ -78,9 +78,7 @@ final class SettingsViewModel {
                 uid: uid)
             )
         NetworkService.shared.request(endPoint)
-            .handleError { [weak self] _ in
-                self?.state = .saveFailed
-            }
+            .replaceError(with: nil)
             .sink { [weak self] _ in
                 self?.state = .saveSuccess
             }
