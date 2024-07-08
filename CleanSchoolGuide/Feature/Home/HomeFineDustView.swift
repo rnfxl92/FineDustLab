@@ -135,7 +135,7 @@ extension HomeFineDustView: UICollectionViewDelegate {
 
 extension HomeFineDustView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = floor((collectionView.width - 24) / 2)
+        let width = floor((collectionView.width - 8) / 2)
         
         return .init(width: width, height: 40)
     }

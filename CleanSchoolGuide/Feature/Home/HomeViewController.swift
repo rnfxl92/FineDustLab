@@ -190,7 +190,7 @@ final class HomeViewController: BaseViewController {
             }
             ultraFineDustView.snp.makeConstraints {
                 $0.top.greaterThanOrEqualTo(fineDustView.snp.bottom)
-                $0.top.lessThanOrEqualTo(fineDustView.snp.bottom).offset(24)
+                $0.top.lessThanOrEqualTo(fineDustView.snp.bottom).offset(12)
                 $0.directionalHorizontalEdges.equalToSuperview().inset(24)
             }
             surveyButtonView.snp.makeConstraints {

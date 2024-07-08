@@ -134,9 +134,9 @@ extension SettingsViewController: UITableViewDataSource {
         case .inquiry:
             let cell: SettingsInquiryCell = tableView.dequeueReusableCell(for: indexPath)
             return cell
-        case .updateInfo:
-            let cell: SettingsUpdateInfoCell = tableView.dequeueReusableCell(for: indexPath)
-            return cell
+//        case .updateInfo:
+//            let cell: SettingsUpdateInfoCell = tableView.dequeueReusableCell(for: indexPath)
+//            return cell
         }
     }
 }

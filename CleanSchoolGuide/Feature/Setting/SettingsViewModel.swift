@@ -16,7 +16,7 @@ final class SettingsViewModel {
         case divider
         case excelDownload
         case inquiry
-        case updateInfo
+//        case updateInfo
     }
     
     enum State {

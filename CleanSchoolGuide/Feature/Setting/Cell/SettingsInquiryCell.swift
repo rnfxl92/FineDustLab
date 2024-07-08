@@ -30,7 +30,7 @@ final class SettingsInquiryCell: UITableViewCell {
         label.textColor = .gray700
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textAlignment = .left
-        label.text = "testABC@school.com"
+        label.text = "blue1464@schoolkeepa.or.kr"
         
         return label
     }()
