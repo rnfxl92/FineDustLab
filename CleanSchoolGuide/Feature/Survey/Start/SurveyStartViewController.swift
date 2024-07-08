@@ -443,7 +443,7 @@ extension SurveyStartViewController: UITextFieldDelegate {
         guard let stringRange = Range(range, in: currentText) else { return false }
         let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
         if textField == nameTextField {
-            return updatedText.count <= 5
+            return updatedText.count <= 30
         } else if textField == gradeTextField {
             return CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: string)) && updatedText.count <= 1
         }

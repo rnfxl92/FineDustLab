@@ -18,7 +18,7 @@ final class HumidityView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .bold)
         label.textColor = .gray800
-        label.text = "32"
+        label.text = "90"
         return label
     }()
     private let humidityImageView = UIImageView(image: .waterDrop)

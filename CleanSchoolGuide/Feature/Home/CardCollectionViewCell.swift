@@ -68,6 +68,8 @@ final class CardCollectionViewCell: UICollectionViewCell {
 
     private func setupUI() {
         mainView.addSubViews([dateLabel, imageView, dayLabel, startButton, descriptionLabel])
+        startButton.setTitleColor(.gray0, for: .normal)
+        startButton.setTitleColor(.gray0.withAlphaComponent(0.2), for: .disabled)
         
         dateLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
@@ -87,7 +89,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
         
         startButton.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(6)
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(12)
         }
         
@@ -164,7 +166,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
                 startButton.setTitle("설문 실패!", for: .disabled)
-                startButton.setBackgroundColor(color: .gray800, forState: .disabled)
+                startButton.setBackgroundColor(color: .gray800.withAlphaComponent(0.2), forState: .disabled)
             }
         } else {
             dateLabel.textColor = .gray500
@@ -186,7 +188,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
                 startButton.setTitle("설문 준비중", for: .disabled)
-                startButton.setBackgroundColor(color: .gray300, forState: .disabled)
+                startButton.setBackgroundColor(color: .gray300.withAlphaComponent(0.2), forState: .disabled)
             }
         }
     }
@@ -203,7 +205,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
     
     private func getStartButtonTitle() -> NSAttributedString {
         if let count = Preferences.surveyData?.data.count, let tempSurvey = Preferences.surveyTemp, tempSurvey.date.isToday {
-            var countStr = "(\(tempSurvey.lastIndex + 1)/\(count))"
+            let countStr = "(\(tempSurvey.lastIndex + 1)/\(count))"
             var str = NSAttributedString(string: "설문 진행중 \(countStr)")
                 .addAttributes(countStr, attributes: [.foregroundColor: UIColor.gray500])
             

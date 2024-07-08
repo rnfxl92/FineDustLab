@@ -64,7 +64,7 @@ final class SurveyDetailViewController: BaseViewController {
         return scrollView
     }()
     
-    private lazy var nextButton = LargeFloatingButtonView(.dual, defaultTitle: viewModel.isEnd ? "완료!" : "다음", cancelTitle: "이전")
+    private lazy var nextButton = LargeFloatingButtonView(.dual, defaultTitle: viewModel.isEnd ? "설문조사 완료" : "다음", cancelTitle: "이전")
         
     private let viewModel: SurveyDetailViewModel
     private let isResumed: Bool

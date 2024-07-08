@@ -30,10 +30,6 @@ final class HomeFineDustView: UIView {
             case 0:
                 return .blue300
             case 1:
-                return .green300
-            case 2:
-                return .orange300
-            case 3:
                 return .red300
             default:
                 return .gray0
@@ -43,18 +39,18 @@ final class HomeFineDustView: UIView {
         var values: [Int] {
             switch self {
             case .fineDust:
-                return [15, 60, 110, 190]
+                return [15, 110]
             case .ultraFineDust:
-                return [5, 30, 70, 100]
+                return [5, 70]
             }
         }
         
         var valueTitle: [String] {
             switch self {
             case .fineDust:
-                return ["0-31", "31-80", "81-150", "150 이상"]
+                return ["35 µg/\u{33A5} 이하", "36 µg/\u{33A5} 이상"]
             case .ultraFineDust:
-                return ["0-15", "16-35", "36-80", "80 이상"]
+                return ["75 µg/\u{33A5} 이하", "76 µg/\u{33A5} 이상"]
             }
         }
     }
@@ -139,7 +135,7 @@ extension HomeFineDustView: UICollectionViewDelegate {
 
 extension HomeFineDustView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = floor((collectionView.width - 24) / 4)
+        let width = floor((collectionView.width - 24) / 2)
         
         return .init(width: width, height: 40)
     }

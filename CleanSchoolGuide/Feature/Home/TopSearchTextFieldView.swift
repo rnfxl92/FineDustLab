@@ -13,7 +13,7 @@ final class TopSearchTextFieldView: UIView {
     
     private let searchBackground: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray100
+        view.backgroundColor = .gray0
         view.cornerRadius = 14
         
         return view

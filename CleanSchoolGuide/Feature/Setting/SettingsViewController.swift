@@ -82,10 +82,8 @@ final class SettingsViewController: BaseViewController {
                     vc.modalPresentationStyle = .overFullScreen
                     self?.present(vc: vc, animated: true)
                 case .saveSuccess:
-                    let vc = PopupViewController(type: .single, description: "정보가 저장되었습니다.", defualtTitle: "확인")
-                    vc.modalTransitionStyle = .crossDissolve
-                    vc.modalPresentationStyle = .overFullScreen
-                    self?.present(vc: vc, animated: true)
+                    guard let self else { return }
+                    CSGToast.show("정보가 저장되었습니다.", view: UIApplication.shared.keyWindows?.last ?? self.view)
                 case .downloaded(let success):
                     guard let self else { return }
                     if success {

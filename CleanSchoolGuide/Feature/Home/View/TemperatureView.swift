@@ -26,7 +26,7 @@ final class TemperatureView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .bold)
         label.textColor = .gray800
-        label.text = "11" // TODO
+        label.text = "24" // TODO
         return label
     }()
     
