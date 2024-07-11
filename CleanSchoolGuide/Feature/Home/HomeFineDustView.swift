@@ -48,9 +48,9 @@ final class HomeFineDustView: UIView {
         var valueTitle: [String] {
             switch self {
             case .fineDust:
-                return ["35 µg/\u{33A5} 이하", "36 µg/\u{33A5} 이상"]
-            case .ultraFineDust:
                 return ["75 µg/\u{33A5} 이하", "76 µg/\u{33A5} 이상"]
+            case .ultraFineDust:
+                return ["35 µg/\u{33A5} 이하", "36 µg/\u{33A5} 이상"]
             }
         }
     }

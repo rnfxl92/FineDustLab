@@ -61,7 +61,7 @@ final class SurveySubQuestionSliderCell: UITableViewCell {
         
         stackView.addSubview(connectView)
         connectView.snp.makeConstraints {
-            $0.directionalHorizontalEdges.equalToSuperview().inset(24)
+            $0.directionalHorizontalEdges.equalToSuperview().inset(32)
             $0.height.equalTo(8)
             $0.top.equalToSuperview().inset(11)
         }

@@ -69,7 +69,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
     private func setupUI() {
         mainView.addSubViews([dateLabel, imageView, dayLabel, startButton, descriptionLabel])
         startButton.setTitleColor(.gray0, for: .normal)
-        startButton.setTitleColor(.gray0.withAlphaComponent(0.2), for: .disabled)
+        startButton.setTitleColor(.gray0.withAlphaComponent(0.6), for: .disabled)
         
         dateLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
@@ -188,7 +188,7 @@ final class CardCollectionViewCell: UICollectionViewCell {
                 startButton.isHidden = false
                 descriptionLabel.isHidden = true
                 startButton.setTitle("설문 준비중", for: .disabled)
-                startButton.setBackgroundColor(color: .gray300.withAlphaComponent(0.2), forState: .disabled)
+                startButton.setBackgroundColor(color: .gray600.withAlphaComponent(0.2), forState: .disabled)
             }
         }
     }
